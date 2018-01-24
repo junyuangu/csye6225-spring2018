@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="fragments/header :: header"/>
+<body>
+<div th:replace="fragments/navigation :: navigation"/>
+
+
+<!-- Page Content -->
+<div id="cm-form">
+    <form action="index.html" method="post" onsubmit="validate_form(this)">
+        <fieldset>
+            <legend>Login</legend>
+            <dl>
+                <dt>
+                    <label for="email" id="userEmail">email:</label>
+                    <input type="text" password="email" tabindex="1"
+                           maxlength="55" placeholder="Email Address">
+                </dt>
+                <dt>
+                    <label for="newpw" id="passWord">password:</label>
+                    <input id="pwInput" type="password" password="newpw" tabindex="2"
+                           maxlength="20" placeholder="Password:8-16chars"
+                           pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/">
+                </dt>
+
+                <input id="subBtn" type="submit" value="Send" tabindex="3">
+            </dl>
+        </fieldset>
+    </form>
+</div>
+<script type="text/javascript" src="6225Assign2.js"></script>
+<!-- /.container -->
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

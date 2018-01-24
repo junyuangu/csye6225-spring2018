@@ -6,14 +6,26 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class IndexController {
+public class IndexController  {
 
   private final static Logger logger = LoggerFactory.getLogger(IndexController.class);
-  
+
   @RequestMapping("/")
   public String index() {
     logger.info("Loading home page.");
     return "index";
+  }
+
+  @RequestMapping("login")
+  public String login() {
+    logger.info("Loading login page.");
+    return "login";
+  }
+
+  @RequestMapping("signup")
+  public String signup() {
+    logger.info("Loading signup page.");
+    return "signup";
   }
 
 }

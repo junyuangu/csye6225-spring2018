@@ -64,6 +64,11 @@ dependencies {
     testCompile('io.rest-assured:rest-assured:3.0.3')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
+    /* Thymeleaf will parse input content to standard XML,
+     * but we write web page formatted as HTML,
+     * therefore we need nekohtml as below.
+     */
+    //compile("net.sourceforge.nekohtml:nekohtml:1.9.21")
 }
 
 war {
