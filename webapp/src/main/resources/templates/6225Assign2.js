@@ -41,3 +41,32 @@ function confirm_password(field1, field2, alerttxt) {
         }
     }
 }
+
+function currTime()
+{
+    var today=new Date()
+    var h=today.getHours()
+    var m=today.getMinutes()
+    var s=today.getSeconds()
+    // 当数字是小于10的就要在前面加0.看起来规范
+    m=checkTime(m)
+    s=checkTime(s)
+    document.getElementById('txt').innerHTML=h+":"+m+":"+s
+    t=setTimeout('currTime()',1000)
+}
+function checkTime(i)
+{
+    if (i<10)
+    {i="0" + i}
+    return i
+}
+
+function currDate()
+{
+    var now= new Date();
+    var year=now.getFullYear();
+    var month=now.getMonth();
+    var date=now.getDate();
+    document.getElementById("info1").innerHTML=year+"-"+(month+1)+"-"+date+" ";
+}
+currDate();
