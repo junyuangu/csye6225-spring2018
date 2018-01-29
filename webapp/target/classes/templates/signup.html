@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="fragments/header :: header"/>
+<body>
+<div th:replace="fragments/navigation :: navigation"/>
+
+
+<!-- Page Content -->
+<div id="cm-form">
+    <form action="index.html" method="post" onsubmit="validate_form(this)">
+        <fieldset>
+            <legend>Sign Up Now</legend>
+                <dl>
+                    <dt>
+                    <label for="uemail" id="userEmail">Email:</label>
+                    <input id="emInput" type="text" name="uemail" tabindex="1"
+                           maxlength="55" placeholder="Email Address"></input>
+                </dt>
+                <dt>
+                    <label for="newpw" id="passWord">password:</label>
+                    <input id="pwInput" type="password" name="newpw" tabindex="2"
+                           maxlength="20" placeholder="Password:8-16chars"
+                           pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/"></input>>
+                </dt>
+                <dt>
+                    <label for="newpw2" id="passWord2">confirm:</label>
+                    <input id="pwInput2" type="password" name="newpw2" tabindex="3"
+                           maxlength="20" placeholder="Confirm Password"
+                           pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/"></input>
+                </dt>
+                <input id="subBtn" type="submit" value="Send" tabindex="4"></input>
+                </dl>
+        </fieldset>
+    </form>
+</div>
+<script type="text/javascript" src="6225Assign2.js"></script>
+<!-- /.container -->
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
