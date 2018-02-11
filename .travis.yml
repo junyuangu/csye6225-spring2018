@@ -7,6 +7,7 @@ install: true
 
 script:
   - cd webapp
+  - chmod +x ./gradlew 
   #- ./webapp/gradlew build
   - ./gradlew assemble
 
@@ -16,3 +17,11 @@ notifications:
       - gu.ju@husky.neu.edu
     on_success: always 
     on_failure: always # default: always
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
