@@ -1,4 +1,4 @@
-nguage: java
+language: java
 jdk:
   - oraclejdk8
 
@@ -6,9 +6,9 @@ sudo: false
 install: true
 
 script:
-  - gradle check
+  - cd webapp
   #- ./webapp/gradlew build
-  - gradle war
+  - gradle build  war
 
 notifications:
   username:
