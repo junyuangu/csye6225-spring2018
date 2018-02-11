@@ -8,7 +8,7 @@ install: true
 script:
   - cd webapp
   #- ./webapp/gradlew build
-  - gradle build  war
+  - ./gradlew assemble
 
 notifications:
   username:
