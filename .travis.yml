@@ -6,7 +6,6 @@ sudo: false
 install: true
 
 script:
-  - cd webapp
   - gradle check
   #- ./webapp/gradlew build
   - gradle war
