@@ -1,18 +1,18 @@
-language: java
+nguage: java
 jdk:
-- oraclejdk8
+  - oraclejdk8
 
 sudo: false
 install: true
 
 script:
- # - ./webapp/gradlew build
+  #- ./webapp/gradlew build
   - cd webapp
   - ./gradlew war
 
 notifications:
   username:
     recipients:
-      gu.ju@husky.neu.edu
-      on_success: always 
-      on_failure: always # default: always
+      - gu.ju@husky.neu.edu
+    on_success: always 
+    on_failure: always # default: always
