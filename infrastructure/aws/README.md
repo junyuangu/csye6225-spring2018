@@ -1,0 +1,1 @@
+The shell file(csye6225-aws-networking-setup.sh) in "scripts/" could create resources one by one using AWS CLI commands, while the shell scripts in "cloudformation/" uses input csye6225-cf-networking.json template file to create resources using cloud formation.
