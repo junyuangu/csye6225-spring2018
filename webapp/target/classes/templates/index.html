@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="fragments/header :: header"/>
+<body>
+<div th:replace="fragments/navigation :: navigation"/>
+
+
+<!-- Page Content -->
+<div class="container">
+    <!--<h3 th:text="'Auth User: ' + ${name}"></h3>-->
+
+    <a href="/authUser">View after login</a>
+            <h3>
+                Welcome to CSYE 6225 Spring 2018 Semester!!!
+            </h3>
+
+    
+</div>
+<script type="text/javascript" src="6225Assign2.js"></script>
+<!-- /.container -->
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
+
+
