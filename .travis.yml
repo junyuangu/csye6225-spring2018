@@ -7,9 +7,8 @@ install: true
 
 script:
   - cd webapp
-  #- ./webapp/gradlew build
-  - chmod 755 ./build.gradle
-  - gradle build  
+  - ./gradlew build
+  - ./gradlew war
 
 notifications:
   username:

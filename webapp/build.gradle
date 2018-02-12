@@ -69,3 +69,4 @@ dependencies {
 war {
     archiveName = 'ROOT.war'
 }
+mainClassName = 'com.csye6225.spring2018.SpringBootWebApplication'
