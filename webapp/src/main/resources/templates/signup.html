@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="fragments/header :: header"/>
+<body>
+<div th:replace="fragments/navigation :: navigation"/>
+
+
+<!-- Page Content -->
+<div id="cm-form">
+    <form th:action="@{/signup-check}" method="post" onsubmit="validate_form(this)">
+
+        <legend>Sign Up Now</legend><br/>
+
+        <label for="uemail" id="userEmail">Email:</label>
+        <input id="emInput" type="text" name="uemail" tabindex="1"
+               maxlength="55" placeholder="Email Address"></input><br/>
+
+
+        <label for="newpw" id="passWord">password:</label>
+        <input id="pwInput" type="password" name="newpw" tabindex="2"
+               maxlength="20" placeholder="Password:8-16chars"
+               pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/"></input><br/>
+
+        <label for="newpw2" id="passWord2">confirm:</label>
+        <input id="pwInput2" type="password" name="newpw2" tabindex="3"
+               maxlength="20" placeholder="Confirm Password"
+               pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/"></input><br/>
+
+        <input id="subBtn" type="submit" value="Signup" tabindex="4"></input>
+
+    </form>
+</div>
+<script type="text/javascript" src="6225Assign2.js"></script>
+<!-- /.container -->
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
