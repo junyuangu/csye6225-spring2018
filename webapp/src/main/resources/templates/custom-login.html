@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title> User Login Page </title>
+        <link rel="stylesheet" href="/css/styles.css"/>
+    </head>
+    <body>
+    <div>
+        <a href="/">Home</a>
+    </div>
+        <h3> Before browse, please Login first. </h3>
+        <p th:if="${param.error}" class="error">
+            Bad Credentials  
+        </p>
+        <form th:action="@{/login-check}" method="POST">
+            User Name : <input type="text" name="app_username"/> <br/><br/>
+            Password: <input type="password" name="app_password"/> <br/><br/>
+            <input type="submit" value="Login"/>
+        </form>
+    </body>
+</html>

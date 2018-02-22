@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Auth User</title>
+</head>
+<body onload="currTime()" >
+<h1>Authenticated User could see this page.</h1>
+<h4>
+    <a href="/index">Home</a >
+</h4>
+<h3 th:text="'Login: ' + ${name}"></h3>
+
+<a href="/logout">Logout</a >
+<p id="date"></p >
+<div id="time"></div>
+</body>
+
+<script type="text/javascript" src="6225Assign2.js"></script>
+
+</html>
