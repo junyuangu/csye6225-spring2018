@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Auth User</title>
-</head>
-<body onload="currTime()" >
-<h1>Authenticated User could see this page.</h1>
-<h4>
-    <a href="/index">Home</a >
-</h4>
-<h3 th:text="'Login: ' + ${name}"></h3>
+<div th:replace="fragments/header :: header"/>
+<body>
+<div th:replace="fragments/navigation :: navigation"/>
 
-<a href="/logout">Logout</a >
-<p id="date"></p >
-<div id="time"></div>
+<h1>&emsp;Login User could see this page.</h1>
+
+<h3 th:text="| Welcome, valued user: ${loginUser}|">Login User: </h3>
+
+<p th:text="| Date: ${currentTime}|">Date: </p>
+
+<form class="form-logout"  action="/logout" method="post">
+    &emsp;<input id="logoutBtn" type="submit" value="Logout" tabindex="1" />
+</form>
+
+<div th:replace="fragments/footer :: footer"/>
 </body>
-
-<script type="text/javascript" src="6225Assign2.js"></script>
-
 </html>

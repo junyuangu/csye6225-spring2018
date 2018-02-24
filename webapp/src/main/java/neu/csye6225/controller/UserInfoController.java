@@ -3,7 +3,6 @@ package neu.csye6225.controller;
 import neu.csye6225.Util.BCryptUtil;
 import neu.csye6225.entity.UserInfo;
 import neu.csye6225.service.IUserInfoService;
-import neu.csye6225.service.UserInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,24 +11,34 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
+@EnableWebMvc //make Autowired effective
 @Controller
 @RequestMapping("/")
 public class UserInfoController {
-
 	private final static Logger logger = LoggerFactory.getLogger(UserInfoController.class);
+	private boolean authState = false;
+	@Autowired
+	private IUserInfoService userInfoService;
+
+	@ModelAttribute("userInfo")
+	public UserInfo getUserInfo(){
+		UserInfo userInfo  = new UserInfo( "elfred012@gmail.com", "root1234");
+		return userInfo;
+	}
 
 	@RequestMapping(value = {"", "#","index"}, method= {RequestMethod.GET})
 	public ModelAndView index(){
+		
+
 		return new ModelAndView("index");
 	}
 
@@ -40,47 +49,50 @@ public class UserInfoController {
 	}
 
 	@RequestMapping(value = "login-check", method = {RequestMethod.POST, RequestMethod.PUT})
-	public ModelAndView loginCheck(@Valid UserInfo user, BindingResult result,
-								   HttpServletRequest request, Model model ) {
+	public ModelAndView loginCheck(@Valid @ModelAttribute("userInfo") UserInfo user, BindingResult result,HttpServletRequest request, Model model ) {
+
 		String username = request.getParameter("app_username");
 		String password = request.getParameter("app_password");
 		logger.info("Username: " + username);
 		logger.info("Password: " + password);
 		if( result.hasErrors() ) {
+			logger.info("loginCheck method: result has errors.");
 			List<ObjectError> errors = result.getAllErrors();
 			String errMsg = errors.stream().map( e -> e.getDefaultMessage() ).findFirst().get();
+			logger.info(errMsg);
 			return new ModelAndView( "403", "errorMessage", errMsg );
 		}
 
-
-		UserInfoService userInfoService = new UserInfoService();
-
 		boolean exists = userInfoService.checkUserByName(username);
 		if (!exists) {
+			logger.info("loginCheck method: username does not exist.");
 			return new ModelAndView("403", "errorMessage", "Account Not Found");
 		}
 
 		String enPassword = BCrypt.hashpw(password, BCryptUtil.SALT);
-		System.out.println( enPassword );
+		logger.info( "encoded PW: " + enPassword );
 		boolean checked = userInfoService.checkAccount(username, enPassword);
 		if (!checked) {
+			logger.info("loginCheck method: password does not match username.");
 			return new ModelAndView("403", "errorMessage", "Username or Password Invalid");
 		} else {
-			ModelAndView mav = new ModelAndView();
-			mav.addObject("user", username);
-			mav.addObject("currentTime", new Date().toString());
-			mav.setViewName("authUser");
+			ModelAndView mav = new ModelAndView("authUser");
+			mav.addObject( "loginUser", username );
+			mav.addObject( "currentTime", new Date().toString() );
+			authState = true;
 			return mav;
 		}
 	}
 
 	@RequestMapping(value = "signup-check", method = {RequestMethod.POST})
 	public ModelAndView signUpCheck(@Valid UserInfo user, BindingResult result, HttpServletRequest request, Model model) {
+
 		logger.info( user.toString() );
 		if (result.hasErrors()) {
+			logger.info("signUpCheck method: result has errors.");
 			List<ObjectError> errors = result.getAllErrors();
 			String eMessage = errors.stream().map(e -> e.getDefaultMessage()).findFirst().get();
-			return new ModelAndView("errorpage", "errorMessage", eMessage);
+			return new ModelAndView("403", "errorMessage", eMessage);
 		}
 
 		String password = user.getPassword();
@@ -89,32 +101,46 @@ public class UserInfoController {
 		UserInfo newUser = new UserInfo(request.getParameter("uemail"), enPassword);
 		boolean exists = userInfoService.checkUserByName(newUser.getUsername());
 		if (exists) {
-			return new ModelAndView("errorpage", "errorMessage", "Account Already Exists");
+			logger.info("signUpCheck method: Account already existed.");
+			return new ModelAndView("403", "errorMessage", "Account Already Exists");
 		}
 		boolean uCheck = userInfoService.save(newUser);
-		if( uCheck != true ) {
-			return new ModelAndView("index");
+		if( uCheck != false ) {
+			return new ModelAndView("login");
 		} else {
-			return new ModelAndView("errorpage", "errorMessage", "Save User Failed");
+			return new ModelAndView("403", "errorMessage", "Save User Failed");
 		}
 
 	}
-
-	@Autowired
-	private IUserInfoService userInfoService;
 
 	@GetMapping("login")
 	public ModelAndView login() {
 		    ModelAndView mav = new ModelAndView();
-		    mav.setViewName("custom-login");
+		    //mav.setViewName("custom-login");
+			mav.setViewName("login");
 		    return mav;
     }
+
+
 	@GetMapping("authUser")
 	public ModelAndView authuser() {
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("authUser");
+		if( !authState ) {
+			return new ModelAndView("403", "errorMessage", "Please Login first.");
+		}
+		ModelAndView mav = new ModelAndView("authUser");
+		mav.addObject( "currentTime", new Date().toString() );
+
 		return mav;
 	}
+
+	@PostMapping("logout")
+	public ModelAndView logout() {
+		authState = false;
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("index");
+		return mav;
+	}
+
 	@GetMapping("secure/userinfo-details")
 	public ModelAndView getAllUserInfos() {
 		    ModelAndView mav = new ModelAndView();

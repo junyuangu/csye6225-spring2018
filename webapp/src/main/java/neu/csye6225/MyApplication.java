@@ -1,7 +1,11 @@
 package neu.csye6225;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
+@ComponentScan({"neu.csye6225.controller", "neu.csye6225.dao", "neu.csye6225.service", "neu.csye6225.entity",
+	"neu.csye6225.Util"})
 @SpringBootApplication
 public class MyApplication {  
 	public static void main(String[] args) {

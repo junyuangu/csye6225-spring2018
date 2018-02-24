@@ -7,31 +7,32 @@
 
 <!-- Page Content -->
 <div>
-    <a ref="index">Home</a>
+    &emsp;&emsp;<a ref="index">Home</a>
 </div>
 <div id="cm-form">
-    <form action="#" method="post" onsubmit="validate_form(this)">
+    <form class="form-login"  action="/login-check" method="post">
         <fieldset>
-            <legend>Login</legend>
+            <legend>&emsp;Login</legend>
             <dl>
                 <dt>
+                    &emsp;&emsp;
                     <label for="app_username" id="userEmail">email:</label>
                     <input type="text" name="app_username" tabindex="1"
-                           maxlength="55" placeholder="Email Address">
+                           maxlength="55" placeholder="Email Address" />
                 </dt>
                 <dt>
+                    &emsp;&emsp;
                     <label for="app_password" id="passWord">password:</label>
                     <input type="password" name="app_password" tabindex="2"
-                           maxlength="20" placeholder="Password:8-16chars"
-                           pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/">
+                           maxlength="16" placeholder="Password:8-16chars" />
                 </dt>
-
-                <input id="subBtn" type="submit" value="Send" tabindex="3">
+                &emsp;&emsp;
+                <input id="subBtn" type="submit" value="Send" tabindex="3" />
             </dl>
         </fieldset>
     </form>
 </div>
-<script type="text/javascript" src="6225Assign2.js"></script>
+<!--script type="text/javascript" src="6225Assign2.js"></script-->
 <!-- /.container -->
 
 <div th:replace="fragments/footer :: footer"/>

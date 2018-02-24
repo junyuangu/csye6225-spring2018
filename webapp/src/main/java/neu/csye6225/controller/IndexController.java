@@ -12,7 +12,7 @@ public class IndexController implements ErrorController {
 
     @RequestMapping(value = PATH)
     public String error() {
-        return "Error handling";
+        return "Error Page: you see this page because some error happens.";
     }
 
     @Override
