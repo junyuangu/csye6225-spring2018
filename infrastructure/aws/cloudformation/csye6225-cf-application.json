@@ -1,0 +1,38 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description" : "csye6225 spring",
+    "Resources" : {
+       "MyEC2Instance" : {
+          "Type" : "AWS::EC2::Instance",
+          "Properties" : {
+             "ImageId" : "ami-41e0b93b",
+             "InstanceType" : "t2.micro",
+             "DisableApiTermination" : "true",
+             "InstanceInitiatedShutdownBehavior" : "stop",
+             "BlockDeviceMappings" : [
+                {
+                   "DeviceName" : "/dev/sdm",
+                   "Ebs" : {
+                      "VolumeType" : "gp2",
+                      "DeleteOnTermination" : "false",
+                      "VolumeSize" : "16"
+                   }
+                }
+             ],
+             "Tags" : [
+                {
+                    "Key" : "Name",
+                    "Value" : {"Ref":"InstanceName"}
+                }
+             ]
+          }
+       }
+    },
+    "Parameters" : {
+        "InstanceName" : {
+            "Type" : "String"
+        }
+    }
+ }        
+ 
+ 
