@@ -1,5 +1,6 @@
 package neu.csye6225.service;
 
+<<<<<<< HEAD
 import neu.csye6225.dao.IUserInfoDAO;
 import neu.csye6225.entity.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,29 @@ import java.util.List;
 public class UserInfoService implements IUserInfoService {
 	@Autowired
 	private IUserInfoDAO userInfoDAO;
+=======
+import neu.csye6225.dao.UserInfoDAO;
+import neu.csye6225.entity.UserInfo;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.sql.SQLException;
+import java.util.List;
+
+//@EnableWebMvc
+@Service
+@Transactional
+public class UserInfoService implements IUserInfoService {
+	//@Autowired
+	@Resource
+	private UserInfoDAO userInfoDAO;
+
+	@Override
+	public void deleteByName(String name) {
+		userInfoDAO.deleteByName(name);
+	}
+>>>>>>> Assignment2
 
 	@Override
 	public boolean save(UserInfo user) {

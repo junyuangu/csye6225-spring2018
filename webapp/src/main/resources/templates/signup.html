@@ -7,7 +7,11 @@
 
 <!-- Page Content -->
 <div id="cm-form">
+<<<<<<< HEAD
     <form th:action="@{/signup-check}" method="post" onsubmit="validate_form(this)">
+=======
+    <form th:action="@{/signup-check}" method="post" >
+>>>>>>> Assignment2
 
         <legend>Sign Up Now</legend><br/>
 
@@ -19,11 +23,16 @@
         <label for="newpw" id="passWord">password:</label>
         <input id="pwInput" type="password" name="newpw" tabindex="2"
                maxlength="20" placeholder="Password:8-16chars"
+<<<<<<< HEAD
                pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/"></input><br/>
+=======
+               /><br/>
+>>>>>>> Assignment2
 
         <label for="newpw2" id="passWord2">confirm:</label>
         <input id="pwInput2" type="password" name="newpw2" tabindex="3"
                maxlength="20" placeholder="Confirm Password"
+<<<<<<< HEAD
                pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/"></input><br/>
 
         <input id="subBtn" type="submit" value="Signup" tabindex="4"></input>
@@ -31,6 +40,15 @@
     </form>
 </div>
 <script type="text/javascript" src="6225Assign2.js"></script>
+=======
+               /><br/>
+
+        <input id="subBtn" type="submit" value="Signup" tabindex="4" />
+
+    </form>
+</div>
+<!--script type="text/javascript" src="6225Assign2.js"></script-->
+>>>>>>> Assignment2
 <!-- /.container -->
 
 <div th:replace="fragments/footer :: footer"/>
