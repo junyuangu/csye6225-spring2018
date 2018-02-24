@@ -28,7 +28,7 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-=======
+
 install: true
 
 script:
@@ -81,4 +81,4 @@ deploy:
   #   wait-until-deployed: true
   #   on:
   #     branch: master
->>>>>>> Assignment2
+
