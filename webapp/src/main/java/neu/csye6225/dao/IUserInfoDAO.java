@@ -5,10 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface IUserInfoDAO {
-<<<<<<< HEAD
-=======
 	void deleteByName(String name);
->>>>>>> Assignment2
 	void insertUserInfo( UserInfo newUser ) throws SQLException;
 	UserInfo findByNameAndPw(String username, String password);
 	UserInfo findByUsername( String username );

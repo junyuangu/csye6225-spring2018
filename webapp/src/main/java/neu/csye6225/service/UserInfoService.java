@@ -1,18 +1,5 @@
 package neu.csye6225.service;
 
-<<<<<<< HEAD
-import neu.csye6225.dao.IUserInfoDAO;
-import neu.csye6225.entity.UserInfo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.sql.SQLException;
-import java.util.List;
-@Service
-public class UserInfoService implements IUserInfoService {
-	@Autowired
-	private IUserInfoDAO userInfoDAO;
-=======
 import neu.csye6225.dao.UserInfoDAO;
 import neu.csye6225.entity.UserInfo;
 import org.springframework.stereotype.Service;
@@ -34,7 +21,6 @@ public class UserInfoService implements IUserInfoService {
 	public void deleteByName(String name) {
 		userInfoDAO.deleteByName(name);
 	}
->>>>>>> Assignment2
 
 	@Override
 	public boolean save(UserInfo user) {
