@@ -37,7 +37,6 @@ public class UserInfoController {
 
 	@RequestMapping(value = {"", "#","index"}, method= {RequestMethod.GET})
 	public ModelAndView index(){
-		
 
 		return new ModelAndView("index");
 	}
@@ -86,7 +85,15 @@ public class UserInfoController {
 
 	@RequestMapping(value = "signup-check", method = {RequestMethod.POST})
 	public ModelAndView signUpCheck(@Valid UserInfo user, BindingResult result, HttpServletRequest request, Model model) {
-
+		String param_uemail = request.getParameter("uemail");
+		String param_newpw = request.getParameter("newpw");
+		String param_newpw2 = request.getParameter("newpw2");
+		logger.info("Username: " + param_uemail);
+		logger.info("Password: " + param_newpw);
+		if( !param_newpw.equals( param_newpw2 ) ) {
+			logger.info("signUpCheck method: confirm password does not match.");
+			return new ModelAndView("403", "errorMessage", "Confirm Password again!");
+		}
 		logger.info( user.toString() );
 		if (result.hasErrors()) {
 			logger.info("signUpCheck method: result has errors.");
@@ -125,6 +132,15 @@ public class UserInfoController {
 	@GetMapping("authUser")
 	public ModelAndView authuser() {
 		if( !authState ) {
+			//For convenience of demonstrate the WebApp, just use this piece of code to delete the
+			//new user: root@163.com
+			String username = "root@163.com";
+			boolean exists = userInfoService.checkUserByName(username);
+			if( exists ) {
+				userInfoService.deleteByName(username);
+				logger.info( "The new user: root@163.com has been deleted for convenience of demonstration.");
+			}
+
 			return new ModelAndView("403", "errorMessage", "Please Login first.");
 		}
 		ModelAndView mav = new ModelAndView("authUser");

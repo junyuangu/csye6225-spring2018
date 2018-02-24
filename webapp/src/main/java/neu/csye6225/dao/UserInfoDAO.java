@@ -22,7 +22,7 @@ public class UserInfoDAO implements IUserInfoDAO {
 
 	@Override
 	public void deleteByName(String name) {
-		jdbcTemplate.update("delete from userinfo where NAME = ?", name);
+		jdbcTemplate.update("delete from userinfo where username = ?", name);
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class UserInfoDAO implements IUserInfoDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<UserInfo> getAllUserInfos() {
-		String sql = "SELECT * FROM users";
+		String sql = "SELECT * FROM userinfo";
 		RowMapper<UserInfo> rowMapper = new UserInfoRowMapper();
 
 		return (List<UserInfo>)this.jdbcTemplate.query(sql, rowMapper);
