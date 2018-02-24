@@ -8,8 +8,8 @@ install: true
 script:
   - cd webapp
   - ./gradlew build
-# - ./gradlew war
-
+  - ./gradlew war
+  - gradle -Dtest.single = MyApplicationTest test
 notifications:
   username:
     recipients:
