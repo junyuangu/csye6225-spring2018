@@ -9,7 +9,7 @@ script:
   - cd webapp
   - ./gradlew build
   - ./gradlew war
-  - gradle -Dtest.single = MyApplicationTest test
+  - gradle -Dtest.single MyApplicationTest test
 notifications:
   username:
     recipients:
