@@ -100,7 +100,6 @@ public class UserInfoController {
 			return new ModelAndView("403", "errorMessage", "Confirm Password again!");
 		}
 
-		logger.info( user.toString() );
 		if (result.hasErrors()) {
 			logger.info("signUpCheck method: result has errors.");
 			List<ObjectError> errors = result.getAllErrors();
@@ -108,11 +107,10 @@ public class UserInfoController {
 			return new ModelAndView("403", "errorMessage", eMessage);
 		}
 
-		String password = user.getPassword();
-
-		String enPassword = BCrypt.hashpw(password, BCryptUtil.SALT);
-		UserInfo newUser = new UserInfo(request.getParameter("uemail"), enPassword);
-		boolean exists = userInfoService.checkUserByName(newUser.getUsername());
+		String enPassword = BCrypt.hashpw(param_newpw, BCryptUtil.SALT);
+		UserInfo newUser = new UserInfo( param_uemail, enPassword );
+		logger.info( newUser.toString() );
+		boolean exists = userInfoService.checkUserByName( newUser.getUsername() );
 		if (exists) {
 			logger.info("signUpCheck method: Account already existed.");
 			return new ModelAndView("403", "errorMessage", "Account Already Exists");
