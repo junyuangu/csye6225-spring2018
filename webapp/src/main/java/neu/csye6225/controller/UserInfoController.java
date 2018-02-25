@@ -91,7 +91,11 @@ public class UserInfoController {
 		String param_newpw2 = request.getParameter("newpw2");
 		logger.info("Username: " + param_uemail);
 		logger.info("Password: " + param_newpw);
-		if( !param_newpw.equals( param_newpw2 ) ) {
+		if( param_newpw==null || param_newpw2==null ) {
+			logger.info("signUpCheck method: Password cannot be null.");
+			return new ModelAndView("403", "errorMessage", "Password cannot be null!");
+		}
+		else if( !param_newpw.equals( param_newpw2 ) ) {
 			logger.info("signUpCheck method: confirm password does not match.");
 			return new ModelAndView("403", "errorMessage", "Confirm Password again!");
 		}
