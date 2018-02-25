@@ -35,10 +35,15 @@ public class UserInfoDAO implements IUserInfoDAO {
 
 
 	@Override
-	public UserInfo findByNameAndPw(String username, String password) {
+	public UserInfo findByNameAndPw(String username, String password)  {
 		String sql = "SELECT * FROM userinfo WHERE username = ? AND password = ?";
-		UserInfo userInfo = (UserInfo)this.jdbcTemplate.queryForObject(
-				sql, new Object[] { username, password }, new UserInfoRowMapper());
+		UserInfo userInfo;
+		try {
+			userInfo = (UserInfo)this.jdbcTemplate.queryForObject(
+					sql, new Object[] { username, password }, new UserInfoRowMapper());
+		}catch( EmptyResultDataAccessException e ) {
+			userInfo = null;
+		}
 
 		return userInfo;
 	}

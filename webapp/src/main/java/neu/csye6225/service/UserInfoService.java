@@ -50,10 +50,10 @@ public class UserInfoService implements IUserInfoService {
 	@Override
 	public boolean checkAccount( String name, String encodePw ) {
 		UserInfo userInfo = userInfoDAO.findByNameAndPw( name, encodePw );
-		if( userInfo == null )
+		if( userInfo==null )
 			return false;
-		else
-			return true;
+
+		return true;
 	}
 
 	@Override
