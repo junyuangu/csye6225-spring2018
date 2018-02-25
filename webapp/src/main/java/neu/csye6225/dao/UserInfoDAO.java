@@ -3,6 +3,7 @@ package neu.csye6225.dao;
 
 import neu.csye6225.entity.UserInfo;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -56,6 +57,8 @@ public class UserInfoDAO implements IUserInfoDAO {
 		try {
 			userInfo = jdbcTemplate.queryForObject(sql, new Object[]{username}, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
+			userInfo = null;
+		} catch( IncorrectResultSizeDataAccessException e ) {
 			userInfo = null;
 		}
 
