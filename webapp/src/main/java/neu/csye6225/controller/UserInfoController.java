@@ -86,6 +86,16 @@ public class UserInfoController {
 	@RequestMapping(value = "signup-check", method = {RequestMethod.POST})
 	public ModelAndView signUpCheck(@Valid UserInfo user, BindingResult result, HttpServletRequest request, Model model) {
 
+		String param_uemail = request.getParameter("uemail");
+		String param_newpw = request.getParameter("newpw");
+		String param_newpw2 = request.getParameter("newpw2");
+		logger.info("Username: " + param_uemail);
+		logger.info("Password: " + param_newpw);
+		if( !param_newpw.equals( param_newpw2 ) ) {
+			logger.info("signUpCheck method: confirm password does not match.");
+			return new ModelAndView("403", "errorMessage", "Confirm Password again!");
+		}
+
 		logger.info( user.toString() );
 		if (result.hasErrors()) {
 			logger.info("signUpCheck method: result has errors.");
@@ -149,13 +159,6 @@ public class UserInfoController {
 		return mav;
 	}
 
-	@GetMapping("secure/userinfo-details")
-	public ModelAndView getAllUserInfos() {
-		    ModelAndView mav = new ModelAndView();
-		    mav.addObject("allUserInfos", userInfoService.getAllUserInfos());
-		    mav.setViewName("details");
-		    return mav;
-    }
 	@GetMapping("error")
 	public ModelAndView error() {
 		    ModelAndView mav = new ModelAndView();
