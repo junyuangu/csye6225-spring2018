@@ -112,7 +112,7 @@ public class UserInfoController {
 
 	}
 
-	@GetMapping("login")
+	@RequestMapping( value = "login", method = {RequestMethod.GET, RequestMethod.POST} )
 	public ModelAndView login() {
 		    ModelAndView mav = new ModelAndView();
 		    //mav.setViewName("custom-login");
