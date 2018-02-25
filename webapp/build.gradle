@@ -48,6 +48,9 @@ dependencies {
 
 }
 
+test {
+	
+}
 
 war {
 	archivesBaseName = 'ROOT.war'
