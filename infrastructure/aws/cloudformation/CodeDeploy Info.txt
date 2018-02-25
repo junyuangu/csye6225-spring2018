@@ -1,0 +1,18 @@
+CodeDeploy
+1. AccountID: 201801825583;
+2. external ID: guju
+3. security group info: 
+sg-3ded834a
+default
+vpc-226a9759
+default VPC security group
+ 
+sg-9296f8e5
+default
+vpc-51778a2a
+default VPC security group
+ 
+sg-c9dd1fbe
+default
+vpc-b10d14c9
+default VPC security group
