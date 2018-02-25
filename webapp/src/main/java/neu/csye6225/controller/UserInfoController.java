@@ -65,7 +65,7 @@ public class UserInfoController {
 		boolean exists = userInfoService.checkUserByName(username);
 		if (!exists) {
 			logger.info("loginCheck method: username does not exist.");
-			return new ModelAndView("403", "errorMessage", "Account Not Found");
+			return new ModelAndView("403", "errorMessage", "Account Not Found.");
 		}
 
 		String enPassword = BCrypt.hashpw(password, BCryptUtil.SALT);
@@ -73,7 +73,7 @@ public class UserInfoController {
 		boolean checked = userInfoService.checkAccount(username, enPassword);
 		if (!checked) {
 			logger.info("loginCheck method: password does not match username.");
-			return new ModelAndView("403", "errorMessage", "Username or Password Invalid");
+			return new ModelAndView("403", "errorMessage", "Username does not Match Password.");
 		} else {
 			ModelAndView mav = new ModelAndView("authUser");
 			mav.addObject( "loginUser", username );
