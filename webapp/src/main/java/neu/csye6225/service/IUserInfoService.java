@@ -4,6 +4,10 @@ import neu.csye6225.entity.UserInfo;
 
 import java.util.List;
 
+/**
+ * @author  Junyuan GU
+ * @NUid    001825583
+ */
 public interface IUserInfoService {
     void deleteByName(String name);
     boolean save(UserInfo user);
@@ -12,5 +16,8 @@ public interface IUserInfoService {
     UserInfo findByUsername( String username );
     //@Secured ({"ROLE_ADMIN"})
     List<UserInfo> getAllUserInfos();
+    String getPicturePath( int userId );
+    String getDescriptionContent( int userId );
+
 
 }

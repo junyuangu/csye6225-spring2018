@@ -20,6 +20,10 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author  Junyuan GU
+ * @NUid    001825583
+ */
 @EnableWebMvc //make Autowired effective
 @Controller
 @RequestMapping("/")
@@ -168,5 +172,19 @@ public class UserInfoController {
 		    mav.addObject("errorMsg", errorMessage);
 		    mav.setViewName("403");
 		    return mav;
-    }		
+    }
+
+    @GetMapping("uploadPic")
+	public ModelAndView uploadPicPage() {
+		ModelAndView mav = new ModelAndView();
+		String errorMessage = "You are not authorized for uploading a picture, please login first.";
+		if( authState )
+			mav.setViewName("uploadPic");
+		else {
+			mav.addObject("errorMessage", errorMessage);
+			mav.setViewName("403");
+		}
+
+		return mav;
+	}
 } 

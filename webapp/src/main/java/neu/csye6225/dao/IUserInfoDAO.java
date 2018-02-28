@@ -4,6 +4,10 @@ import neu.csye6225.entity.UserInfo;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * @author  Junyuan GU
+ * @NUid    001825583
+ */
 public interface IUserInfoDAO {
 	void deleteByName(String name);
 	void insertUserInfo( UserInfo newUser ) throws SQLException;

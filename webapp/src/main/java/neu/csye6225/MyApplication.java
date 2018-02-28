@@ -4,6 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+/**
+ * @author  Junyuan GU
+ * @NUid    001825583
+ */
 @ComponentScan({"neu.csye6225.controller", "neu.csye6225.dao", "neu.csye6225.service", "neu.csye6225.entity",
 	"neu.csye6225.Util"})
 @SpringBootApplication

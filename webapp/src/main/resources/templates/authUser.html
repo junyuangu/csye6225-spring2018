@@ -10,6 +10,13 @@
 
 <p th:text="| Date: ${currentTime}|">Date: </p>
 
+<form class="form-editPic"  action="/uploadPic" method="get">
+    &emsp;<input id="forwardUploadPicBtn" type="submit" value="Edit Pic" tabindex="1" />
+</form>
+
+<br/>
+<br/>
+
 <form class="form-logout"  action="/logout" method="post">
     &emsp;<input id="logoutBtn" type="submit" value="Logout" tabindex="1" />
 </form>
