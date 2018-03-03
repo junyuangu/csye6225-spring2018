@@ -7,7 +7,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>spring-demo</name>
-	<description>Spring Boot Demo Project</description>
+	<aboutMe>Spring Boot Demo Project</aboutMe>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>

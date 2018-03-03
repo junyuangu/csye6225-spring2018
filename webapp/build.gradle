@@ -45,6 +45,7 @@ dependencies {
 
 	//library for Assignment5
 	compile(group: 'commons-fileupload', name: 'commons-fileupload', version:'1.3.1')
+	compile(group: 'commons-io', name: 'commons-io', version: '2.5')
 	compile('org.apache.commons:commons-lang3:+')
 	compile('org.apache.httpcomponents:httpclient:+')
 

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="fragments/header :: header"/>
+<body>
+<div th:replace="fragments/navigation :: navigation"/>
+
+<h3 th:text="| Valued user: ${loginUser}, you could update personal info now.|"/>
+
+
+
+<form class="form-upload"  action="/upload-toDb" method="post" enctype="multipart/form-data">
+    <input id="img_input2" type="file" name="uploadImg" accept="image/*" />
+    <label for="img_input2" id="img_label2">Select File
+        <i class="fa fa-plus fa-lg"></i></label>
+    <div id="preview_box2"></div>
+    &emsp;<input id="uploadBtn" type="submit" value="Upload" tabindex="1" />
+</form>
+
+<form class="form-delete"  action="/deletePic" method="post">
+    &emsp;<input id="deletePicBtn" type="submit" value="DeletePicture" tabindex="2" />
+</form>
+
+
+<form class="form-updateAboutMe"  action="/update-AboutMe" method="post">
+    <label for="aboutMeInput" id="userDescription">About Me:</label>
+    <input type="text" name="aboutMeInput"  maxlength="140" />
+    <input id="updateBtn" type="submit" value="Update" tabindex="3" />
+</form>
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

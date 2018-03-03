@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="fragments/header :: header"/>
+<body>
+<div th:replace="fragments/navigation :: navigation"/>
+
+<h1>&emsp;Login User's Profile.</h1>
+<!--/*@thymesVar id="loginUser" type="java.lang.String"*/-->
+<h3 th:text="| Welcome, valued user: ${loginUser}|">Login User: </h3>
+
+<!--/*@thymesVar id="currentTime" type="java.lang.String"*/-->
+<p th:text="| Date: ${currentTime}|">Date: </p>
+<!--/*@thymesVar id="fileTemporaryPath" type="java.lang.String"*/-->
+<img th:src="@{${fileTemporaryPath}}" th:height="320" th:width="200"/>
+<br/>
+<h3>About Me</h3>
+
+<!--/*@thymesVar id="aboutMeDescription" type="java.lang.String"*/-->
+<div th:if="${imgInfoText!=noLoginUser}">
+    <input id="searchUsername" type="text"/>
+    <br/>
+    <form class="form-editPic"  action="/aboutMe-searchByUser" method="post">
+        <label th:for="aboutMeSearch" id="userDescription" name="aboutMeSearch">Input Username:</label>
+        <input id="forwardUploadPicBtn" type="submit" value="Enter Username" tabindex="3" />
+    </form>
+</div>
+
+
+<br/>
+<!--/*@thymesVar id="imgInfoText" type="java.lang.String"*/-->
+<p th:text="${imgInfoText}"/>
+<br/>
+
+<form class="form-logout"  action="/logout" method="post">
+    &emsp;<input id="logoutBtn" type="submit" value="Logout" tabindex="1" />
+</form>
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

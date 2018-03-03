@@ -1,5 +1,7 @@
 package neu.csye6225.service;
 
+import neu.csye6225.entity.Description;
+import neu.csye6225.entity.Picture;
 import neu.csye6225.entity.UserInfo;
 
 import java.util.List;
@@ -16,8 +18,12 @@ public interface IUserInfoService {
     UserInfo findByUsername( String username );
     //@Secured ({"ROLE_ADMIN"})
     List<UserInfo> getAllUserInfos();
-    String getPicturePath( int userId );
-    String getDescriptionContent( int userId );
+    String findAboutmeByUsername( String username );
+    Description findDescriptionByUsername(String username );
+    String findPicPathByUsername(String username );
 
+    void updatePicture( String filename, String loginUsername  );
+    void updateProfile( String aboutMe, String loginUsername );
+    Picture findPicByUsername(String username );
 
 }
