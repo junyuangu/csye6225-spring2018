@@ -203,15 +203,22 @@ public class UserInfoController {
 	@GetMapping("editProfile")
 	public ModelAndView editProfile() {
 		ModelAndView mav = new ModelAndView();
+		if( !authState ) {
+			String errorMessage = "You are not authorized for editing profile, please login first.";
+			mav.addObject("errorMessage", errorMessage);
+			mav.setViewName("403");
+			return mav;
+		}
+
 		String username = session.getAttribute("loginUserName").toString();
 		if( username!=null ) {
 			mav.setViewName("editProfile");
 			mav.addObject("loginUser", username );
-		}
-		else {
-			String errorMessage = "You are not authorized for uploading a picture, please login first.";
+		} else {
+			String errorMessage = "You are not authorized for editing profile, please login first.";
 			mav.addObject("errorMessage", errorMessage);
 			mav.setViewName("403");
+			return mav;
 		}
 
 		return mav;
@@ -220,14 +227,21 @@ public class UserInfoController {
 	@GetMapping("myProfile")
 	public ModelAndView myProfile() {
 		ModelAndView mav = new ModelAndView();
-		String userName = session.getAttribute("loginUserName").toString();
+		if( !authState ) {
+			mav.setViewName( "myProfile" );
+			mav.addObject("loginUser", "No LoginUser");
+			mav.addObject( "currentTime", new Date().toString() );
+			mav.addObject("authState", "false" );
+			return mav;
+		}
 
+		String userName = session.getAttribute("loginUserName").toString();
 		if( userName==null ) {
 			mav.setViewName( "myProfile" );
 			mav.addObject("loginUser", userName);
 			mav.addObject( "currentTime", new Date().toString() );
 
-		} else if( authState ) {
+		} else {
 			mav.setViewName( "myProfile" );
 			mav.addObject( "loginUser", userName );
 			mav.addObject( "currentTime", new Date().toString() );
@@ -334,8 +348,6 @@ public class UserInfoController {
 		if( session.getAttribute("loginUserName")==null ) {
 			String errMsg = "There is no Login User.";
 			ModelAndView mav = new ModelAndView( "myProfile", "errorMessage", errMsg );
-			mav.addObject("noLoginUser", "unauth user");
-			mav.addObject("imgInfoText", "unauth user");
 			mav.setViewName("myProfile");
 
 			return mav;
@@ -365,36 +377,28 @@ public class UserInfoController {
 
 
 	@RequestMapping( value = "aboutMe-searchByUser", method = {RequestMethod.POST} )
-	public ModelAndView getAboutMeBySearchUser( BindingResult result, HttpServletRequest request ) {
+	public ModelAndView getAboutMeBySearchUser( HttpServletRequest request ) {
 		String inputSearchUsername = request.getParameter("aboutMeSearch");
-
-		if( result.hasErrors() ) {
-			logger.info("getAboutMeBySerchUser method: result has errors.");
-			List<ObjectError> errors = result.getAllErrors();
-			String errMsg = errors.stream().map( e -> e.getDefaultMessage() ).findFirst().get();
+		if( inputSearchUsername==null ) {
+			logger.info("getAboutMeBySearchUser method: no upload image.");
+			String errMsg = "Please input a registered email.";
 			logger.info(errMsg);
 			return new ModelAndView( "403", "errorMessage", errMsg );
 		}
 
-//        String aboutMeContent = userInfoService.findDescriptionByUsername(inputSearchUsername);
-//        if(aboutMeContent==null) {
-//
-//        }
+		String aboutMeText = userInfoService.findAboutmeByUsername(inputSearchUsername);
 
-		String loginUsername = session.getAttribute("loginUserName").toString();
-
-		String aboutMeText = request.getParameter("mesInput");
 		String aboutMe = new String();
-		if( aboutMeText==null ) {
+		if( aboutMeText==null || aboutMeText.equals("") ) {
 			aboutMe = "none";
 		} else if( aboutMeText.length() > 140 ) {
 			aboutMe = aboutMeText.substring(0, 139);
-		}
+		} else
+			aboutMe = aboutMeText;
 		//update Database
 		//userInfoService.updateProfile( aboutMe, loginUsername );
-
 		ModelAndView mav = new ModelAndView();
-		mav.addObject("loginUser", loginUsername);
+		mav.addObject("loginUser", inputSearchUsername);
 		mav.addObject( "currentTime", new Date() );
 		mav.addObject("imgInfoText", aboutMe);
 		mav.setViewName("myProfile");

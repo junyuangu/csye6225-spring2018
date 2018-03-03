@@ -15,12 +15,11 @@
 <br/>
 <h3>About Me</h3>
 
-<!--/*@thymesVar id="aboutMeDescription" type="java.lang.String"*/-->
-<div th:if="${imgInfoText!=noLoginUser}">
-    <input id="searchUsername" type="text"/>
-    <br/>
+<!--/*@thymesVar id="authState" type="java.lang.String"*/-->
+<div th:if=" ${authState} == 'false' ">
     <form class="form-editPic"  action="/aboutMe-searchByUser" method="post">
         <label th:for="aboutMeSearch" id="userDescription" name="aboutMeSearch">Input Username:</label>
+        <input id="searchUsername"  type="text" name="aboutMeSearch" />
         <input id="forwardUploadPicBtn" type="submit" value="Enter Username" tabindex="3" />
     </form>
 </div>
@@ -29,7 +28,7 @@
 <br/>
 <!--/*@thymesVar id="imgInfoText" type="java.lang.String"*/-->
 <p th:text="${imgInfoText}"/>
-<br/>
+
 
 <form class="form-logout"  action="/logout" method="post">
     &emsp;<input id="logoutBtn" type="submit" value="Logout" tabindex="1" />
