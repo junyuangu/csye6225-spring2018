@@ -11,7 +11,7 @@
                     "sg-72692301"
                 ],
                 "KeyName": "csye6225",
-                "SubnetId": "subnet-4e1db42a", //subnet-98660cc5
+                "SubnetId": "subnet-4e1db42a", 
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [

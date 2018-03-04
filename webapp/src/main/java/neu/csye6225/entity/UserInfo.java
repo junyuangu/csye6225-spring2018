@@ -11,6 +11,10 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @author  Junyuan GU
+ * @NUid    001825583
+ */
 @Entity
 @Table(name="userinfo")
 public class UserInfo implements Serializable {

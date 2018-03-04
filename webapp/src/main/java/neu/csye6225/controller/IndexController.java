@@ -5,6 +5,11 @@ import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author  Junyuan GU
+ * @NUid    001825583
+ * @date    02/15/2018
+ */
 @RestController
 public class IndexController implements ErrorController {
 

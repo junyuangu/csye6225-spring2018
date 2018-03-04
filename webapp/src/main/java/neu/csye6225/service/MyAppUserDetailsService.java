@@ -12,7 +12,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Arrays;
 
-
+/**
+ * @author  Junyuan GU
+ * @NUid    001825583
+ */
 public class MyAppUserDetailsService implements UserDetailsService {
 	@Autowired
 	private IUserInfoDAO userInfoDAO;

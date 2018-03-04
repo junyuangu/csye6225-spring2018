@@ -13,6 +13,10 @@ import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * @author  Junyuan GU
+ * @NUid    001825583
+ */
 //@EnableWebMvc
 @Repository
 //@Transactional

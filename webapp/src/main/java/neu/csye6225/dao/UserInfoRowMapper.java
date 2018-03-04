@@ -8,7 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created by callouswander on 2018/2/20.
+ * @author  Junyuan GU
+ * @NUid    001825583
  */
 public class UserInfoRowMapper implements RowMapper<UserInfo> {
     @Override

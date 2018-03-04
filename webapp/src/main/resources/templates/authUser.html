@@ -10,6 +10,25 @@
 
 <p th:text="| Date: ${currentTime}|">Date: </p>
 
+<!--/*@thymesVar id="fileTemporaryPath" type="java.lang.String"*/-->
+<!--img th:src="@{${fileTemporaryPath}}" th:height="320" th:width="200"/-->
+<img th:src="@{/upload/1520032946088.jpeg}" th:height="320" th:width="200"/>
+<!--img src="../upload/1520032946088.jpeg" height="320" width="200"/-->
+
+<br/>
+<br/>
+<h3>About Me</h3>
+<!--/*@thymesVar id="aboutMeDescription" type="java.lang.String"*/-->
+<p th:text="| ${aboutMeDescription} |"/>
+<br/>
+
+<form class="form-editPic"  action="/editProfile" method="get">
+    &emsp;<input id="forwardUploadPicBtn" type="submit" value="Edit Profile" tabindex="1" />
+</form>
+
+<br/>
+<br/>
+
 <form class="form-logout"  action="/logout" method="post">
     &emsp;<input id="logoutBtn" type="submit" value="Logout" tabindex="1" />
 </form>
