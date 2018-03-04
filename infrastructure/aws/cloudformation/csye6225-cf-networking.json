@@ -4,221 +4,152 @@
 
   "Resources" : {
     "VPC" : {
-        "Type" : "AWS::EC2::VPC",
-        "Properties" : {
-	         "CidrBlock" : "10.0.0.0/16",
-           "Tags" : [{
-                "Key" : "Name",
-                "Value" : { "Ref" : "InstanceName" }
-           }]
-        }
-    },
-
-    "PublicRouteTable" : {
-        "Type" : "AWS::EC2::RouteTable",
-        "Properties" : {
-           "VpcId" : {
-              "Ref" : "VPC"
-           },
-           "Tags" : [
-            {
-              "Key" : "Name",
-              "Value" : {"Ref":"routeTableName"}
-            }
-        ]
-        }
-    },
-
-    "PublicRoute" : {
-        "DependsOn" : "AttachGateway",
-        "Type" : "AWS::EC2::Route",
-        "Properties" : {
-           "GatewayId" : {
-              "Ref" : "InternetGateway"
-           },
-           "DestinationCidrBlock" : "0.0.0.0/0",
-           "RouteTableId" : {
-              "Ref" : "PublicRouteTable"
-           }
-        }
-    },
-
-    "PublicSubnet" : {
-        "Type" : "AWS::EC2::Subnet",
-        "Properties" : {
-           "VpcId" : {
-              "Ref" : "VPC"
-           },
-           "CidrBlock" : "10.0.0.0/24",
-	         "AvailabilityZone" : "us-east-1a"
-        }
-    },
-    "SubnetRouteTableAssociation1" : {
-         "Type" : "AWS::EC2::SubnetRouteTableAssociation",
-         "Properties" : {
-            "SubnetId" : { "Ref" : "PublicSubnet" },
-            "RouteTableId" : { "Ref" : "PublicRouteTable" }
-         }
-    },
-
-
-
-    "PrivateRouteTable" : {
-         "Type" : "AWS::EC2::RouteTable",
-         "Properties" : {
-            "VpcId" : {
-               "Ref" : "VPC"
-            },
-            "Tags" : [
-             {
-               "Key" : "Name",
-               "Value" : {"Ref":"privaterouteTableName"}
-             }
-         ]
-         }
-     },
-     "PrivateRoute" : {
-         "DependsOn" : "AttachGateway",
-         "Type" : "AWS::EC2::Route",
-         "Properties" : {
-            "GatewayId" : {
-               "Ref" : "InternetGateway"
-            },
-            "DestinationCidrBlock" : "10.0.1.0/24",
-            "RouteTableId" : {
-               "Ref" : "PrivateRouteTable"
-            }
-         }
-     },
-
-   "PrivateSubnet" : {
-      "Type" : "AWS::EC2::Subnet",
+      "Type" : "AWS::EC2::VPC",
       "Properties" : {
-         "VpcId" : {
-            "Ref" : "VPC"
-         },
-         "CidrBlock" : "10.0.1.0/24",
-         "AvailabilityZone" : "us-east-1c"
+        "CidrBlock" : "10.0.0.0/16",
+        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
+		   {"Key" : "Name", "Value" : {"Ref" : "AWS::StackName"} }
+		 ]
       }
-   },
-   "SubnetRouteTableAssociation2" : {
-       "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+    },
+
+    "InternetGateway" : {
+      "Type" : "AWS::EC2::InternetGateway",
+      "Properties" : {
+        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
+		   {"Key" : "Name", "Value" : {"Ref" : "AWS::StackName"} }
+		 ]
+      }
+    },
+
+    "AttachGateway" : {
+       "Type" : "AWS::EC2::VPCGatewayAttachment",
        "Properties" : {
-          "SubnetId" : { "Ref" : "PrivateSubnet" },
-          "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+         "VpcId" : { "Ref" : "VPC" },
+         "InternetGatewayId" : { "Ref" : "InternetGateway" }
        }
-   },
+    },
 
-   "InternetGateway" : {
-        "Type" : "AWS::EC2::InternetGateway",
-        "Properties" : {
-            "Tags" : [
-                {
-                  "Key" : "Name",
-                  "Value" : { "Ref" : "AWS::StackName" }
-                }
-            ]
-        }
-   },
+    "RouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : {"Ref" : "VPC"},
+        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
+		   {"Key" : "Name", "Value" : {"Ref" : "ParamPublicRouteTableName"} }
+		 ]
+      }
+    },
+    "PrivateRouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : {"Ref" : "VPC"},
+        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
+		   {"Key" : "Name", "Value" : {"Ref" : "ParamPrivateRouteTableName"} }
+		 ]
+      }
+    },
 
-   "AttachGateway" : {
-        "Type" : "AWS::EC2::VPCGatewayAttachment",
-        "Properties" : {
-           "VpcId" : {
-              "Ref" : "VPC"
-           },
-           "InternetGatewayId" : {
-              "Ref" : "InternetGateway"
-           }
-        }
-   },
-
-    "myDBSubnetGroup" : {
-         "Type" : "AWS::RDS::DBSubnetGroup",
+    "Route" : {
+      "Type" : "AWS::EC2::Route",
+      "DependsOn" : "AttachGateway",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "RouteTable" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "GatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+    "SubnetForWebServers" : {
+         "Type" : "AWS::EC2::Subnet",
          "Properties" : {
-            "DBSubnetGroupDescription" : "description",
-            "SubnetIds" : [ {"Ref" : "PublicSubnet"}, {"Ref" : "PrivateSubnet"} ],
-            "Tags" : [
-              {
-                "Key" : "Name",
-                "Value" : { "Ref" : "AWS::StackName" }
-              }
-            ]
+            "VpcId" : { "Ref" : "VPC" },
+            "CidrBlock" : "10.0.0.0/24",
+            "AvailabilityZone" : "us-east-1a",
+            "Tags" : [ { "Key" : "Name", "Value" : "SubnetForWebServers" } ]
          }
       },
-
-      "WebServerSecurityGroup": {
-          "Type": "AWS::EC2::SecurityGroup",
-          "Properties": {
-              "GroupName":"csye6225-webapp",
-              "GroupDescription": "Enable HTTP access via port 80, SSH access via port 22, HTTPS access via port 443",
-              "VpcId":{"Ref":"VPC"},
-              "SecurityGroupIngress": [
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "80",
-                      "ToPort": "80",
-                      "CidrIp": "0.0.0.0/0"
-                  },
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "22",
-                      "ToPort": "22",
-                      "CidrIp": "0.0.0.0/0"
-                  },
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "443",
-                      "ToPort": "443",
-                      "CidrIp": "0.0.0.0/0"
-                  }
-              ]
-          }
-       },
-
-
-       "DBServerSecurityGroup": {
-              "Type": "AWS::EC2::SecurityGroup",
-              "Properties": {
-                  "GroupName":"csye6225-rds",
-                  "GroupDescription": "database",
-                  "VpcId":{"Ref":"VPC"},
-                  "SecurityGroupIngress": [ {
-                          "IpProtocol": "tcp",
-                          "FromPort": "3306",
-                          "ToPort": "3306",
-                          "SourceSecurityGroupId" : { "Ref" : "WebServerSecurityGroup" }
-                   }]
-              }
-       },
-
-       "DBSecurityGroup": {
-              "Type": "AWS::RDS::DBSecurityGroup",
-              "Properties": {
-                  "GroupDescription": "allow visit to DB",
-                  "EC2VpcId":{"Ref":"VPC"},
-                  "DBSecurityGroupIngress": [
-                    { "SourceSecurityGroupId" : { "Ref" : "DBServerSecurityGroup" } }
-                  ]
-              }
-       }
-
-
-
-
+    "SubnetForWebServersSubnetRouteTableAssociation" : {
+         "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+         "Properties" : {
+            "SubnetId" : { "Ref" : "SubnetForWebServers" },
+            "RouteTableId" : { "Ref" : "RouteTable" }
+         }
+      },
+    "SubnetForDBServers" : {
+         "Type" : "AWS::EC2::Subnet",
+         "Properties" : {
+            "VpcId" : { "Ref" : "VPC" },
+            "CidrBlock" : "10.0.1.0/24",
+            "AvailabilityZone" : "us-east-1b",
+            "Tags" : [ { "Key" : "Name", "Value" : "SubnetForDBServers" } ]
+         }
+      },
+    "SubnetForDBServersSubnetRouteTableAssociation" : {
+         "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+         "Properties" : {
+            "SubnetId" : { "Ref" : "SubnetForDBServers" },
+            "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+         }
+      },
+      "WebServerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+ 	"GroupName":"WebServerSecurityGroup",
+        "GroupDescription" : "Enable TCP access via port 22, 80 and 443",
+        "VpcId":{"Ref":"VPC"},
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "22",
+          "ToPort" : "22",
+          "CidrIp" : "0.0.0.0/0"
+         },
+         {
+           "IpProtocol": "tcp",
+           "FromPort": "80",
+           "ToPort": "80",
+           "CidrIp": "0.0.0.0/0"
+         },
+         {
+           "IpProtocol": "tcp",
+           "FromPort": "443",
+           "ToPort": "443",
+           "CidrIp": "0.0.0.0/0"
+         }
+       ]
+      }
     },
-
-     "Parameters" : {
-        "InstanceName" : {
-          "Type" : "String"
-       },
-
-        "routeTableName" : {
+      "DBServerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+ 	"GroupName":"DBServerSecurityGroup",
+        "GroupDescription" : "Enable TCP access via port 3306",
+        "VpcId":{"Ref":"VPC"},
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "3306",
+          "ToPort" : "3306",
+          "SourceSecurityGroupId" : {"Ref" : "WebServerSecurityGroup"}
+         }
+       ]
+      }
+    },
+   "DBSecurityGroup": {
+   "Type": "AWS::RDS::DBSecurityGroup",
+   "Properties": {
+      "EC2VpcId" : { "Ref" : "VPC" },
+      "DBSecurityGroupIngress": [
+         {"EC2SecurityGroupId": { "Ref": "DBServerSecurityGroup"}}
+      ],
+      "GroupDescription": "Allow 3306 to DB"
+      }
+   }
+ },
+  "Parameters" : {
+	"ParamPublicRouteTableName" : {
             "Type" : "String"
-        },
-      	"privaterouteTableName" : {
-      	    "Type" : "String"
-      	}
-     }
+	},
+       "ParamPrivateRouteTableName" : {
+            "Type" : "String"
+	}
+ }
 
 }
