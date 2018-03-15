@@ -93,7 +93,8 @@ public class UserInfoController {
 			mav.addObject( "currentTime", new Date().toString() );
 
 			String filepath = userInfoService.findPicPathByUsername(username);
-			mav.addObject("fileTemporaryPath", filepath);
+			String relativePath = "../" + filepath;
+			mav.addObject("fileTemporaryPath", relativePath);
 			logger.info( filepath );
 			//String aboutMe = userInfoService.findDescriptionByUsername(username);
 			//mav.addObject( "aboutMeDescription", aboutMe );
@@ -228,7 +229,7 @@ public class UserInfoController {
 	public ModelAndView myProfile() {
 		ModelAndView mav = new ModelAndView();
 		if( !authState ) {
-			mav.setViewName( "myProfile" );
+			mav.setViewName("myProfile");
 			mav.addObject("loginUser", "No LoginUser");
 			mav.addObject( "currentTime", new Date().toString() );
 			mav.addObject("authState", "false" );
@@ -237,16 +238,17 @@ public class UserInfoController {
 
 		String userName = session.getAttribute("loginUserName").toString();
 		if( userName==null ) {
-			mav.setViewName( "myProfile" );
+			mav.setViewName("myProfile");
 			mav.addObject("loginUser", userName);
 			mav.addObject( "currentTime", new Date().toString() );
 
 		} else {
-			mav.setViewName( "myProfile" );
+			mav.setViewName("myProfile");
 			mav.addObject( "loginUser", userName );
 			mav.addObject( "currentTime", new Date().toString() );
 			String filePath = userInfoService.findPicPathByUsername( userName );
 			mav.addObject("fileTemporaryPath", filePath);
+			mav.addObject( "defaultPath", "../upload/default.png" );
 			String aboutMe = userInfoService.findAboutmeByUsername( userName );
 			if( aboutMe != null ) {
 				mav.addObject( "imgInfoText", aboutMe );
@@ -347,7 +349,7 @@ public class UserInfoController {
 
 		if( session.getAttribute("loginUserName")==null ) {
 			String errMsg = "There is no Login User.";
-			ModelAndView mav = new ModelAndView( "myProfile", "errorMessage", errMsg );
+			ModelAndView mav = new ModelAndView("myProfile", "errorMessage", errMsg );
 			mav.setViewName("myProfile");
 
 			return mav;

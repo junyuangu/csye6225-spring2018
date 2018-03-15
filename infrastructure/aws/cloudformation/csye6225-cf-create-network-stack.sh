@@ -9,14 +9,12 @@ echo "Enter Your Stack Name:"
 read STACK_NAME
 
 #Assign STACK_NAME to parameters
-InstanceName="$STACK_NAME-csye6225-vpc"
-
 RouteTableName="$STACK_NAME-csye6225-public-route-table"
 
 PrivateRouteTableName="$STACK_NAME-csye6225-private-route-table"
 
 #Create Stack:
-aws cloudformation create-stack --stack-name $STACK_NAME --template-body file://csye6225-cf-networking.json --parameters ParameterKey=InstanceName,ParameterValue=$InstanceName ParameterKey=routeTableName,ParameterValue=$RouteTableName ParameterKey=privaterouteTableName,ParameterValue=$PrivateRouteTableName
+aws cloudformation create-stack --stack-name $STACK_NAME --template-body file://csye6225-cf-networking.json --parameters  ParameterKey=ParamPublicRouteTableName,ParameterValue=$RouteTableName ParameterKey=ParamPrivateRouteTableName,ParameterValue=$PrivateRouteTableName
 
 #Check Stack Status
 STACK_STATUS=`aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[][ [StackStatus ] ][]" --output text`
