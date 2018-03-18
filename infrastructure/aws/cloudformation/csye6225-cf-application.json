@@ -9,6 +9,14 @@
              "InstanceType" : "t2.micro",
              "DisableApiTermination" : "true",
              "InstanceInitiatedShutdownBehavior" : "stop",
+             "SecurityGroupIds": [
+                 {
+                     "Fn::GetAtt": [
+                         "WebServerSecurityGroup",
+                         "GroupId"
+                     ]
+                 }
+             ],
              "BlockDeviceMappings" : [
                 {
                    "DeviceName" : "/dev/sda1",
@@ -52,13 +60,14 @@
       "RecordServiceS3Bucket" : {
   	     "Type" : "AWS::S3::Bucket",
          "Properties" : {
-      	    "BucketName" : "s3.csye6225-spring2018-guju.me.com"
+      	    "BucketName" : "s3.csye6225-spring2018-guju.me"
       	  }
       },
 
      "MyDB" : {
        "Type" : "AWS::RDS::DBInstance",
        "Properties" : {
+          "AllocatedStorage" : "10",
           "DBName" : "csye6225",
           "Engine" : "MySQL",
           "EngineVersion" : "5.6.37",
@@ -68,18 +77,21 @@
           "MasterUsername" : "csye6225master",
           "MasterUserPassword" : "csye6225password",
           "PubliclyAccessible" : "false",
-          "Tags" : [ { "Key" : "Name", "Value" : "csye6225" } ],
-          "AllocatedStorage" : "10"
+          "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
+          "VPCSecurityGroups": [{
+      	       "Fn::GetAtt": [ "DBServerSecurityGroup", "GroupId" ]
+      	  }],
+          "Tags" : [ { "Key" : "Name", "Value" : "csye6225" } ]
         }
       }
 
     },
 
-     "Parameters" : {
+    "Parameters" : {
         "InstanceName" : {
             "Type" : "String"
         }
-     }
+    }
 
 
  }
