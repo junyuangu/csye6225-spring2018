@@ -1,0 +1,136 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description" : "csye6225 spring2018 for assignment6&7",
+    "Resources" : {
+
+
+
+
+        "CodeDeployIAMPolicy":{
+           "Type":"AWS::IAM::Policy",
+           "Properties":{
+              "PolicyName":"CodeDeployIAMPolicy",
+              "PolicyDocument":{
+                 "Version":"2012-10-17",
+                 "Statement":[ {
+                       "Effect":"Allow",
+                       "Action":[
+                          "autoscaling:CompleteLifecycleAction",
+                          "autoscaling:DeleteLifecycleHook",
+                          "autoscaling:DescribeAutoScalingGroups",
+                          "autoscaling:DescribeLifecycleHooks",
+                          "autoscaling:PutLifecycleHook",
+                          "autoscaling:RecordLifecycleActionHeartbeat",
+                          "autoscaling:CreateAutoScalingGroup",
+                          "autoscaling:UpdateAutoScalingGroup",
+                          "autoscaling:EnableMetricsCollection",
+                          "autoscaling:DescribeAutoScalingGroups",
+                          "autoscaling:DescribePolicies",
+                          "autoscaling:DescribeScheduledActions",
+                          "autoscaling:DescribeNotificationConfigurations",
+                          "autoscaling:DescribeLifecycleHooks",
+                          "autoscaling:SuspendProcesses",
+                          "autoscaling:ResumeProcesses",
+                          "autoscaling:AttachLoadBalancers",
+                          "autoscaling:PutScalingPolicy",
+                          "autoscaling:PutScheduledUpdateGroupAction",
+                          "autoscaling:PutNotificationConfiguration",
+                          "autoscaling:PutLifecycleHook",
+                          "autoscaling:DescribeScalingActivities",
+                          "autoscaling:DeleteAutoScalingGroup",
+                          "ec2:DescribeInstances",
+                          "ec2:DescribeInstanceStatus",
+                          "ec2:TerminateInstances",
+                          "tag:GetTags",
+                          "tag:GetResources",
+                          "sns:Publish",
+                          "cloudwatch:DescribeAlarms",
+                          "cloudwatch:PutMetricAlarm",
+                          "elasticloadbalancing:DescribeLoadBalancers",
+                          "elasticloadbalancing:DescribeInstanceHealth",
+                          "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+                          "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+                          "elasticloadbalancing:DescribeTargetGroups",
+                          "elasticloadbalancing:DescribeTargetHealth",
+                          "elasticloadbalancing:RegisterTargets",
+                          "elasticloadbalancing:DeregisterTargets"
+                       ],
+                       "Resource":"*"
+                 } ]
+              },
+              "Roles":[
+                 {
+                    "Ref":"CodeDeployServiceRole"
+                 }
+              ]
+           }
+        },
+
+        "CodeDeployEC2S3Policy":{
+           "Type":"AWS::IAM::Policy",
+           "Properties":{
+              "PolicyName":"CodeDeployEC2S3Policy",
+              "PolicyDocument":{
+                 "Version":"2012-10-17",
+                 "Statement":[ {
+                     "Action":[
+                        "s3:Get*",
+                        "s3:List*"
+                     ],
+                     "Effect":"Allow",
+                     "Resource":"*"
+                 } ]
+              },
+              "Roles":[ {
+                  "Ref":"EC2ServiceRole"
+              } ]
+           }
+        },
+
+          "EC2ServiceRole":{
+             "Type":"AWS::IAM::Role",
+             "Properties":{
+                "AssumeRolePolicyDocument": {
+                   "Version":"2012-10-17",
+                   "Statement":[ {
+                         "Effect":"Allow",
+                         "Principal":{
+                            "Service":[
+                               "ec2.amazonaws.com"
+                            ]
+                         },
+                         "Action":[ "sts:AssumeRole" ]
+                   } ]
+                },
+                "Path":"/"
+             }
+          },
+
+          "CodeDeployServiceRole": {
+             "Type":"AWS::IAM::Role",
+             "Properties":{
+                "AssumeRolePolicyDocument":{
+                   "Version":"2012-10-17",
+                   "Statement": [ {
+                       "Effect":"Allow",
+                       "Principal":{
+                          "Service":[
+                             "ec2.amazonaws.com"
+                          ]
+                       },
+                       "Action":[ "sts:AssumeRole" ]
+                   } ]
+                },
+                "Path":"/"
+            }
+          },
+
+          "S3Bucket" : {
+            	"Type": "AWS::S3::Bucket",
+            	"Properties" : {
+            	   "BucketName" : "code-deploy.csye6225-spring2018-guju.me"
+              }
+        	},
+
+    }
+}
