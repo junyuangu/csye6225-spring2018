@@ -25,7 +25,7 @@
              } ],
              "Tags" : [ {
                     "Key" : "Name",
-                    "Value" : { "Ref" : "InstanceName" }
+                    "Value" : { "Ref" : "EC2InstanceTagValue" }
              } ],
              "UserData": {
                  "Fn::Base64": {
@@ -44,7 +44,6 @@
                              "sudo ./install auto ",
                              "sudo service codedeploy-agent start ",
                              "sudo apt-get install tomcat8 -y ",
-                             "sudo echo \"JAVA_OPTS=\\\"\\${JAVA_OPTS} -Dspring.datasource.username=csye6225master -Dspring.datasource.password=csye6225password  -Dspring.profiles.active=aws\\\"\" >> /etc/default/tomcat8 ",
                              {
                                  "Fn::Join": [
                                      "",
@@ -52,7 +51,7 @@
                                          "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.url=\\\"jdbc:mysql://",
                                          {
                                              "Fn::GetAtt": [
-                                                 "MyDB",
+                                                 "MyDBInstance",
                                                  "Endpoint.Address"
                                              ]
                                          },
@@ -60,6 +59,8 @@
                                      ]
                                  ]
                              },
+                             "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.username=\"",{"Ref":"rdsParamUsername"},"\"\"' >> /usr/share/tomcat8/bin/setenv.sh \n",
+                             "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.password=\"",{"Ref":"rdsParamPassword"},"\"\"' >> /usr/share/tomcat8/bin/setenv.sh \n",
                              "sudo service tomcat8 restart "
                          ]
                      ]
@@ -96,7 +97,7 @@
       	  }
       },
 
-     "MyDB" : {
+     "MyDBInstance" : {
        "Type" : "AWS::RDS::DBInstance",
        "Properties" : {
           "AllocatedStorage" : "10",
@@ -106,8 +107,8 @@
           "DBInstanceClass" : "db.t2.medium",
           "MultiAZ" : "false",
           "DBInstanceIdentifier" : "csye6225-spring2018",
-          "MasterUsername" : "csye6225master",
-          "MasterUserPassword" : "csye6225password",
+          "MasterUsername" : {"Ref" : "rdsParamUsername"},
+          "MasterUserPassword" : {"Ref" : "rdsParamPassword"},
           "PubliclyAccessible" : "false",
           "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
           "VPCSecurityGroups": [{
@@ -155,9 +156,26 @@
     },
 
     "Parameters" : {
-        "InstanceName" : {
-            "Type" : "String"
-        }
+        "EC2InstanceTagValue" : {
+            "Description" : " EC2 instance tag Value ",
+            "Type" : "String",
+            "Default" : "MyEC2ForCodeDeployInstance"
+        },
+
+        "rdsParamUsername": {
+  				"Description": "database username",
+  				"Type" : "String",
+          "Default" : "csye6225master"
+  			},
+
+  			"rdsParamPassword": {
+  				"Description" : "database password",
+  				"Type" : "String",
+          "Default" : "csye6225password"
+  			}
+
+
+
     }
 
 

@@ -11,10 +11,7 @@ Team: Junyuan Gu, 001825583;
 			   AWS Network Cloud Formation update - public and private route table, as well as corresponding security group.
 			   AWS Application CF update - DynamoDB, S3 Bucket, RDS instance for MySQL 5.6.37
 
-6.Assignment6&7: 
+6.Assignment6&7: CI CD Template contains a. 3 polices, b. 2 roles, c. s3 bucket for CodeDeploy, d. CodeDeploy Applicaiton.
+	operation: network -> app -> ci_cd
 
-From Assignment8-9
-Team: a. Junyu Liu, 
-      b. Junyuan Gu, 001825583;
-      c. Li Yuan,
-      d. Ziyan Hu, 
+

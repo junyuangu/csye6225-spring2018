@@ -93,7 +93,7 @@
       "WebServerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
- 	"GroupName":"WebServerSecurityGroup",
+ 	      "GroupName":"WebServerSecurityGroup",
         "GroupDescription" : "Enable TCP access via port 22, 80 and 443",
         "VpcId":{"Ref":"VPC"},
         "SecurityGroupIngress" : [ {
