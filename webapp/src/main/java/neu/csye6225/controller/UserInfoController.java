@@ -2,6 +2,7 @@ package neu.csye6225.controller;
 
 import neu.csye6225.Util.BCryptUtil;
 import neu.csye6225.entity.UserInfo;
+import neu.csye6225.service.IAWSUploadS3Service;
 import neu.csye6225.service.IUserInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,9 @@ public class UserInfoController {
 	private boolean authState = false;
 	@Autowired
 	private IUserInfoService userInfoService;
+
+	@Autowired
+	private IAWSUploadS3Service awsUploadS3Service;
 
 	@Autowired
 	private HttpSession	 session;
@@ -319,7 +323,10 @@ public class UserInfoController {
 					logger.info( filePath + newFileName );
 					// saves the file on disk
 					multipartFile.transferTo( new File(filePath, newFileName) );
-					//FileUtils.copyInputStreamToFile( multipartFile.getInputStream(), new File(filePath, newFileName) );
+
+					//upload to AWS S3 bucket
+					String toUploadFileName = filePath + newFileName;
+					awsUploadS3Service.uploadObjectSingleOp( "xyzdemo.pem", toUploadFileName );
 
 					// update file path in the database
 					userInfoService.updatePicture( filePath+newFileName, app_username );

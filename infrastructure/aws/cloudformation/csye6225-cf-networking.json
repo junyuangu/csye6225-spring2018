@@ -63,6 +63,7 @@
          "Properties" : {
             "VpcId" : { "Ref" : "VPC" },
             "CidrBlock" : "10.0.0.0/24",
+            "MapPublicIpOnLaunch": true,
             "AvailabilityZone" : "us-east-1a",
             "Tags" : [ { "Key" : "Name", "Value" : "SubnetForWebServers" } ]
          }
@@ -117,31 +118,35 @@
        ]
       }
     },
-      "DBServerSecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
- 	"GroupName":"DBServerSecurityGroup",
-        "GroupDescription" : "Enable TCP access via port 3306",
-        "VpcId":{"Ref":"VPC"},
-        "SecurityGroupIngress" : [ {
-          "IpProtocol" : "tcp",
-          "FromPort" : "3306",
-          "ToPort" : "3306",
-          "SourceSecurityGroupId" : {"Ref" : "WebServerSecurityGroup"}
-         }
-       ]
-      }
+
+    "DBServerSecurityGroup" : {
+        "Type" : "AWS::EC2::SecurityGroup",
+        "Properties" : {
+    	      "GroupName":"DBServerSecurityGroup",
+            "GroupDescription" : "EC2 Security Group for RDS DB. Enable TCP access via port 3306",
+            "VpcId":{"Ref":"VPC"},
+            "SecurityGroupIngress" : [ {
+              "IpProtocol" : "tcp",
+              "FromPort" : "3306",
+              "ToPort" : "3306",
+              "SourceSecurityGroupId" : {"Ref" : "WebServerSecurityGroup"}
+             }
+           ]
+        }
     },
-   "DBSecurityGroup": {
-   "Type": "AWS::RDS::DBSecurityGroup",
-   "Properties": {
-      "EC2VpcId" : { "Ref" : "VPC" },
-      "DBSecurityGroupIngress": [
-         {"EC2SecurityGroupId": { "Ref": "DBServerSecurityGroup"}}
-      ],
-      "GroupDescription": "Allow 3306 to DB"
-      }
-   }
+
+    "RDS_DBSubnetGroup": {
+        "Type": "AWS::RDS::DBSubnetGroup",
+        "Properties": {
+            "DBSubnetGroupDescription": "Subnets for RDS instances",
+            "DBSubnetGroupName": "RDSsubnet-group",
+            "SubnetIds" : [
+                { "Ref": "SubnetForDBServers" },
+                { "Ref": "SubnetForWebServers" }
+            ]
+        }
+    }
+
  },
   "Parameters" : {
 	"ParamPublicRouteTableName" : {

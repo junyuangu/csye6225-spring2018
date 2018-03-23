@@ -9,7 +9,7 @@ import java.io.IOException;
  * @NUID    001825583
  */
 public interface IAWSUploadS3Service {
-    void uploadObjectSingleOp( String keyName, File uploadFileName ) throws IOException;
+    void uploadObjectSingleOp( String keyName, String uploadFileName ) throws IOException;
     void createFolder( String folderName );
     void deleteFolder( String folderName );
 }

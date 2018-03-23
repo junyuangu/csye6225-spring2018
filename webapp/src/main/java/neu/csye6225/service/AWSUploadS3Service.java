@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+@EnableWebMvc
+@Service
 public class AWSUploadS3Service implements IAWSUploadS3Service{
     private Logger logger = LoggerFactory.getLogger(AWSUploadS3Service.class);
     private static final String SUFFIX = "/";
@@ -28,12 +32,13 @@ public class AWSUploadS3Service implements IAWSUploadS3Service{
     private AmazonS3 s3client;
 
     @Override
-    public void uploadObjectSingleOp( String keyName, File uploadFileName ) throws IOException {
+    public void uploadObjectSingleOp( String keyName, String uploadFileName ) throws IOException {
         try {
             logger.info("Uploading a new object to S3 from a file.");
-            System.out.println("\nbucketName: "+bucketName+"\nkeyName: "+keyName);
-            s3client.putObject(new PutObjectRequest(
-                    bucketName, keyName, uploadFileName));
+            System.out.println( "\nbucketName: " + bucketName + "\nkeyName: " + keyName );
+            File uploadFile = new File( uploadFileName );
+            s3client.putObject( new PutObjectRequest(
+                    bucketName, keyName, uploadFile ) );
 
         } catch (AmazonServiceException ase) {
             logger.info("Caught an AmazonServiceException, which " +

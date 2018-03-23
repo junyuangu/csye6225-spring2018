@@ -13,7 +13,7 @@
       "KeyName" : {
         "Description" : "The EC2 Key Pair to allow SSH access to the instances",
         "Type" : "AWS::EC2::KeyPair::KeyName",
-        "Default" : "default"
+        "Default" : "xyzdemo"
       },
 
       "S3Key" : {
@@ -147,7 +147,8 @@
                        "Action":[ "sts:AssumeRole" ]
                  } ]
               },
-              "Path":"/"
+              "Path":"/",
+              "RoleName" : "CodeDeployEC2ServiceRole"
            }
         },
 
@@ -180,7 +181,8 @@
         "CodeDeployApplication": {
             "Type": "AWS::CodeDeploy::Application",
             "Properties" : {
-                "ApplicationName" : { "Ref" : "CodeDeployAppName" }
+                "ApplicationName" : { "Ref" : "CodeDeployAppName" },
+                "ComputePlatform": "Server"
             }
         },
 

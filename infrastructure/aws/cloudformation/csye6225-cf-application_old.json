@@ -77,10 +77,10 @@
           "MasterUsername" : "csye6225master",
           "MasterUserPassword" : "csye6225password",
           "PubliclyAccessible" : "false",
-          "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
-          "VPCSecurityGroups": [{
-      	       "Fn::GetAtt": [ "DBServerSecurityGroup", "GroupId" ]
+          "DBSecurityGroups": [{
+      	       "Fn::GetAtt": [ "DBSecurityGroup", "GroupId" ]
       	  }],
+          "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
           "Tags" : [ { "Key" : "Name", "Value" : "csye6225" } ]
         }
       }
