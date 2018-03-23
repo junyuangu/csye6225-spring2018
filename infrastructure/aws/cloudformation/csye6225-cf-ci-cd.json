@@ -2,45 +2,12 @@
     "AWSTemplateFormatVersion" : "2010-09-09",
     "Description" : "csye6225 spring2018 for assignment6&7",
 
-    "Parameters" : {
-
-      "CodeDeployAppName" : {
-        "Description" : "CodeDeploy Application Name",
-        "Type" : "String",
-        "Default" : "MyApplication"
-      },
-
-      "KeyName" : {
-        "Description" : "The EC2 Key Pair to allow SSH access to the instances",
-        "Type" : "AWS::EC2::KeyPair::KeyName",
-        "Default" : "xyzdemo"
-      },
-
-      "S3Key" : {
-        "Description" : "S3 Object key that points to the deployment bundle",
-        "Type" : "String"
-      },
-
-      "TagKey" : {
-        "Description" : " EC2 instance tag Key ",
-        "Type" : "String",
-        "Default" : "Name"
-      },
-
-      "TagValue" : {
-        "Description" : " EC2 instance tag Value ",
-        "Type" : "String",
-        "Default" : "MyEC2ForCodeDeployInstance"
-      }
-
-    },
-
     "Resources" : {
 
         "CodeDeployEC2S3Policy":{
            "Type":"AWS::IAM::Policy",
            "Properties":{
-              "PolicyName":"CodeDeployEC2S3Policy",
+              "PolicyName":"CodeDeploy-EC2-S3",
               "PolicyDocument":{
                  "Version":"2012-10-17",
                  "Statement":[ {
@@ -57,38 +24,35 @@
                  } ]
               },
               "Roles":[ {
-                  "Ref":"CodeDeployEC2ServiceRole"
+                  "Ref" : "CodeDeployEC2ServiceRole"
               } ]
            }
         },
 
         "TravisUploadToS3Policy":{
-           "Type":"AWS::IAM::Policy",
-           "Properties":{
-              "PolicyName":"TravisUploadToS3Policy",
-              "PolicyDocument":{
-                 "Version":"2012-10-17",
-                 "Statement":[ {
-                     "Action":[
+           "Type":"AWS::IAM::ManagedPolicy",
+           "Properties" : {
+              "ManagedPolicyName" : "Travis-Upload-To-S3",
+              "PolicyDocument" : {
+                 "Version" : "2012-10-17",
+                 "Statement" : [ {
+                     "Action" : [
                          "s3:PutObject"
                      ],
-                     "Effect":"Allow",
-                     "Resource": [
+                     "Effect" : "Allow",
+                     "Resource" : [
                          "*"
                      ]
                  } ]
               },
-              "Roles":[ {
-                  "Ref":"EC2ServiceRole"
-              } ],
-              "Users" : [ "travisUser"]
+              "Users" : [ { "Ref" : "UserFromTravis" } ]
            }
         },
 
         "TravisCodeDeployPolicy" : {
-           "Type":"AWS::IAM::Policy",
+           "Type":"AWS::IAM::ManagedPolicy",
            "Properties":{
-              "PolicyName":"TravisCodeDeployPolicy",
+              "ManagedPolicyName":"Travis-Code-Deploy",
               "PolicyDocument":{
                  "Version": "2012-10-17",
                  "Statement": [
@@ -98,9 +62,16 @@
                        "codedeploy:RegisterApplicationRevision",
                        "codedeploy:GetApplicationRevision"
                      ],
-                     "Resource": [
-                       "arn:aws:codedeploy:us-east-1:169212139838:application:MyApplication"
-                     ]
+                     "Resource": {
+                       "FN::Join" : [ "",
+                         [
+                            "arn:aws:codedeploy:us-east-1:",
+                            { "Ref" : "AWS::AccountId" },
+                            ":application:",
+                            { "Ref" : "CodeDeployAppName" }
+                         ]
+                       ]
+                     }
                    },
                    {
                      "Effect": "Allow",
@@ -118,17 +89,17 @@
                        "codedeploy:GetDeploymentConfig"
                      ],
                      "Resource": [
-                       "arn:aws:codedeploy:us-east-1:169212139838:deploymentconfig:CodeDeployDefault.OneAtATime",
-                       "arn:aws:codedeploy:us-east-1:169212139838:deploymentconfig:CodeDeployDefault.HalfAtATime",
-                       "arn:aws:codedeploy:us-east-1:169212139838:deploymentconfig:CodeDeployDefault.AllAtOnce"
+                         { "FN::Join" : [ "",
+                             [ "arn:aws:codedeploy:us-east-1:", {"Ref":"AWS::AccountId"}, ":CodeDeployDefault.OneAtATime" ],
+                             [ "arn:aws:codedeploy:us-east-1:", {"Ref":"AWS::AccountId"}, ":CodeDeployDefault.HalfAtATime" ],
+                             [ "arn:aws:codedeploy:us-east-1:", {"Ref":"AWS::AccountId"}, ":CodeDeployDefault.AllAtOnce" ]
+                           ]
+                         }
                      ]
                    }
                  ]
               },
-              "Roles":[ {
-                  "Ref":"EC2ServiceRole"
-              } ],
-              "Users" : [ "travisUser"]
+              "Users" : [ { "Ref" : "UserFromTravis" } ]
            }
         },
 
@@ -161,20 +132,23 @@
                      "Effect":"Allow",
                      "Principal":{
                         "Service":[
-                           "codedeploy.us-east-1.amazonaws.com"
+                           "codedeploy.amazonaws.com"
                         ]
                      },
                      "Action":[ "sts:AssumeRole" ]
                  } ]
               },
-              "Path":"/"
+              "Path":"/",
+              "ManagedPolicyArns": [
+                  "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+              ]
           }
         },
 
-        "S3Bucket" : {
+        "S3BucketForCodeDeploy" : {
           	"Type": "AWS::S3::Bucket",
           	"Properties" : {
-          	   "BucketName" : "code-deploy.csye6225-spring2018-guju.me"
+          	   "BucketName" : { "Ref" : "CodeDeployS3BucketName" }
             }
       	},
 
@@ -182,7 +156,7 @@
             "Type": "AWS::CodeDeploy::Application",
             "Properties" : {
                 "ApplicationName" : { "Ref" : "CodeDeployAppName" },
-                "ComputePlatform": "Server"
+                "ComputePlatform" : "Server"
             }
         },
 
@@ -190,8 +164,8 @@
           "Type" : "AWS::CodeDeploy::DeploymentConfig",
           "Properties" : {
             "MinimumHealthyHosts" : {
-              "Type" : "FLEET_PERCENT",
-              "Value" : "75"
+              "Type" : { "Ref" : "DeploymentCfgType" },
+              "Value" : { "Ref" : "DeploymentCfgValue" }
             }
           }
         },
@@ -199,7 +173,8 @@
         "DeploymentGroup" : {
             "Type" : "AWS::CodeDeploy::DeploymentGroup",
             "Properties" : {
-                "ApplicationName" : {
+                "ApplicationName" : { "Ref" : "CodeDeployAppName" },
+                "DeploymentGroupName": {
                     "Fn::Join": [ "",
                       [
                         { "Ref" : "CodeDeployApplication" },
@@ -210,12 +185,11 @@
                 "AutoScalingGroups" : [ {"Ref" : "AutoScalingGroup" } ],
                 "Deployment" : {
                     "Description" : "MyApplication deployment",
-                    "IgnoreApplicationStopFailures" : "true",
                     "Revision" : {
                         "RevisionType" : "S3",
                         "S3Location" : {
-                          "Bucket" : {"Ref" : "S3Bucket"},
-                          "Key" : {"Ref" : "S3Key"},
+                          "Bucket" : { "Ref" : "S3BucketForCodeDeploy" },
+                          "Key" : { "Ref" : "S3Key" },
                           "BundleType" : "Zip"
                         }
                     }
@@ -225,57 +199,62 @@
                     "Value" : { "Ref" : "TagValue" },
                     "Type" : "KEY_AND_VALUE"
                 } ],
-                "ServiceRoleArn" : { "Fn::GetAtt" : ["CodeDeployServiceRole", "Arn"] }
-            }
-        },
+                "ServiceRoleArn" : { "Fn::GetAtt" : [ "CodeDeployServiceRole", "Arn" ] }
+            },
+            "DependsOn": [ "CodeDeployApplication" ]
+        }
 
+    },
 
-        "CodeDeployIAMPolicy":{
-          "Type":"AWS::IAM::Policy",
-          "Properties":{
-             "PolicyName":"CodeDeployIAMPolicy",
-             "PolicyDocument":{
-                "Version":"2012-10-17",
-                "Statement":[ {
-                      "Effect":"Allow",
-                      "Action":[
-                        "autoscaling:*",
-                        "codedeploy:*",
-                        "ec2:*",
-                        "lambda:*",
-                        "elasticloadbalancing:*",
-                        "iam:AddRoleToInstanceProfile",
-                        "iam:CreateInstanceProfile",
-                        "iam:CreateRole",
-                        "iam:DeleteInstanceProfile",
-                        "iam:DeleteRole",
-                        "iam:DeleteRolePolicy",
-                        "iam:GetInstanceProfile",
-                        "iam:GetRole",
-                        "iam:GetRolePolicy",
-                        "iam:ListInstanceProfilesForRole",
-                        "iam:ListRolePolicies",
-                        "iam:ListRoles",
-                        "iam:PassRole",
-                        "iam:PutRolePolicy",
-                        "iam:RemoveRoleFromInstanceProfile",
-                        "s3:*"
-                      ],
-                      "Resource":"*"
-                } ]
-             },
-             "Roles":[
-                {
-                   "Ref":"CodeDeployServiceRole"
-                }
-             ]
-          }
-       },
+    "Parameters" : {
 
+      "UserFromTravis" : {
+        "Description" : "User who uses TravisCI",
+        "Type" : "String",
+        "Default" : "travisUser"
+      },
 
+      "CodeDeployAppName" : {
+        "Description" : "CodeDeploy Application Name",
+        "Type" : "String",
+        "Default" : "MyApplication"
+      },
 
+      "CodeDeployS3BucketName" : {
+        "Description" : "S3 Bucket which is used by CodeDeploy",
+        "Type" : "String",
+        "Default" : "code-deploy.csye6225-spring2018-guju.me"
+      },
 
+      "DeploymentCfgType" : {
+        "Description" : "Deployment Configuration Param",
+        "Type" : "String",
+        "Default" : "FLEET_PERCENT"
+      },
 
+      "DeploymentCfgValue" : {
+        "Description" : "Deployment Configuration Param",
+        "Type" : "String",
+        "Default" : "75"
+      },
+
+      "S3Key" : {
+        "Description" : "S3 Object key that points to the deployment bundle",
+        "Type" : "String",
+        "Default" : "MyApplication.zip"
+      },
+
+      "TagKey" : {
+        "Description" : " EC2 instance tag Key ",
+        "Type" : "String",
+        "Default" : "Name"
+      },
+
+      "TagValue" : {
+        "Description" : " EC2 instance tag Value ",
+        "Type" : "String",
+        "Default" : "MyEC2ForCodeDeployInstance"
+      }
 
     }
 }
