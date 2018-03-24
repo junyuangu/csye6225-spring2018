@@ -11,7 +11,9 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
+@Profile("test")
 @Configuration
 public class AWSConfiguration {
 
@@ -32,7 +34,7 @@ public class AWSConfiguration {
     @Bean
     public AmazonS3 amazonS3Client(AWSCredentials awsCredentials) {
 
-        AWSCredentials awsCreds = new BasicAWSCredentials("AKIAIKQSF7JHXUXM4TYQ", "UDcMwbu3XJ5DrAYe8T2Ky3BcvVCS7lYAqNE+ZaZv");
+        AWSCredentials awsCreds = new BasicAWSCredentials("access_id", "access_secret");
 
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(awsCreds))

@@ -2,7 +2,6 @@ package neu.csye6225.controller;
 
 import neu.csye6225.Util.BCryptUtil;
 import neu.csye6225.entity.UserInfo;
-import neu.csye6225.service.IAWSUploadS3Service;
 import neu.csye6225.service.IUserInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.context.annotation.Profile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -30,6 +30,7 @@ import java.util.List;
  * @NUid    001825583
  */
 @EnableWebMvc //make Autowired effective
+@Profile("dev")
 @Controller
 @RequestMapping("/")
 public class UserInfoController {
@@ -37,9 +38,6 @@ public class UserInfoController {
 	private boolean authState = false;
 	@Autowired
 	private IUserInfoService userInfoService;
-
-	@Autowired
-	private IAWSUploadS3Service awsUploadS3Service;
 
 	@Autowired
 	private HttpSession	 session;
@@ -96,10 +94,11 @@ public class UserInfoController {
 			mav.addObject( "loginUser", username );
 			mav.addObject( "currentTime", new Date().toString() );
 
-			String filepath = userInfoService.findPicPathByUsername(username);
-			String relativePath = "../" + filepath;
-			mav.addObject("fileTemporaryPath", relativePath);
-			logger.info( filepath );
+			String filePath = userInfoService.findPicPathByUsername(username);
+			int index = filePath.indexOf("/upload/");
+			String relaFilePath = ".." + filePath.substring(index);
+			mav.addObject("fileTemporaryPath", relaFilePath);
+			logger.info( relaFilePath );
 			//String aboutMe = userInfoService.findDescriptionByUsername(username);
 			//mav.addObject( "aboutMeDescription", aboutMe );
 			authState = true;
@@ -251,7 +250,10 @@ public class UserInfoController {
 			mav.addObject( "loginUser", userName );
 			mav.addObject( "currentTime", new Date().toString() );
 			String filePath = userInfoService.findPicPathByUsername( userName );
-			mav.addObject("fileTemporaryPath", filePath);
+			int index = filePath.indexOf("/upload/");
+			String relaFilePath = ".." + filePath.substring(index);
+			logger.info( relaFilePath );
+			mav.addObject("fileTemporaryPath", relaFilePath);
 			mav.addObject( "defaultPath", "../upload/default.png" );
 			String aboutMe = userInfoService.findAboutmeByUsername( userName );
 			if( aboutMe != null ) {
@@ -323,10 +325,6 @@ public class UserInfoController {
 					logger.info( filePath + newFileName );
 					// saves the file on disk
 					multipartFile.transferTo( new File(filePath, newFileName) );
-
-					//upload to AWS S3 bucket
-					String toUploadFileName = filePath + newFileName;
-					awsUploadS3Service.uploadObjectSingleOp( "xyzdemo.pem", toUploadFileName );
 
 					// update file path in the database
 					userInfoService.updatePicture( filePath+newFileName, app_username );

@@ -6,6 +6,7 @@ import com.amazonaws.services.rds.auth.GetIamAuthTokenRequest;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import org.springframework.context.annotation.Profile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,6 +23,7 @@ import java.util.Properties;
 
 import java.net.URL;
 
+@Profile("test")
 public class AwsRDSMySQLService {
     //AWS Credentials of the IAM user with policy enabling IAM Database Authenticated access to the db by the db user.
     private static final DefaultAWSCredentialsProviderChain creds = new DefaultAWSCredentialsProviderChain();

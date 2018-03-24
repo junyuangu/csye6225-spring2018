@@ -1,6 +1,8 @@
 # CSYE 6225 Spring 2018 Starter Repository
-From Assignment1-7, I worked on them solely, without team members.
-Team: Junyuan Gu, 001825583;
+Team Member: One.
+Name: Junyuan Gu, 001825583;
+1.Assignment1: Install the develop environment.
+
 2.Assignment2: WebApp+JMeter Test.
 
 3.Assignment3: AWS Network Stack: create and delete.

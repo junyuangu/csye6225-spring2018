@@ -3,8 +3,11 @@ package neu.csye6225.Util;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
+import org.springframework.context.annotation.Profile;
+
 import java.io.File;
 
+@Profile("production")
 public class Upload2AWSS3Util {
 
     public void uploadSingleFile( String file_path, String bucket_name, String key_name ) {

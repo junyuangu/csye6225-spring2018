@@ -2,6 +2,7 @@ package neu.csye6225.controller;
 
 
 import org.springframework.boot.autoconfigure.web.ErrorController;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @NUid    001825583
  * @date    02/15/2018
  */
+
+@Profile("dev")
 @RestController
 public class IndexController implements ErrorController {
 
