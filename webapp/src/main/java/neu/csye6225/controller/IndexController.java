@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @date    02/15/2018
  */
 
-@Profile("dev")
 @RestController
 public class IndexController implements ErrorController {
 

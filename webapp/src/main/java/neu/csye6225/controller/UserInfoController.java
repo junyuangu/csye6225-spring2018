@@ -154,7 +154,6 @@ public class UserInfoController {
 		    return mav;
     }
 
-
 	@GetMapping("authUser")
 	public ModelAndView authuser() {
 		if( !authState ) {
