@@ -2,8 +2,29 @@
     "AWSTemplateFormatVersion" : "2010-09-09",
     "Description" : "csye6225 spring2018 for assignment6, using free-tier AWS resources.",
     "Resources" : {
+      "MyDBInstance" : {
+        "Type" : "AWS::RDS::DBInstance",
+        "Properties" : {
+           "AllocatedStorage" : { "Ref" : "rdsParamStorageSize" },
+           "DBName" : { "Ref" : "rdsParamDBName" },
+           "Engine" : { "Ref" : "rdsParamEngine" },
+           "EngineVersion" : { "Ref" : "rdsParamEngineVersion" },
+           "DBInstanceClass" :  { "Ref" : "rdsParamDBInsClass" },
+           "MultiAZ" : "FALSE",
+           "DBInstanceIdentifier" : { "Ref" : "rdsParamDBInsId" },
+           "MasterUsername" : {"Ref" : "rdsParamUsername"},
+           "MasterUserPassword" : {"Ref" : "rdsParamPassword"},
+           "PubliclyAccessible" : "FALSE",
+           "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
+           "VPCSecurityGroups": [ { "Ref" : "RDSSecurityGroupId" } ]
+         }
+       }
+
+     },
+
       "MyEC2Instance" : {
           "Type" : "AWS::EC2::Instance",
+          "DependsOn": "MyDBInstance",
           "Properties" : {
              "ImageId" : { "Ref" : "ImageIdOfEC2Instance" },
              "InstanceType" : { "Ref" : "TypeOfEC2Instance" },
@@ -103,25 +124,7 @@
       	  }
       },
 
-     "MyDBInstance" : {
-       "Type" : "AWS::RDS::DBInstance",
-       "Properties" : {
-          "AllocatedStorage" : { "Ref" : "rdsParamStorageSize" },
-          "DBName" : { "Ref" : "rdsParamDBName" },
-          "Engine" : { "Ref" : "rdsParamEngine" },
-          "EngineVersion" : { "Ref" : "rdsParamEngineVersion" },
-          "DBInstanceClass" :  { "Ref" : "rdsParamDBInsClass" },
-          "MultiAZ" : "FALSE",
-          "DBInstanceIdentifier" : { "Ref" : "rdsParamDBInsId" },
-          "MasterUsername" : {"Ref" : "rdsParamUsername"},
-          "MasterUserPassword" : {"Ref" : "rdsParamPassword"},
-          "PubliclyAccessible" : "FALSE",
-          "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
-          "VPCSecurityGroups": [ { "Ref" : "RDSSecurityGroupId" } ]
-        }
-      }
 
-    },
     "Outputs": {
         "InstanceId": {
             "Description": "InstanceId of the newly created EC2 instance",
@@ -172,20 +175,17 @@
 
         "WebServerSecurityGroupId" : {
           "Description" : "Group ID of Web Server Security Group",
-          "Type": "String",
-          "Default" : " "
+          "Type": "String"
         },
 
         "EC2SubnetId" : {
           "Description" : "EC2 Subnet ID",
-          "Type": "String",
-          "Default" : " "
+          "Type": "String"
         },
 
         "RDSSecurityGroupId" : {
           "Description" : "Security Group ID of RDS",
-          "Type": "String",
-          "Default" : " "
+          "Type": "String"
         },
 
         "EC2VolumeType" : {

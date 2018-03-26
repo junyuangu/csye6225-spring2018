@@ -8,8 +8,8 @@
       "Properties" : {
         "CidrBlock" : "10.0.0.0/16",
         "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		   {"Key" : "Name", "Value" : {"Ref" : "AWS::StackName"} }
-		 ]
+		               {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" } }
+                 ]
       }
     },
 
@@ -17,8 +17,8 @@
       "Type" : "AWS::EC2::InternetGateway",
       "Properties" : {
         "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		   {"Key" : "Name", "Value" : {"Ref" : "AWS::StackName"} }
-		 ]
+		               {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" } } 
+                 ]
       }
     },
 
@@ -94,8 +94,7 @@
       "WebServerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
- 	      "GroupName":"WebServerSecurityGroup",
-        "GroupDescription" : "Enable TCP access via port 22, 80 and 443",
+        "GroupDescription" : "Enable TCP access via port 22, 80, 443 and 8080",
         "VpcId":{"Ref":"VPC"},
         "SecurityGroupIngress" : [ {
           "IpProtocol" : "tcp",
@@ -114,6 +113,12 @@
            "FromPort": "443",
            "ToPort": "443",
            "CidrIp": "0.0.0.0/0"
+         },
+         {
+            "IpProtocol": "tcp",
+            "FromPort": "8080",
+            "ToPort": "8080",
+            "CidrIp": "0.0.0.0/0"
          }
        ]
       }
