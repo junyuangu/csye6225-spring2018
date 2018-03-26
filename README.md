@@ -14,6 +14,6 @@ Name: Junyuan Gu, 001825583;
 			   AWS Application CF update - DynamoDB, S3 Bucket, RDS instance for MySQL 5.6.37
 
 6.Assignment6&7: CI CD Template contains a. 3 polices, b. 2 roles, c. s3 bucket for CodeDeploy, d. CodeDeploy Applicaiton and CodeDeploy Group Configuration.
-	Shell scripts operations: network -> app -> ci_cd
+	Shell scripts operations: network -> ci_cd -> application
 
 

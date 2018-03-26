@@ -63,7 +63,7 @@
                        "codedeploy:GetApplicationRevision"
                      ],
                      "Resource": {
-                       "FN::Join" : [ "",
+                       "Fn::Join" : [ "",
                          [
                             "arn:aws:codedeploy:us-east-1:",
                             { "Ref" : "AWS::AccountId" },
@@ -89,12 +89,21 @@
                        "codedeploy:GetDeploymentConfig"
                      ],
                      "Resource": [
-                         { "FN::Join" : [ "",
-                             [ "arn:aws:codedeploy:us-east-1:", {"Ref":"AWS::AccountId"}, ":CodeDeployDefault.OneAtATime" ],
-                             [ "arn:aws:codedeploy:us-east-1:", {"Ref":"AWS::AccountId"}, ":CodeDeployDefault.HalfAtATime" ],
-                             [ "arn:aws:codedeploy:us-east-1:", {"Ref":"AWS::AccountId"}, ":CodeDeployDefault.AllAtOnce" ]
-                           ]
-                         }
+                          {
+                            "Fn::Join": [ "",
+                                [ "arn:aws:codedeploy:us-east-1:",{ "Ref": "AWS::AccountId" },":deploymentconfig:CodeDeployDefault.OneAtATime" ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [ "",
+                                [ "arn:aws:codedeploy:us-east-1:", { "Ref": "AWS::AccountId" }, ":deploymentconfig:CodeDeployDefault.HalfAtATime" ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [ "",
+                                [ "arn:aws:codedeploy:us-east-1:", { "Ref": "AWS::AccountId" }, ":deploymentconfig:CodeDeployDefault.AllAtOnce" ]
+                            ]
+                          }
                      ]
                    }
                  ]
@@ -178,21 +187,9 @@
                     "Fn::Join": [ "",
                       [
                         { "Ref" : "CodeDeployApplication" },
-                        "DeploymentGroup_Fleet"
+                        "DeploymentGroupFleet"
                       ]
                     ]
-                },
-                "AutoScalingGroups" : [ {"Ref" : "AutoScalingGroup" } ],
-                "Deployment" : {
-                    "Description" : "MyApplication deployment",
-                    "Revision" : {
-                        "RevisionType" : "S3",
-                        "S3Location" : {
-                          "Bucket" : { "Ref" : "S3BucketForCodeDeploy" },
-                          "Key" : { "Ref" : "S3Key" },
-                          "BundleType" : "Zip"
-                        }
-                    }
                 },
                 "Ec2TagFilters" : [ {
                     "Key" : { "Ref" : "TagKey" },

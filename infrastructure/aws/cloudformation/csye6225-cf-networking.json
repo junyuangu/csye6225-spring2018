@@ -122,7 +122,6 @@
     "DBServerSecurityGroup" : {
         "Type" : "AWS::EC2::SecurityGroup",
         "Properties" : {
-    	      "GroupName":"DBServerSecurityGroup",
             "GroupDescription" : "EC2 Security Group for RDS DB. Enable TCP access via port 3306",
             "VpcId":{"Ref":"VPC"},
             "SecurityGroupIngress" : [ {
@@ -135,7 +134,7 @@
         }
     },
 
-    "RDS_DBSubnetGroup": {
+    "RDSDBSubnetGroup": {
         "Type": "AWS::RDS::DBSubnetGroup",
         "Properties": {
             "DBSubnetGroupDescription": "Subnets for RDS instances",

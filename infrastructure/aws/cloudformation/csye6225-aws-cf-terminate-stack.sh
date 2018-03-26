@@ -1,7 +1,7 @@
 set -e
 #Author Junyuan Gu
 echo "Author: Junyuan Gu"
-echo "		gu.ju@husky.neu.edu"
+echo "Eamil:  gu.ju@husky.neu.edu"
 
 STACK_NAME=$1
 echo "The stack you want to delete: "

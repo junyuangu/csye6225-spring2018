@@ -10,7 +10,7 @@
              "DisableApiTermination" : "true",
              "InstanceInitiatedShutdownBehavior" : "stop",
              "SubnetId": {"Ref" : "EC2SubnetId"},
-             "SecurityGroupIds": [{"Ref" : "WebServerSecurityGroup_Id"}],
+             "SecurityGroupIds": [{"Ref" : "WebServerSecurityGroupId"}],
              "BlockDeviceMappings" : [ {
                    "DeviceName" : "/dev/sdf",
                    "Ebs" : {
@@ -111,14 +111,14 @@
           "Engine" : { "Ref" : "rdsParamEngine" },
           "EngineVersion" : { "Ref" : "rdsParamEngineVersion" },
           "DBInstanceClass" :  { "Ref" : "rdsParamDBInsClass" },
-          "MultiAZ" : "false",
+          "MultiAZ" : "FALSE",
           "DBInstanceIdentifier" : { "Ref" : "rdsParamDBInsId" },
-          "VPCSecurityGroups": [{"Ref" : "RDSSecurityGroup_ID"}],
-          "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
           "MasterUsername" : {"Ref" : "rdsParamUsername"},
           "MasterUserPassword" : {"Ref" : "rdsParamPassword"},
-          "PubliclyAccessible" : "false",
-          "Tags" : [ { "Key" : "Name", "Value" : { "Ref" : "rdsParamDBTagVal" } } ]
+          "PubliclyAccessible" : "FALSE",
+          "VPCSecurityGroups": [{"Ref" : "RDSSGId"}],
+          "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" }
+
         }
       }
 
@@ -171,22 +171,22 @@
           "Default" : "t2.micro"
         },
 
-        "WebServerSecurityGroup_Id" : {
+        "WebServerSecurityGroupId" : {
           "Description" : "Group ID of Web Server Security Group",
           "Type": "String",
-          "Default" : " "
+          "Default" : "sg-761a3900"
         },
 
         "EC2SubnetId" : {
           "Description" : "EC2 Subnet ID",
           "Type": "String",
-          "Default" : " "
+          "Default" : "subnet-9a8fb6b5"
         },
 
-        "RDSSecurityGroup_ID" : {
+        "RDSSGId" : {
+          "Default" : "sg-590f2c2f",
           "Description" : "Security Group ID of RDS",
-          "Type": "String",
-          "Default" : " "
+          "Type": "String"
         },
 
         "EC2VolumeType" : {
@@ -271,13 +271,13 @@
         "rdsParamDBTagVal" : {
           "Description" : "Tag Value for RDS DB instance",
           "Type" : "String",
-          "Default" : "csye6225"
+          "Default" : "csye6225MyDBInstance"
         },
 
         "DBSubnetGroup" : {
           "Description" : "Group Name for RDS DataBase Subnet Group",
           "Type" : "String",
-          "Default" : "RDS_DBSubnetGroup"
+          "Default" : "RDSsubnet-group"
         }
 
     }
