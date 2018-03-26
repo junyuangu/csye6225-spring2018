@@ -116,9 +116,8 @@
           "MasterUsername" : {"Ref" : "rdsParamUsername"},
           "MasterUserPassword" : {"Ref" : "rdsParamPassword"},
           "PubliclyAccessible" : "FALSE",
-          "VPCSecurityGroups": [{"Ref" : "RDSSGId"}],
-          "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" }
-
+          "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
+          "VPCSecurityGroups": [ { "Ref" : "RDSSecurityGroupId" } ]
         }
       }
 
@@ -174,19 +173,19 @@
         "WebServerSecurityGroupId" : {
           "Description" : "Group ID of Web Server Security Group",
           "Type": "String",
-          "Default" : "sg-761a3900"
+          "Default" : " "
         },
 
         "EC2SubnetId" : {
           "Description" : "EC2 Subnet ID",
           "Type": "String",
-          "Default" : "subnet-9a8fb6b5"
+          "Default" : " "
         },
 
-        "RDSSGId" : {
-          "Default" : "sg-590f2c2f",
+        "RDSSecurityGroupId" : {
           "Description" : "Security Group ID of RDS",
-          "Type": "String"
+          "Type": "String",
+          "Default" : " "
         },
 
         "EC2VolumeType" : {
@@ -253,7 +252,7 @@
         "rdsParamDBInsId" : {
           "Description" : "Instance Identifier for RDS DB",
           "Type" : "String",
-          "Default" : "csye6225-spring2018"
+          "Default" : "RDS-csye6225-spring2018"
         },
 
         "rdsParamUsername" : {

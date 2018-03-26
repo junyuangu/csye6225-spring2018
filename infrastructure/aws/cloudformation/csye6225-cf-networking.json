@@ -123,7 +123,7 @@
         "Type" : "AWS::EC2::SecurityGroup",
         "Properties" : {
             "GroupDescription" : "EC2 Security Group for RDS DB. Enable TCP access via port 3306",
-            "VpcId":{"Ref":"VPC"},
+            "VpcId": { "Ref" : "VPC" },
             "SecurityGroupIngress" : [ {
               "IpProtocol" : "tcp",
               "FromPort" : "3306",

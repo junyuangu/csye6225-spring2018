@@ -27,12 +27,15 @@ val3="RDS_SecurityGroup_ID: $RDS_SecurityGroup_ID"
 echo $val1
 echo $val2
 echo $val3
-echo $RDS_SecurityGroup_ID
 
 #Create Stack:
-STATUS_CF=$(aws cloudformation create-stack --template-body file://csye6225-cf-application.json --capabilities CAPABILITY_NAMED_IAM --stack-name $stackname --parameters ParameterKey=EC2InstanceTagValue,ParameterValue=$instancename
-Parameterkey=EC2SubnetId,ParameterValue=$EC2_Subnet_ID ParameterKey=WebServerSecurityGroupId,ParameterValue=$EC2_SecurityGroup_ID )
-# Parameterkey=RDSSGId,ParameterValue=$RDS_SecurityGroup_ID
+STATUS_CF=$(aws cloudformation create-stack --stack-name $stackname --template-body file://csye6225-cf-application.json --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ImageIdOfEC2Instance,ParameterValue=ami-66506c1c
+ParameterKey=TypeOfEC2Instance,ParameterValue=t2.micro ParameterKey=WebServerSecurityGroupId,ParameterValue=$EC2_SecurityGroup_ID Parameterkey=EC2SubnetId,ParameterValue=$EC2_Subnet_ID Parameterkey=RDSSecurityGroupId,ParameterValue=$RDS_SecurityGroup_ID
+ParameterKey=EC2VolumeType,ParameterValue=gp2 ParameterKey=EC2VolumeSize,ParameterValue=16 ParameterKey=TagKey,ParameterValue=Name ParameterKey=EC2InstanceTagValue,ParameterValue=$instancename
+ParameterKey=WebAppS3BucketName,ParameterValue=web-app.csye6225-spring2018-guju.me ParameterKey=rdsParamStorageSize,ParameterValue=10 ParameterKey=rdsParamDBName,ParameterValue=csye6225 ParameterKey=rdsParamEngine,ParameterValue=MySQL
+ParameterKey=rdsParamEngineVersion,ParameterValue=5.6.37 ParameterKey=rdsParamDBInsClass,ParameterValue=db.t2.medium ParameterKey=rdsParamDBInsId,ParameterValue=csye6225-spring2018 ParameterKey=rdsParamUsername,ParameterValue=csye6225master
+ParameterKey=rdsParamPassword,ParameterValue=csye6225password ParameterKey=rdsParamDBTagVal,ParameterValue=csye6225MyDBInstance ParameterKey=DBSubnetGroup,ParameterValue=RDSsubnet-group)
+
 #Wait until stack completely created
 echo "Please wait..."
 
