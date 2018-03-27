@@ -45,7 +45,11 @@ STACK_STATUS=`aws cloudformation wait stack-create-complete --stack-name $stackn
 
 if [ ! -z "$STACK_CF" ] && [ -z "$STACK_STATUS" ]; then
   #statements
+  echo "STACK_CF: $STACK_CF"
+  echo "STACK_STATUS: $STACK_STATUS"
   echo "Job Done!"
 else
-   echo "Failure!"
+  echo "STACK_CF: $STACK_CF"
+  echo "STACK_STATUS: $STACK_STATUS"
+  echo "Failure!"
 fi
