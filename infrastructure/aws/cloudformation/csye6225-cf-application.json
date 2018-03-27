@@ -18,9 +18,7 @@
            "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
            "VPCSecurityGroups": [ { "Ref" : "RDSSecurityGroupId" } ]
          }
-       }
-
-     },
+       },
 
       "MyEC2Instance" : {
           "Type" : "AWS::EC2::Instance",
@@ -113,17 +111,18 @@
           "ProvisionedThroughput" : {
               "ReadCapacityUnits" : "5",
               "WriteCapacityUnits" : "5"
-            },
-            "TableName" : "csye6225"
-          }
+          },
+          "TableName" : "csye6225"
+        }
       },
-      "RecordServiceS3Bucket" : {
+      "S3Bucket" : {
   	     "Type" : "AWS::S3::Bucket",
          "Properties" : {
       	    "BucketName" : { "Ref" : "WebAppS3BucketName" }
       	  }
-      },
+      }
 
+    },
 
     "Outputs": {
         "InstanceId": {
@@ -175,17 +174,20 @@
 
         "WebServerSecurityGroupId" : {
           "Description" : "Group ID of Web Server Security Group",
-          "Type": "String"
+          "Type": "AWS::EC2::SecurityGroup::Id",
+          "Default" : " "
         },
 
         "EC2SubnetId" : {
           "Description" : "EC2 Subnet ID",
-          "Type": "String"
+          "Type": "AWS::EC2::Subnet::Id",
+          "Default" : " "
         },
 
         "RDSSecurityGroupId" : {
           "Description" : "Security Group ID of RDS",
-          "Type": "String"
+          "Type": "AWS::EC2::SecurityGroup::Id",
+          "Default" : " "
         },
 
         "EC2VolumeType" : {
@@ -215,7 +217,7 @@
         "WebAppS3BucketName" : {
           "Description" : "S3 Bucket Name for storing profile pictures uploaded by users",
           "Type" : "String",
-          "Default" : "web-app.csye6225-spring2018-guju.me"
+          "Default" : "s3.csye6225-spring2018-guju.me"
 
         },
 

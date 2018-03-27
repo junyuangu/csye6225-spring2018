@@ -23,9 +23,9 @@
                      ]
                  } ]
               },
-              "Roles":[ {
-                  "Ref" : "CodeDeployEC2ServiceRole"
-              } ]
+              "Roles":[
+                { "Ref" : "RoleForCodeDeployEC2Service" }
+              ]
            }
         },
 
@@ -112,7 +112,7 @@
            }
         },
 
-        "CodeDeployEC2ServiceRole":{
+        "RoleForCodeDeployEC2Service":{
            "Type":"AWS::IAM::Role",
            "Properties":{
               "AssumeRolePolicyDocument": {
@@ -132,9 +132,10 @@
            }
         },
 
-        "CodeDeployServiceRole": {
+        "RoleForCodeDeployService": {
            "Type":"AWS::IAM::Role",
            "Properties":{
+              "RoleName": "CodeDeployServiceRole",
               "AssumeRolePolicyDocument":{
                  "Version":"2012-10-17",
                  "Statement": [ {
@@ -184,19 +185,14 @@
             "Properties" : {
                 "ApplicationName" : { "Ref" : "CodeDeployAppName" },
                 "DeploymentGroupName": {
-                    "Fn::Join": [ "",
-                      [
-                        { "Ref" : "CodeDeployApplication" },
-                        "DeploymentGroupFleet"
-                      ]
-                    ]
-                },
+                    "Ref" : "NameOfDeploymentGroup"
+                 },
                 "Ec2TagFilters" : [ {
                     "Key" : { "Ref" : "TagKey" },
                     "Value" : { "Ref" : "TagValue" },
                     "Type" : "KEY_AND_VALUE"
                 } ],
-                "ServiceRoleArn" : { "Fn::GetAtt" : [ "CodeDeployServiceRole", "Arn" ] }
+                "ServiceRoleArn" : { "Fn::GetAtt" : [ "RoleForCodeDeployService", "Arn" ] }
             },
             "DependsOn": [ "CodeDeployApplication" ]
         }
@@ -221,6 +217,12 @@
         "Description" : "S3 Bucket which is used by CodeDeploy",
         "Type" : "String",
         "Default" : "code-deploy.csye6225-spring2018-guju.me"
+      },
+
+      "NameOfDeploymentGroup" : {
+        "Description" : "Deployment Group Name",
+        "Type" : "String",
+        "Default" : "MyApplication_deployment"
       },
 
       "DeploymentCfgType" : {
