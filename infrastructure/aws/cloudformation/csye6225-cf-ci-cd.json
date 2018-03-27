@@ -63,7 +63,8 @@
                          [
                             "arn:aws:codedeploy:us-east-1:",
                             { "Ref" : "AWS::AccountId" },
-                            ":application:csye6225-spring2018"
+                            ":application:",
+                            { "Ref" : "CodeDeployAppName" }
                          ]
                        ]
                      }
