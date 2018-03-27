@@ -12,12 +12,13 @@
                  "Version":"2012-10-17",
                  "Statement":[ {
                      "Action":[
-                        "s3:*"
+                        "s3:List*",
+                        "s3:Get*",
+                        "s3:Put*"
                      ],
                      "Effect":"Allow",
-                     "Resource":   [
-                         "*"
-                     ]
+                     "Resource" : "arn:aws:s3:::*"
+
                  } ]
               },
               "Roles":[
@@ -37,9 +38,7 @@
                          "s3:PutObject"
                      ],
                      "Effect" : "Allow",
-                     "Resource" : [
-                         "*"
-                     ]
+                     "Resource" : [ "*" ]
                  } ]
               },
               "Users" : [ { "Ref" : "UserFromTravis" } ]
@@ -166,20 +165,11 @@
             }
         },
 
-        "DeploymentConfig" : {
-          "Type" : "AWS::CodeDeploy::DeploymentConfig",
-          "Properties" : {
-            "MinimumHealthyHosts" : {
-              "Type" : { "Ref" : "DeploymentCfgType" },
-              "Value" : { "Ref" : "DeploymentCfgValue" }
-            }
-          }
-        },
-
         "DeploymentGroup" : {
             "Type" : "AWS::CodeDeploy::DeploymentGroup",
             "Properties" : {
                 "ApplicationName" : { "Ref" : "CodeDeployAppName" },
+                "DeploymentConfigName" : "CodeDeployDefault.OneAtATime",
                 "DeploymentGroupName": {
                     "Ref" : "NameOfDeploymentGroup"
                  },
@@ -190,7 +180,9 @@
                 } ],
                 "ServiceRoleArn" : { "Fn::GetAtt" : [ "RoleForCodeDeployService", "Arn" ] }
             },
-            "DependsOn": [ "CodeDeployApplication" ]
+            "DependsOn": [
+              "CodeDeployApplication"
+            ]
         }
 
     },
@@ -218,25 +210,7 @@
       "NameOfDeploymentGroup" : {
         "Description" : "Deployment Group Name",
         "Type" : "String",
-        "Default" : "MyApplication_deployment"
-      },
-
-      "DeploymentCfgType" : {
-        "Description" : "Deployment Configuration Param",
-        "Type" : "String",
-        "Default" : "FLEET_PERCENT"
-      },
-
-      "DeploymentCfgValue" : {
-        "Description" : "Deployment Configuration Param",
-        "Type" : "String",
-        "Default" : "75"
-      },
-
-      "S3Key" : {
-        "Description" : "S3 Object key that points to the deployment bundle",
-        "Type" : "String",
-        "Default" : "MyApplication.zip"
+        "Default" : "MyApplication-deployment-group"
       },
 
       "TagKey" : {
