@@ -30,6 +30,7 @@
              "InstanceInitiatedShutdownBehavior" : "stop",
              "SubnetId": {"Ref" : "EC2SubnetId"},
              "SecurityGroupIds": [{"Ref" : "WebServerSecurityGroupId"}],
+             "KeyName" : { "Ref" : "ExistingKeyPairName" },
              "BlockDeviceMappings" : [ {
                    "DeviceName" : "/dev/sdf",
                    "Ebs" : {
@@ -200,6 +201,12 @@
           "Description" : "EC2 Volume size",
           "Type" : "String",
           "Default" : "16"
+        },
+
+        "ExistingKeyPairName" : {
+          "Description" : "Attach an Existing Key Pair to the EC2 Instance",
+          "Type" : "String",
+          "Default" : " "
         },
 
         "TagKey" : {
