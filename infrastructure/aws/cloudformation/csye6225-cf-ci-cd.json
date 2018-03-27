@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion" : "2010-09-09",
-    "Description" : "csye6225 spring2018 for assignment6&7",
+    "Description" : "csye6225 spring2018 for assignment 6&7",
 
     "Resources" : {
 
@@ -12,14 +12,11 @@
                  "Version":"2012-10-17",
                  "Statement":[ {
                      "Action":[
-                        "s3:Get*",
-                        "s3:List*"
+                        "s3:*"
                      ],
                      "Effect":"Allow",
                      "Resource":   [
-                         "arn:aws:s3:::aws-codedeploy-us-east-1/*",
-                         "arn:aws:s3:::aws-codedeploy-us-east-2/*",
-                         "arn:aws:s3:::code-deploy.csye6225-spring2018-guju.me/*"
+                         "*"
                      ]
                  } ]
               },
@@ -67,8 +64,7 @@
                          [
                             "arn:aws:codedeploy:us-east-1:",
                             { "Ref" : "AWS::AccountId" },
-                            ":application:",
-                            { "Ref" : "CodeDeployAppName" }
+                            ":application:csye6225-spring2018"
                          ]
                        ]
                      }

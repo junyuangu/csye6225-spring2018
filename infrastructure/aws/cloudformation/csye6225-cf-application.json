@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion" : "2010-09-09",
-    "Description" : "csye6225 spring2018 for assignment6, using free-tier AWS resources.",
+    "Description" : "csye6225 spring2018 for assignment6&7, using free-tier AWS resources.",
     "Resources" : {
       "MyDBInstance" : {
         "Type" : "AWS::RDS::DBInstance",
