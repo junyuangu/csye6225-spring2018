@@ -1,1 +1,1 @@
-AWA CloudFormation
+aws CloudFormation

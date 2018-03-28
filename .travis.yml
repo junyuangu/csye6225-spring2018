@@ -33,7 +33,7 @@ after_success:
   - cd ..
   - pwd
   - ls -al
-before_deploy: "echo 'ready?'"
+  
 deploy:
   - provider: s3
     bucket: $s3_bucket
@@ -59,7 +59,6 @@ deploy:
     on:
       all_branches: true 
       #branch: master
-  after_deploy: "echo 'deploy done!'"
 
 notifications:
   email:
