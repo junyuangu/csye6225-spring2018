@@ -62,22 +62,35 @@
                              "sudo service codedeploy-agent start ",
                              "sudo apt-get install tomcat8 -y ",
                              {
-                                 "Fn::Join": [
-                                     "",
-                                     [
-                                         "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.url=\\\"jdbc:mysql://",
-                                         {
-                                             "Fn::GetAtt": [
-                                                 "MyDBInstance",
-                                                 "Endpoint.Address"
-                                             ]
-                                         },
-                                         ":3306/csye6225\\\"\"' >> /etc/default/tomcat8"
-                                     ]
-                                 ]
+                                "Fn::Join": [
+                                   "",
+                                   [
+                                     "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.url=\\\"jdbc:mysql://",
+                                     { "Fn::GetAtt": [ "MyDBInstance", "Endpoint.Address" ] },
+                                     ":3306/csye6225\\\"\"' >> /etc/default/tomcat8 \n"
+                                   ]
+                                ]
                              },
-                             "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.username=\"",{"Ref":"rdsParamUsername"},"\"\"' >> /usr/share/tomcat8/bin/setenv.sh \n",
-                             "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.password=\"",{"Ref":"rdsParamPassword"},"\"\"' >> /usr/share/tomcat8/bin/setenv.sh \n",
+                             {
+                               "Fn::Join": [
+                                  "",
+                                  [
+                                    "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.username=",
+                                    {"Ref":"rdsParamUsername"},
+                                    "\"' >> /usr/share/tomcat8/bin/setenv.sh \n"
+                                  ]
+                               ]
+                             },
+                             {
+                               "Fn::Join": [
+                                  "",
+                                  [
+                                    "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.password=",
+                                    {"Ref":"rdsParamPassword"},
+                                    "\"' >> /usr/share/tomcat8/bin/setenv.sh \n"
+                                  ]
+                                ]
+                             },
                              "sudo service tomcat8 restart "
                          ]
                      ]
