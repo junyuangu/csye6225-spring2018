@@ -16,14 +16,14 @@ apply plugin:  'war'
 apply plugin: "io.spring.dependency-management"
 
 group = 'neu.csye6225'
-version = '1.7.1-RELEASE'
+//version = '1.7.1-RELEASE'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 
 jar {
 	baseName = 'csye6225-assign7'
-	version =  '1.7.1'
+	//version =  '1.7.1'
 }
 
 

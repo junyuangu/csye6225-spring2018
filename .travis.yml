@@ -22,7 +22,7 @@ after_success:
   - cp infrastructure/aws/codedeploy/*.sh .
   - cp infrastructure/aws/codedeploy/*.yml .
   - pwd
-  - zip -r csye6225-web-app-$TRAVIS_JOB_NUMBER.zip webapp/build/libs/ROOT-1.7.1-RELEASE.war *.sh *.yml
+  - zip -r csye6225-web-app-$TRAVIS_JOB_NUMBER.zip webapp/build/libs/ROOT.war *.sh *.yml
   - ls -al
   - mv  csye6225-web-app-$TRAVIS_JOB_NUMBER.zip codedeploy_artifact/
   - ls -al
@@ -33,7 +33,7 @@ after_success:
   - cd ..
   - pwd
   - ls -al
-  
+
 deploy:
   - provider: s3
     bucket: $s3_bucket
