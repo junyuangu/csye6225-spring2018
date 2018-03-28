@@ -33,15 +33,15 @@ after_success:
   - cd ..
   - pwd
   - ls -al
-
+before_deploy: "echo 'ready?'"
 deploy:
   - provider: s3
-    local_dir: codedeploy_artifact
     bucket: $s3_bucket
     region: us-east-1
-    skip_cleanup: true
     access_key_id: $access_key_id
     secret_access_key: $secret_access_key
+    skip_cleanup: true
+    local_dir: codedeploy_artifact
     on:
       all_branches: true
       #branch: master
@@ -59,6 +59,7 @@ deploy:
     on:
       all_branches: true 
       #branch: master
+  after_deploy: "echo 'deploy done!'"
 
 notifications:
   email:
