@@ -47,9 +47,9 @@ if [ ! -z "$STACK_CF" ] && [ -z "$STACK_STATUS" ]; then
   #statements
   echo "STACK_CF: $STACK_CF"
   echo "STACK_STATUS: $STACK_STATUS"
-  echo "Job Done!"
+  echo "Success!"
 else
   echo "STACK_CF: $STACK_CF"
   echo "STACK_STATUS: $STACK_STATUS"
-  echo "Failure!"
+  echo "Job Done!"
 fi
