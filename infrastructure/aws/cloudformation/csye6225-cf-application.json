@@ -77,19 +77,12 @@
                                   [
                                     "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.username=",
                                     {"Ref":"rdsParamUsername"},
+                                    " -Dspring.datasource.password=",
+                                    {"Ref":"rdsParamPassword"},
+                                    " -Dspring.profiles.active=production",
                                     "\"' >> /usr/share/tomcat8/bin/setenv.sh \n"
                                   ]
                                ]
-                             },
-                             {
-                               "Fn::Join": [
-                                  "",
-                                  [
-                                    "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.password=",
-                                    {"Ref":"rdsParamPassword"},
-                                    "\"' >> /usr/share/tomcat8/bin/setenv.sh \n"
-                                  ]
-                                ]
                              },
                              "sudo service tomcat8 restart "
                          ]
