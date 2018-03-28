@@ -22,8 +22,8 @@ targetCompatibility = 1.8
 
 
 jar {
-	baseName = 'csye6225-assign5'
-	version =  '0.5.1'
+	baseName = 'csye6225-assign7'
+	version =  '1.7.1'
 }
 
 
@@ -62,9 +62,6 @@ dependencies {
 
 }
 
-test {
-
-}
 
 war {
 	archivesBaseName = 'ROOT'
