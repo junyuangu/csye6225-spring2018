@@ -16,7 +16,7 @@ apply plugin:  'war'
 apply plugin: "io.spring.dependency-management"
 
 group = 'neu.csye6225'
-version = '0.7.1-SNAPSHOT'
+version = '1.7.1-RELEASE'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -67,5 +67,5 @@ test {
 }
 
 war {
-	archivesBaseName = 'ROOT.war'
+	archivesBaseName = 'ROOT'
 }

@@ -6,7 +6,7 @@ import neu.csye6225.entity.UserInfo;
 import org.springframework.context.annotation.Profile;
 
 import java.util.List;
-@Profile("production")
+@Profile("aws")
 public interface IUserServiceProduct {
     void deleteByName(String name);
     void save(UserInfo user);

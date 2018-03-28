@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 // This will be AUTO IMPLEMENTED by Spring into a Bean called IPictureRepository.
 // CRUD refers Create, Read, Update, Delete.
-@Profile("production")
+@Profile("aws")
 public interface IUserInfoRepository extends CrudRepository<UserInfo, String> {
 
 }

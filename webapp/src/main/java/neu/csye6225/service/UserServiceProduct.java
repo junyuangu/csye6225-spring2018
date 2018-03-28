@@ -25,7 +25,7 @@ import java.util.List;
  * @author  Junyuan GU
  * @NUid    001825583
  */
-@Profile("production")
+@Profile("aws")
 @EnableWebMvc
 @Service
 @Transactional

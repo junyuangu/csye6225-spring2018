@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
-@Profile("production")
+@Profile("aws")
 @Controller
 public class ProductUsingS3Controller {
     private final static Logger logger = LoggerFactory.getLogger(ProductUsingS3Controller.class);

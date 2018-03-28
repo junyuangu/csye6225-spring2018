@@ -79,7 +79,7 @@
                                     {"Ref":"rdsParamUsername"},
                                     " -Dspring.datasource.password=",
                                     {"Ref":"rdsParamPassword"},
-                                    " -Dspring.profiles.active=production",
+                                    " -Dspring.profiles.active=aws",
                                     "\"' >> /usr/share/tomcat8/bin/setenv.sh \n"
                                   ]
                                ]
