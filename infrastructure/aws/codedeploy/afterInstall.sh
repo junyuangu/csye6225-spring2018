@@ -6,3 +6,4 @@
 cd /var/lib/tomcat8/webapps
 sudo chown tomcat8:tomcat8 ROOT.war
 sudo chmod 777 ROOT.war
+sudo systemctl restart tomcat8
