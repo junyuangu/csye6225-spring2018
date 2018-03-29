@@ -55,12 +55,10 @@ dependencies {
 	//lib for Assign6&7
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk
 	compile(group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.11.294')
-	//Use Mysql Connector-Java
-	runtime('mysql:mysql-connector-java')
+	runtime('org.springframework.boot:spring-boot-devtools')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
-
-
 	runtime('mysql:mysql-connector-java')
+
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 
 }
