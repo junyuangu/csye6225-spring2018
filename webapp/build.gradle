@@ -56,7 +56,7 @@ dependencies {
 
 	//Very Important!!!
 	//Notice: if debug with Spring Boot embedded Tomcat Server, there's no need for external tomcat configuration.
-	//BUT, if deploy to an designated tomcat server, must use following configuration.
+	//BUT, if deploy to an designated tomcat server, must use the providedRuntime configuration.
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 
 

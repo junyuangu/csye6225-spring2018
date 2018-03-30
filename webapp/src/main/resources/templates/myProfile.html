@@ -12,9 +12,8 @@
 <p th:text="| Date: ${currentTime}|">Date: </p>
 <!--/*@thymesVar id="fileTemporaryPath" type="java.lang.String"*/-->
 <!--<img th:src="@{${fileTemporaryPath}}" th:height="320" th:width="200"/>-->
-<img th:src="@{'../upload/default.png'}" th:height="320" th:width="240"/>
+<img src="${fileTemporaryPath}" alt="Profile picture" width="320" height="200">
 
-<img src="../upload/default.png" height="320px" width="240px"/>
 <br/>
 <h3>About Me</h3>
 
