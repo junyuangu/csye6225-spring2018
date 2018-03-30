@@ -12,7 +12,7 @@
 
 <!--/*@thymesVar id="fileTemporaryPath" type="java.lang.String"*/-->
 <!--img th:src="@{${fileTemporaryPath}}" th:height="320" th:width="200"/-->
-<img src="[[${fileTemporaryPath}]]" alt="Profile picture" width="320" height="200"/> <br/>
+<img src="${fileTemporaryPath}" alt="Profile picture" width="320" height="200"/> <br/>
 <p th:text="|The picture source link: ${fileTemporaryPath}|">Link:</p>
 
 
