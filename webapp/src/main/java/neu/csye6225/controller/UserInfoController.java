@@ -95,11 +95,12 @@ public class UserInfoController {
 			mav.addObject( "currentTime", new Date().toString() );
 
 			String filepath = userInfoService.findPicPathByUsername(username);
-			String relativePath = "../" + filepath;
+			int index = filepath.indexOf("upload/");
+			String relativePath = "../" + filepath.substring(index);
 			mav.addObject("fileTemporaryPath", relativePath);
 			logger.info( filepath );
-			//String aboutMe = userInfoService.findDescriptionByUsername(username);
-			//mav.addObject( "aboutMeDescription", aboutMe );
+			String aboutMe = userInfoService.findAboutmeByUsername(username);
+			mav.addObject( "aboutMeDescription", aboutMe );
 			authState = true;
 			return mav;
 		}
@@ -176,7 +177,9 @@ public class UserInfoController {
 		mav.addObject( "currentTime", new Date().toString() );
 
 		String filepath = userInfoService.findPicPathByUsername(userName);
-		mav.addObject("fileTemporaryPath", filepath);
+		int index = filepath.indexOf("upload/");
+		String relativePath = "../" + filepath.substring(index);
+		mav.addObject("fileTemporaryPath", relativePath);
 		String aboutMe = userInfoService.findAboutmeByUsername(userName);
 		mav.addObject( "aboutMeDescription", aboutMe );
 		logger.info( filepath );
@@ -249,7 +252,9 @@ public class UserInfoController {
 			mav.addObject( "loginUser", userName );
 			mav.addObject( "currentTime", new Date().toString() );
 			String filePath = userInfoService.findPicPathByUsername( userName );
-			mav.addObject("fileTemporaryPath", filePath);
+			int index = filePath.indexOf("upload/");
+			String relativePath = "../" + filePath.substring(index);
+			mav.addObject("fileTemporaryPath", relativePath);
 			mav.addObject( "defaultPath", "../upload/default.png" );
 			String aboutMe = userInfoService.findAboutmeByUsername( userName );
 			if( aboutMe != null ) {
