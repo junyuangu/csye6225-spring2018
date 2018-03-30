@@ -3,6 +3,7 @@ package neu.csye6225.controller;
 import neu.csye6225.Util.BCryptUtil;
 import neu.csye6225.entity.UserInfo;
 import neu.csye6225.service.IUserInfoService;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,9 +96,19 @@ public class UserInfoController {
 			mav.addObject( "currentTime", new Date().toString() );
 
 			String filepath = userInfoService.findPicPathByUsername(username);
-			int index = filepath.indexOf("upload/");
-			String relativePath = "../" + filepath.substring(index);
-			mav.addObject("fileTemporaryPath", relativePath);
+			if(filepath==null) {
+				mav.addObject("fileTemporaryPath", "../upload/default.png");
+				String aboutMe = userInfoService.findAboutmeByUsername(username);
+				mav.addObject( "aboutMeDescription", aboutMe );
+				authState = true;
+				return mav;
+			}
+//			int index = filepath.indexOf("upload/");
+//			if( index<0 )
+//				mav.addObject("fileTemporaryPath", "../upload/default.png");
+//
+//			String relativePath = "../" + filepath.substring(index);
+			mav.addObject("fileTemporaryPath", filepath);
 			logger.info( filepath );
 			String aboutMe = userInfoService.findAboutmeByUsername(username);
 			mav.addObject( "aboutMeDescription", aboutMe );
@@ -177,9 +188,17 @@ public class UserInfoController {
 		mav.addObject( "currentTime", new Date().toString() );
 
 		String filepath = userInfoService.findPicPathByUsername(userName);
-		int index = filepath.indexOf("upload/");
-		String relativePath = "../" + filepath.substring(index);
-		mav.addObject("fileTemporaryPath", relativePath);
+		if(filepath==null) {
+			logger.info("filePath is null.");
+			mav.addObject("fileTemporaryPath", "../upload/default.png");
+			String aboutMe = userInfoService.findAboutmeByUsername(userName);
+			mav.addObject( "aboutMeDescription", aboutMe );
+			authState = true;
+			return mav;
+		}
+		//int index = filepath.indexOf("upload/");
+		//String relativePath = "../" + filepath.substring(index);
+		mav.addObject("fileTemporaryPath", filepath);
 		String aboutMe = userInfoService.findAboutmeByUsername(userName);
 		mav.addObject( "aboutMeDescription", aboutMe );
 		logger.info( filepath );
@@ -252,9 +271,11 @@ public class UserInfoController {
 			mav.addObject( "loginUser", userName );
 			mav.addObject( "currentTime", new Date().toString() );
 			String filePath = userInfoService.findPicPathByUsername( userName );
-			int index = filePath.indexOf("upload/");
-			String relativePath = "../" + filePath.substring(index);
-			mav.addObject("fileTemporaryPath", relativePath);
+            if( filePath==null )
+                filePath = "../upload/default.png";
+			//int index = filePath.indexOf("upload/");
+			//String relativePath = "../" + filePath.substring(index);
+			mav.addObject("fileTemporaryPath", filePath);
 			mav.addObject( "defaultPath", "../upload/default.png" );
 			String aboutMe = userInfoService.findAboutmeByUsername( userName );
 			if( aboutMe != null ) {
@@ -274,7 +295,8 @@ public class UserInfoController {
 			logger.info(errMsg);
 			return new ModelAndView( "403", "errorMessage", errMsg );
 		}
-		String path = System.getProperty("user.dir") + "/src/main/resources/upload/";
+		//String path = System.getProperty("user.dir") + "/src/main/resources/upload/";
+		String path = System.getProperty("java.io.tmpdir") + "/";
 		String filename = path + "default.png";
 		// update file path in the database
 		userInfoService.updatePicture( filename, app_username );
@@ -307,14 +329,15 @@ public class UserInfoController {
 
 		// Get the default temporary file path
 		//String path = System.getProperty("java.io.tmpdir");
-		String path = System.getProperty("user.dir") + "/src/main/resources/";		//Absolute Project Path
+		//String path = System.getProperty("user.dir") + "/src/main/resources/";		//Absolute Project Path
+		String path = System.getProperty("java.io.tmpdir");
 
 		logger.info(path);
 		if (!multipartFile.isEmpty()) {
 			String filename = multipartFile.getOriginalFilename();
 			//check the file type of uploading file, if it is an image.
 			String suffix = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-			String filePath = path + "upload/";
+			String filePath = path + "/";
 			String newFileName =  System.currentTimeMillis() + "." + suffix;
 			if ( !suffix.equals("png") && !suffix.equals("jpg") && !suffix.equals("jpeg") ) {
 				//FileUtils.copyInputStreamToFile(multipartFile.getInputStream(),new File(path + "//upload//", System.currentTimeMillis() + "." + suffix));
