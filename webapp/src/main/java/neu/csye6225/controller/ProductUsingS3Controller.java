@@ -48,6 +48,12 @@ public class ProductUsingS3Controller {
     @Autowired
     private Environment env;
 
+    @ModelAttribute("userInfo")
+    public UserInfo getUserInfo(){
+        UserInfo userInfo  = new UserInfo( "elfred012@gmail.com", "root1234");
+        return userInfo;
+    }
+
     @RequestMapping(value = {"", "#","index"}, method= {RequestMethod.GET})
     public ModelAndView indexProduct( HttpServletRequest request ){
         session = request.getSession();
