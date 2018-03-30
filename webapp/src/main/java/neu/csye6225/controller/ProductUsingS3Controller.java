@@ -187,9 +187,13 @@ public class ProductUsingS3Controller {
             mav.setViewName("myProfile");
             mav.addObject( "loginUser", userName );
             mav.addObject( "currentTime", new Date().toString() );
-            String filePath = userInfoServiceProduct.findPicPathByUsername( userName );
 
-            String reFilePath = productRetrieveFileFromS3( filePath, userName );
+            String reFilePath = new String();
+            String filePath = userInfoServiceProduct.findPicPathByUsername( userName );
+            if( filePath==null )
+                reFilePath = imgPlaceHolder;
+            else
+                reFilePath = productRetrieveFileFromS3( filePath, userName );
             logger.info( reFilePath );
             mav.addObject("fileTemporaryPath", reFilePath);
             mav.addObject( "defaultPath", "../upload/default.png" );
@@ -238,9 +242,13 @@ public class ProductUsingS3Controller {
             mav.addObject( "loginUser", username );
             mav.addObject( "currentTime", new Date().toString() );
 
+            String reFilePath = new String();
             String fileName = userInfoServiceProduct.findPicPathByUsername( username );
-            //Retrieve the Image URI from S3 Bucket
-            String reFilePath = productRetrieveFileFromS3( fileName, username );
+            if( fileName==null )
+                reFilePath = imgPlaceHolder;
+            else
+                //Retrieve the Image URI from S3 Bucket
+                reFilePath = productRetrieveFileFromS3( fileName, username );
             logger.info( "File Path read from S3: " + reFilePath );
             mav.addObject( "fileTemporaryPath", reFilePath );
 
