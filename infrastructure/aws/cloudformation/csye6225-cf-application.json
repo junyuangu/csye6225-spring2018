@@ -1,32 +1,105 @@
 {
     "AWSTemplateFormatVersion" : "2010-09-09",
-    "Description" : "csye6225 spring2018 for assignment5",
+    "Description" : "csye6225 spring2018 for assignment6&7, using free-tier AWS resources.",
     "Resources" : {
-       "MyEC2Instance" : {
+      "MyDBInstance" : {
+        "Type" : "AWS::RDS::DBInstance",
+        "Properties" : {
+           "AllocatedStorage" : { "Ref" : "rdsParamStorageSize" },
+           "DBName" : { "Ref" : "rdsParamDBName" },
+           "Engine" : { "Ref" : "rdsParamEngine" },
+           "EngineVersion" : { "Ref" : "rdsParamEngineVersion" },
+           "DBInstanceClass" :  { "Ref" : "rdsParamDBInsClass" },
+           "MultiAZ" : "FALSE",
+           "DBInstanceIdentifier" : { "Ref" : "rdsParamDBInsId" },
+           "MasterUsername" : {"Ref" : "rdsParamUsername"},
+           "MasterUserPassword" : {"Ref" : "rdsParamPassword"},
+           "PubliclyAccessible" : "FALSE",
+           "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
+           "VPCSecurityGroups": [ { "Ref" : "RDSSecurityGroupId" } ]
+         }
+       },
+
+      "MyEC2Instance" : {
           "Type" : "AWS::EC2::Instance",
+          "DependsOn": "MyDBInstance",
           "Properties" : {
-             "ImageId" : "ami-66506c1c",
-             "InstanceType" : "t2.micro",
+             "ImageId" : { "Ref" : "ImageIdOfEC2Instance" },
+             "InstanceType" : { "Ref" : "TypeOfEC2Instance" },
              "DisableApiTermination" : "true",
              "InstanceInitiatedShutdownBehavior" : "stop",
-             "BlockDeviceMappings" : [
-                {
-                   "DeviceName" : "/dev/sda1",
+             "SubnetId": {"Ref" : "EC2SubnetId"},
+             "SecurityGroupIds": [{"Ref" : "WebServerSecurityGroupId"}],
+             "KeyName" : { "Ref" : "ExistingKeyPairName" },
+             "BlockDeviceMappings" : [ {
+                   "DeviceName" : "/dev/sdf",
                    "Ebs" : {
-                      "VolumeType" : "gp2",
+                      "VolumeType" : { "Ref" : "EC2VolumeType" },
                       "DeleteOnTermination" : "false",
-                      "VolumeSize" : "16"
+                      "VolumeSize" : { "Ref" : "EC2VolumeSize" }
                    }
-                }
-             ],
-             "Tags" : [
-                {
-                    "Key" : "Name",
-                    "Value" : { "Ref" : "InstanceName" }
-                }
-             ]
+             } ],
+             "IamInstanceProfile": { "Ref" : "CodeDeployEC2ServiceRoleInsProfile" },
+             "Tags" : [ {
+                    "Key" : { "Ref" : "TagKey" },
+                    "Value" : { "Ref" : "EC2InstanceTagValue" }
+             } ],
+             "UserData": {
+                 "Fn::Base64": {
+                     "Fn::Join": [
+                         "\n",
+                         [
+                             "#!/bin/bash -xe ",
+                             "sudo apt-get update ",
+                             "sudo apt-get install openjdk-8-jdk -y",
+                             "sudo apt-get install ruby -y ",
+                             "sudo apt-get install wget -y ",
+                             "sudo apt-get install python -y ",
+                             "sudo apt-get update ",
+                             "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install ",
+                             "sudo chmod +x ./install ",
+                             "sudo ./install auto ",
+                             "sudo service codedeploy-agent start ",
+                             "sudo apt-get install tomcat8 -y ",
+                             {
+                                "Fn::Join": [
+                                   "",
+                                   [
+                                     "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.url=\\\"jdbc:mysql://",
+                                     { "Fn::GetAtt": [ "MyDBInstance", "Endpoint.Address" ] },
+                                     ":3306/csye6225\\\"\"' >> /etc/default/tomcat8 \n"
+                                   ]
+                                ]
+                             },
+                             {
+                               "Fn::Join": [
+                                  "",
+                                  [
+                                    "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.username=",
+                                    {"Ref":"rdsParamUsername"},
+                                    " -Dspring.datasource.password=",
+                                    {"Ref":"rdsParamPassword"},
+                                    " -Dspring.profiles.active=aws",
+                                    "\"' >> /usr/share/tomcat8/bin/setenv.sh \n"
+                                  ]
+                               ]
+                             },
+                             "sudo service tomcat8 restart "
+                         ]
+                     ]
+                 }
+             }
           }
-       },
+      },
+
+      "CodeDeployEC2ServiceRoleInsProfile": {
+    			"Type": "AWS::IAM::InstanceProfile",
+    			"Properties": {
+    				"Path": "/",
+    				"Roles":[ "CodeDeployEC2ServiceRole"]
+    			}
+    	},
+
       "myDynamoDBTable" : {
         "Type" : "AWS::DynamoDB::Table",
         "Properties" : {
@@ -45,41 +118,183 @@
           "ProvisionedThroughput" : {
               "ReadCapacityUnits" : "5",
               "WriteCapacityUnits" : "5"
-            },
-            "TableName" : "csye6225"
-          }
+          },
+          "TableName" : "csye6225"
+        }
       },
-      "RecordServiceS3Bucket" : {
+      "S3Bucket" : {
   	     "Type" : "AWS::S3::Bucket",
          "Properties" : {
-      	    "BucketName" : "s3.csye6225-spring2018-guju.me.com"
+      	    "BucketName" : { "Ref" : "WebAppS3BucketName" }
       	  }
-      },
-
-     "MyDB" : {
-       "Type" : "AWS::RDS::DBInstance",
-       "Properties" : {
-          "DBName" : "csye6225",
-          "Engine" : "MySQL",
-          "EngineVersion" : "5.6.37",
-          "DBInstanceClass" : "db.t2.medium",
-          "MultiAZ" : "false",
-          "DBInstanceIdentifier" : "csye6225-spring2018",
-          "MasterUsername" : "csye6225master",
-          "MasterUserPassword" : "csye6225password",
-          "PubliclyAccessible" : "false",
-          "Tags" : [ { "Key" : "Name", "Value" : "csye6225" } ],
-          "AllocatedStorage" : "10"
-        }
       }
 
     },
 
-     "Parameters" : {
-        "InstanceName" : {
-            "Type" : "String"
+    "Outputs": {
+        "InstanceId": {
+            "Description": "InstanceId of the newly created EC2 instance",
+            "Value": {
+                "Ref": "MyEC2Instance"
+            }
+        },
+        "AZ": {
+            "Description": "Availability Zone of the newly created EC2 instance",
+            "Value": {
+                "Fn::GetAtt": [
+                    "MyEC2Instance",
+                    "AvailabilityZone"
+                ]
+            }
+        },
+        "PublicDNS": {
+            "Description": "Public DNSName of the newly created EC2 instance",
+            "Value": {
+                "Fn::GetAtt": [
+                    "MyEC2Instance",
+                    "PublicDnsName"
+                ]
+            }
+        },
+        "PublicIP": {
+            "Description": "Public IP address of the newly created EC2 instance",
+            "Value": {
+                "Fn::GetAtt": [
+                    "MyEC2Instance",
+                    "PublicIp"
+                ]
+            }
         }
-     }
+    },
+
+    "Parameters" : {
+        "ImageIdOfEC2Instance": {
+          "Description" : "ImageId of EC2 Instance",
+          "Type": "String",
+          "Default" : "ami-66506c1c"
+        },
+        "TypeOfEC2Instance": {
+          "Description" : "InstanceType of EC2 Instance",
+          "Type": "String",
+          "Default" : "t2.micro"
+        },
+
+        "WebServerSecurityGroupId" : {
+          "Description" : "Group ID of Web Server Security Group",
+          "Type": "AWS::EC2::SecurityGroup::Id",
+          "Default" : " "
+        },
+
+        "EC2SubnetId" : {
+          "Description" : "EC2 Subnet ID",
+          "Type": "AWS::EC2::Subnet::Id",
+          "Default" : " "
+        },
+
+        "RDSSecurityGroupId" : {
+          "Description" : "Security Group ID of RDS",
+          "Type": "AWS::EC2::SecurityGroup::Id",
+          "Default" : " "
+        },
+
+        "EC2VolumeType" : {
+          "Description" : "EC2 Volume type",
+          "Type" : "String",
+          "Default" : "gp2"
+        },
+
+        "EC2VolumeSize" : {
+          "Description" : "EC2 Volume size",
+          "Type" : "String",
+          "Default" : "16"
+        },
+
+        "ExistingKeyPairName" : {
+          "Description" : "Attach an Existing Key Pair to the EC2 Instance",
+          "Type" : "String",
+          "Default" : " "
+        },
+
+        "TagKey" : {
+          "Description" : " EC2 instance tag Key ",
+          "Type" : "String",
+          "Default" : "Name"
+        },
+
+        "EC2InstanceTagValue" : {
+            "Description" : " EC2 instance tag Value ",
+            "Type" : "String",
+            "Default" : "MyEC2ForCodeDeployInstance"
+        },
+
+        "WebAppS3BucketName" : {
+          "Description" : "S3 Bucket Name for storing profile pictures uploaded by users",
+          "Type" : "String",
+          "Default" : "s3.csye6225-spring2018-guju.me"
+
+        },
+
+        "rdsParamStorageSize" : {
+          "Description" : "Allocated Storage for RDS",
+          "Type" : "String",
+          "Default" : "10"
+        },
+
+        "rdsParamDBName" : {
+          "Description" : "DB Name for RDS",
+          "Type" : "String",
+          "Default" : "csye6225"
+        },
+
+        "rdsParamEngine" : {
+          "Description" : "Engine Type for RDS DB",
+          "Type" : "String",
+          "Default" : "MySQL"
+        },
+
+        "rdsParamEngineVersion" : {
+          "Description" : "Engine version for RDS DB",
+          "Type" : "String",
+          "Default" : "5.6.37"
+        },
+
+        "rdsParamDBInsClass" : {
+          "Description" : "Instance Class for RDS DB",
+          "Type" : "String",
+          "Default" : "db.t2.medium"
+        },
+
+        "rdsParamDBInsId" : {
+          "Description" : "Instance Identifier for RDS DB",
+          "Type" : "String",
+          "Default" : "RDS-csye6225-spring2018"
+        },
+
+        "rdsParamUsername" : {
+  				"Description": "database username",
+  				"Type" : "String",
+          "Default" : "csye6225master"
+  			},
+
+  			"rdsParamPassword" : {
+  				"Description" : "database password",
+  				"Type" : "String",
+          "Default" : "csye6225password"
+  			},
+
+        "rdsParamDBTagVal" : {
+          "Description" : "Tag Value for RDS DB instance",
+          "Type" : "String",
+          "Default" : "csye6225MyDBInstance"
+        },
+
+        "DBSubnetGroup" : {
+          "Description" : "Group Name for RDS DataBase Subnet Group",
+          "Type" : "String",
+          "Default" : "RDSsubnet-group"
+        }
+
+    }
 
 
  }

@@ -14,14 +14,14 @@ apply plugin: 'org.springframework.boot'
 apply plugin:  'war'
 
 group = 'neu.csye6225'
-version = '0.5.1-SNAPSHOT'
+version = '0.7.2-RELEASE'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 
 jar {
 	baseName = 'csye6225-assign5'
-	version =  '0.5.1'
+	version =  '0.7.1'
 }
 
 
@@ -49,9 +49,19 @@ dependencies {
 	compile('org.apache.commons:commons-lang3:+')
 	compile('org.apache.httpcomponents:httpclient:+')
 
+	//lib for Assign6&7
+	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk
+	compile(group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.11.294')
+	runtime('org.springframework.boot:spring-boot-devtools')
+
+	//Very Important!!!
+	//Notice: if debug with Spring Boot embedded Tomcat Server, there's no need for external tomcat configuration.
+	//BUT, if deploy to an designated tomcat server, must use the providedRuntime configuration.
+	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+
+
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-
 }
 
 test {
@@ -59,5 +69,6 @@ test {
 }
 
 war {
-	archivesBaseName = 'ROOT.war'
+	//archivesBaseName = 'ROOT'
+	archiveName = 'ROOT.war'
 }

@@ -2,7 +2,7 @@
 set -e
 #Author: Junyuan Gu
 echo "Author: Junyuan Gu"
-echo "        gu.ju@husky.neu.edu"
+echo "Email:  gu.ju@husky.neu.edu"
 #Usage: setting up our networking resources such as Virtual Private Cloud (VPC), Internet Gateway, Route Table and Routes using AWS Cloud Formation
 
 
@@ -33,7 +33,7 @@ gatewayId=`aws ec2 describe-internet-gateways --filter "Name=tag:Name,Values=${S
 aws ec2 create-tags --resources $gatewayId --tags Key=Name,Value=$STACK_NAME-csye6225-InternetGateway
 
 #Find Route Table
-routeTableId=`aws ec2 describe-route-tables --filter "Name=tag:Name,Values=${STACK_NAME}" --query 'RouteTables[*].{id:RouteTableId}' --output text` 
+routeTableId=`aws ec2 describe-route-tables --filter "Name=tag:Name,Values=${STACK_NAME}" --query 'RouteTables[*].{id:RouteTableId}' --output text`
 #Rename Route Table
 aws ec2 create-tags --resources $routeTableId --tags Key=Name,Value=$STACK_NAME-csye6225-public-route-table
 

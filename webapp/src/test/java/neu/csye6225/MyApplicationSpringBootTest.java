@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = MockServletContext.class)
 @WebAppConfiguration
-public class MyApplicationTest {
+public class MyApplicationSpringBootTest {
 
 	private MockMvc mockMvc;
 

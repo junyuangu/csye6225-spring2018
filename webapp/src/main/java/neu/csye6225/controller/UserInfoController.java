@@ -6,6 +6,7 @@ import neu.csye6225.service.IUserInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +32,7 @@ import java.util.List;
 @EnableWebMvc //make Autowired effective
 @Controller
 @RequestMapping("/")
+@Profile("dev")
 public class UserInfoController {
 	private final static Logger logger = LoggerFactory.getLogger(UserInfoController.class);
 	private boolean authState = false;
@@ -93,11 +95,12 @@ public class UserInfoController {
 			mav.addObject( "currentTime", new Date().toString() );
 
 			String filepath = userInfoService.findPicPathByUsername(username);
-			String relativePath = "../" + filepath;
+			int index = filepath.indexOf("upload/");
+			String relativePath = "../" + filepath.substring(index);
 			mav.addObject("fileTemporaryPath", relativePath);
 			logger.info( filepath );
-			//String aboutMe = userInfoService.findDescriptionByUsername(username);
-			//mav.addObject( "aboutMeDescription", aboutMe );
+			String aboutMe = userInfoService.findAboutmeByUsername(username);
+			mav.addObject( "aboutMeDescription", aboutMe );
 			authState = true;
 			return mav;
 		}
@@ -174,7 +177,9 @@ public class UserInfoController {
 		mav.addObject( "currentTime", new Date().toString() );
 
 		String filepath = userInfoService.findPicPathByUsername(userName);
-		mav.addObject("fileTemporaryPath", filepath);
+		int index = filepath.indexOf("upload/");
+		String relativePath = "../" + filepath.substring(index);
+		mav.addObject("fileTemporaryPath", relativePath);
 		String aboutMe = userInfoService.findAboutmeByUsername(userName);
 		mav.addObject( "aboutMeDescription", aboutMe );
 		logger.info( filepath );
@@ -247,7 +252,9 @@ public class UserInfoController {
 			mav.addObject( "loginUser", userName );
 			mav.addObject( "currentTime", new Date().toString() );
 			String filePath = userInfoService.findPicPathByUsername( userName );
-			mav.addObject("fileTemporaryPath", filePath);
+			int index = filePath.indexOf("upload/");
+			String relativePath = "../" + filePath.substring(index);
+			mav.addObject("fileTemporaryPath", relativePath);
 			mav.addObject( "defaultPath", "../upload/default.png" );
 			String aboutMe = userInfoService.findAboutmeByUsername( userName );
 			if( aboutMe != null ) {

@@ -2,6 +2,7 @@ package neu.csye6225.dao;
 
 
 import neu.csye6225.entity.UserInfo;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,6 +21,7 @@ import java.util.List;
 //@EnableWebMvc
 @Repository
 //@Transactional
+@Profile("dev")
 public class UserInfoDAO implements IUserInfoDAO {
 	//@Autowired
 	@Resource

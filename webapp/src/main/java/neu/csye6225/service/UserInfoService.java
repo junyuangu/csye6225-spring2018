@@ -9,6 +9,7 @@ import neu.csye6225.entity.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -25,6 +26,7 @@ import java.util.List;
 @EnableWebMvc
 @Service
 @Transactional
+@Profile("dev")
 public class UserInfoService implements IUserInfoService {
 	private final static Logger logger = LoggerFactory.getLogger(UserInfoService.class);
 	//@Autowired

@@ -1,6 +1,6 @@
 {
 
-  "Description" : "This template is for csye6225-spring2018 assignment5.",
+  "Description" : "This template is for csye6225-spring2018 assignment 5, 6 and 7.",
 
   "Resources" : {
     "VPC" : {
@@ -8,8 +8,8 @@
       "Properties" : {
         "CidrBlock" : "10.0.0.0/16",
         "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		   {"Key" : "Name", "Value" : {"Ref" : "AWS::StackName"} }
-		 ]
+		               {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" } }
+                 ]
       }
     },
 
@@ -17,8 +17,8 @@
       "Type" : "AWS::EC2::InternetGateway",
       "Properties" : {
         "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		   {"Key" : "Name", "Value" : {"Ref" : "AWS::StackName"} }
-		 ]
+		               {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" } }
+                 ]
       }
     },
 
@@ -63,6 +63,7 @@
          "Properties" : {
             "VpcId" : { "Ref" : "VPC" },
             "CidrBlock" : "10.0.0.0/24",
+            "MapPublicIpOnLaunch": true,
             "AvailabilityZone" : "us-east-1a",
             "Tags" : [ { "Key" : "Name", "Value" : "SubnetForWebServers" } ]
          }
@@ -93,8 +94,7 @@
       "WebServerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
- 	"GroupName":"WebServerSecurityGroup",
-        "GroupDescription" : "Enable TCP access via port 22, 80 and 443",
+        "GroupDescription" : "Enable TCP access via port 22, 80, 443 and 8080",
         "VpcId":{"Ref":"VPC"},
         "SecurityGroupIngress" : [ {
           "IpProtocol" : "tcp",
@@ -113,35 +113,44 @@
            "FromPort": "443",
            "ToPort": "443",
            "CidrIp": "0.0.0.0/0"
+         },
+         {
+            "IpProtocol": "tcp",
+            "FromPort": "8080",
+            "ToPort": "8080",
+            "CidrIp": "0.0.0.0/0"
          }
        ]
       }
     },
-      "DBServerSecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
- 	"GroupName":"DBServerSecurityGroup",
-        "GroupDescription" : "Enable TCP access via port 3306",
-        "VpcId":{"Ref":"VPC"},
-        "SecurityGroupIngress" : [ {
-          "IpProtocol" : "tcp",
-          "FromPort" : "3306",
-          "ToPort" : "3306",
-          "SourceSecurityGroupId" : {"Ref" : "WebServerSecurityGroup"}
-         }
-       ]
-      }
+
+    "DBServerSecurityGroup" : {
+        "Type" : "AWS::EC2::SecurityGroup",
+        "Properties" : {
+            "GroupDescription" : "EC2 Security Group for RDS DB. Enable TCP access via port 3306",
+            "VpcId": { "Ref" : "VPC" },
+            "SecurityGroupIngress" : [ {
+              "IpProtocol" : "tcp",
+              "FromPort" : "3306",
+              "ToPort" : "3306",
+              "SourceSecurityGroupId" : {"Ref" : "WebServerSecurityGroup"}
+             }
+           ]
+        }
     },
-   "DBSecurityGroup": {
-   "Type": "AWS::RDS::DBSecurityGroup",
-   "Properties": {
-      "EC2VpcId" : { "Ref" : "VPC" },
-      "DBSecurityGroupIngress": [
-         {"EC2SecurityGroupId": { "Ref": "DBServerSecurityGroup"}}
-      ],
-      "GroupDescription": "Allow 3306 to DB"
-      }
-   }
+
+    "RDSDBSubnetGroup": {
+        "Type": "AWS::RDS::DBSubnetGroup",
+        "Properties": {
+            "DBSubnetGroupDescription": "Subnets for RDS instances",
+            "DBSubnetGroupName": "RDSsubnet-group",
+            "SubnetIds" : [
+                { "Ref": "SubnetForDBServers" },
+                { "Ref": "SubnetForWebServers" }
+            ]
+        }
+    }
+
  },
   "Parameters" : {
 	"ParamPublicRouteTableName" : {

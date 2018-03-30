@@ -3,6 +3,7 @@ package neu.csye6225.service;
 import neu.csye6225.entity.Description;
 import neu.csye6225.entity.Picture;
 import neu.csye6225.entity.UserInfo;
+import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * @author  Junyuan GU
  * @NUid    001825583
  */
+@Profile("dev")
 public interface IUserInfoService {
     void deleteByName(String name);
     boolean save(UserInfo user);
