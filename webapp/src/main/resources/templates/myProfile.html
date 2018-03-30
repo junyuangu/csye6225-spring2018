@@ -11,18 +11,17 @@
 <!--/*@thymesVar id="currentTime" type="java.lang.String"*/-->
 <p th:text="| Date: ${currentTime}|">Date: </p>
 <!--/*@thymesVar id="fileTemporaryPath" type="java.lang.String"*/-->
-<img th:src="@{${fileTemporaryPath}}" height="320px" width="240px" alt="Image Holder"/>
-<!--<img th:src="@{'../upload/default.png'}" th:height="320" th:width="240"/>-->
+<!--<img th:src="@{${fileTemporaryPath}}" th:height="320" th:width="200"/>-->
+<img th:src="@{'../upload/default.png'}" th:height="320" th:width="240"/>
 
-
-
+<img src="../upload/default.png" height="320px" width="240px"/>
 <br/>
 <h3>About Me</h3>
 
 <!--/*@thymesVar id="authState" type="java.lang.String"*/-->
 <div th:if=" ${authState} == 'false' ">
     <form class="form-editPic"  action="/aboutMe-searchByUser" method="post">
-        <label th:for="aboutMeSearch" id="userDescription" name="lblForAboutMeSearch">Input Username:</label>
+        <label th:for="aboutMeSearch" id="userDescription" name="aboutMeSearch">Input Username:</label>
         <input id="searchUsername"  type="text" name="aboutMeSearch" />
         <input id="forwardUploadPicBtn" type="submit" value="Enter Username" tabindex="3" />
     </form>

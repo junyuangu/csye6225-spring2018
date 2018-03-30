@@ -4,7 +4,6 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE")
-		classpath("io.spring.gradle:dependency-management-plugin:0.5.4.RELEASE")
 	}
 }
 
@@ -13,17 +12,16 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin:  'war'
-apply plugin: "io.spring.dependency-management"
 
 group = 'neu.csye6225'
-//version = '1.7.1-RELEASE'
+version = '0.7.2-RELEASE'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 
 jar {
-	baseName = 'csye6225-assign7'
-	//version =  '1.7.1'
+	baseName = 'csye6225-assign5'
+	version =  '0.7.1'
 }
 
 
@@ -37,8 +35,7 @@ dependencies {
 
 	//compile('org.springframework.boot:spring-boot-starter-security')
 	compile(group: 'org.springframework.security', name: 'spring-security-core', version: '4.2.1.RELEASE')
-	//compile('org.springframework.boot:spring-boot-starter-thymeleaf')
-	compile(group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '1.5.10.RELEASE')
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 
@@ -56,14 +53,22 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk
 	compile(group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.11.294')
 	runtime('org.springframework.boot:spring-boot-devtools')
-	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
-	runtime('mysql:mysql-connector-java')
 
+	//Very Important!!!
+	//Notice: if debug with Spring Boot embedded Tomcat Server, there's no need for external tomcat configuration.
+	//BUT, if deploy to an designated tomcat server, must use following configuration.
+	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+
+
+	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+test {
 
 }
 
-
 war {
-	archivesBaseName = 'ROOT'
+	//archivesBaseName = 'ROOT'
+	archiveName = 'ROOT.war'
 }

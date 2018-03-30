@@ -29,8 +29,10 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
-@Profile("aws")
+
 @Controller
+@RequestMapping("/")
+@Profile("aws")
 public class ProductUsingS3Controller {
     private final static Logger logger = LoggerFactory.getLogger(ProductUsingS3Controller.class);
     private final static String imgPlaceHolder = "http://via.placeholder.com/240x320";
@@ -243,7 +245,7 @@ public class ProductUsingS3Controller {
         }
     }
 
-    @RequestMapping("/aboutMe-searchByUser")
+    @RequestMapping("aboutMe-searchByUser")
     public ModelAndView showAboutMeBySearch( @RequestParam("aboutMeSearch") String username ) {
 
         if( username==null ) {
@@ -272,7 +274,7 @@ public class ProductUsingS3Controller {
         return mav;
     }
 
-    @RequestMapping( method = {RequestMethod.GET,RequestMethod.POST}, value = "/deletePic" )
+    @RequestMapping( method = {RequestMethod.GET,RequestMethod.POST}, value = "deletePic" )
     public ModelAndView DeleteFileInS3Bucket (  Model model )  {
         String app_username = session.getAttribute("loginUserName").toString();
         logger.info( "app_username: " + app_username );
@@ -302,7 +304,7 @@ public class ProductUsingS3Controller {
         return mav;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/upload-toDb")
+    @RequestMapping(method = RequestMethod.POST, value = "upload-toDb")
     public ModelAndView UploadFileToS3Bucket( @RequestParam("uploadImg") MultipartFile file ) {
         ModelAndView mav = new ModelAndView();
         String app_username = session.getAttribute("loginUserName").toString();

@@ -1,8 +1,10 @@
 package neu.csye6225.controller;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @NUid    001825583
  * @date    02/15/2018
  */
-
 @RestController
 public class IndexController implements ErrorController {
 
@@ -25,5 +26,15 @@ public class IndexController implements ErrorController {
     @Override
     public String getErrorPath() {
         return PATH;
+    }
+
+    @Autowired
+    private Environment env;
+
+
+    @RequestMapping("/testProfile")
+    @Profile("test")
+    public String testProfile(){
+        return env.getProperty("profile");
     }
 }

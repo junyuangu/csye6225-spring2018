@@ -25,10 +25,11 @@ import java.util.List;
  * @author  Junyuan GU
  * @NUid    001825583
  */
-@Profile("aws")
+
 @EnableWebMvc
 @Service
 @Transactional
+@Profile("aws")
 public class UserServiceProduct implements IUserServiceProduct {
     private final static Logger logger = LoggerFactory.getLogger(UserInfoService.class);
     @Autowired

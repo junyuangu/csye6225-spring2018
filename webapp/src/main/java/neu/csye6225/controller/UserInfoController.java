@@ -6,6 +6,7 @@ import neu.csye6225.service.IUserInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.context.annotation.Profile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -30,9 +30,9 @@ import java.util.List;
  * @NUid    001825583
  */
 @EnableWebMvc //make Autowired effective
-@Profile("dev")
 @Controller
 @RequestMapping("/")
+@Profile("dev")
 public class UserInfoController {
 	private final static Logger logger = LoggerFactory.getLogger(UserInfoController.class);
 	private boolean authState = false;
@@ -94,11 +94,10 @@ public class UserInfoController {
 			mav.addObject( "loginUser", username );
 			mav.addObject( "currentTime", new Date().toString() );
 
-			String filePath = userInfoService.findPicPathByUsername(username);
-			int index = filePath.indexOf("/upload/");
-			String relaFilePath = ".." + filePath.substring(index);
-			mav.addObject("fileTemporaryPath", relaFilePath);
-			logger.info( relaFilePath );
+			String filepath = userInfoService.findPicPathByUsername(username);
+			String relativePath = "../" + filepath;
+			mav.addObject("fileTemporaryPath", relativePath);
+			logger.info( filepath );
 			//String aboutMe = userInfoService.findDescriptionByUsername(username);
 			//mav.addObject( "aboutMeDescription", aboutMe );
 			authState = true;
@@ -153,6 +152,7 @@ public class UserInfoController {
 			mav.setViewName("login");
 		    return mav;
     }
+
 
 	@GetMapping("authUser")
 	public ModelAndView authuser() {
@@ -249,10 +249,7 @@ public class UserInfoController {
 			mav.addObject( "loginUser", userName );
 			mav.addObject( "currentTime", new Date().toString() );
 			String filePath = userInfoService.findPicPathByUsername( userName );
-			int index = filePath.indexOf("/upload/");
-			String relaFilePath = ".." + filePath.substring(index);
-			logger.info( relaFilePath );
-			mav.addObject("fileTemporaryPath", relaFilePath);
+			mav.addObject("fileTemporaryPath", filePath);
 			mav.addObject( "defaultPath", "../upload/default.png" );
 			String aboutMe = userInfoService.findAboutmeByUsername( userName );
 			if( aboutMe != null ) {
@@ -324,6 +321,7 @@ public class UserInfoController {
 					logger.info( filePath + newFileName );
 					// saves the file on disk
 					multipartFile.transferTo( new File(filePath, newFileName) );
+					//FileUtils.copyInputStreamToFile( multipartFile.getInputStream(), new File(filePath, newFileName) );
 
 					// update file path in the database
 					userInfoService.updatePicture( filePath+newFileName, app_username );

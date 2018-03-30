@@ -3,7 +3,6 @@ package neu.csye6225.service;
 import neu.csye6225.dao.IUserInfoDAO;
 import neu.csye6225.entity.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -17,7 +16,6 @@ import java.util.Arrays;
  * @author  Junyuan GU
  * @NUid    001825583
  */
-@Profile("dev")
 public class MyAppUserDetailsService implements UserDetailsService {
 	@Autowired
 	private IUserInfoDAO userInfoDAO;

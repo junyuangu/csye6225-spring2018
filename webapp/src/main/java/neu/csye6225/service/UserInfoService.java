@@ -23,10 +23,10 @@ import java.util.List;
  * @author  Junyuan GU
  * @NUid    001825583
  */
-@Profile("dev")
 @EnableWebMvc
 @Service
 @Transactional
+@Profile("dev")
 public class UserInfoService implements IUserInfoService {
 	private final static Logger logger = LoggerFactory.getLogger(UserInfoService.class);
 	//@Autowired

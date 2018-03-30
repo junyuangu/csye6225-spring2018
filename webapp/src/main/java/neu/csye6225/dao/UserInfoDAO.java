@@ -18,10 +18,10 @@ import java.util.List;
  * @author  Junyuan GU
  * @NUid    001825583
  */
-@Profile("dev")
 //@EnableWebMvc
 @Repository
 //@Transactional
+@Profile("dev")
 public class UserInfoDAO implements IUserInfoDAO {
 	//@Autowired
 	@Resource
