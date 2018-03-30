@@ -431,6 +431,8 @@ public class ProductUsingS3Controller {
         if ( i != -1 ) {
             suffix = fileName.substring(i+1);
         }
+        else
+            return imgPlaceHolder;
         String bucketName = env.getProperty("bucket.name");
         s3client.createBucket(bucketName);
         String picName = app_username + "." + suffix;
