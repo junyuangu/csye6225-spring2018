@@ -55,6 +55,7 @@
                              "sudo apt-get install ruby -y ",
                              "sudo apt-get install wget -y ",
                              "sudo apt-get install python -y ",
+                             "sudo apt-get install mysql-client -y",
                              "sudo apt-get update ",
                              "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install ",
                              "sudo chmod +x ./install ",
@@ -80,11 +81,53 @@
                                     " -Dspring.datasource.password=",
                                     {"Ref":"rdsParamPassword"},
                                     " -Dspring.profiles.active=aws",
-                                    "\"' >> /usr/share/tomcat8/bin/setenv.sh \n"
+                                    "\"' >> /usr/share/tomcat8/bin/setenv.sh"
                                   ]
                                ]
                              },
-                             "sudo service tomcat8 restart "
+                             "sudo service tomcat8 restart ",
+
+
+                           "apt-get update -y",
+                           "apt-get install python -y",
+                           "sudo curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O",
+                           "chmod +x ./awslogs-agent-setup.py\n",
+                           "echo '[general]' >> /home/ubuntu/awslogs.conf",
+                           "echo 'state_file = /var/awslogs/state/agent-state' >> /home/ubuntu/awslogs.conf",
+                           "echo '[var/lib/tomcat8/logs]' >> /home/ubuntu/awslogs.conf",
+                           "echo 'file = /var/lib/tomcat8/logs/csye6225.log' >> /home/ubuntu/awslogs.conf",
+                           "echo 'log_group_name = /var/lib/tomcat8/logs'>> /home/ubuntu/awslogs.conf",
+                           "echo 'log_stream_name = {instance_id}' >> /home/ubuntu/awslogs.conf",
+                           "echo 'datetime_format = %d/%b/%Y:%H:%M:%S' >> /home/ubuntu/awslogs.conf",
+                           "sleep 3",
+                           "sudo python ./awslogs-agent-setup.py --region us-east-1 -c awslogs.conf",
+
+                           "sudo cd /etc/systemd/system",
+                           {
+                              "Fn::Join" : [
+                                "\n",
+                                [
+                                  "echo '[Unit]",
+                                  "Description=Service for CloudWatch Logs agent",
+                                  "After=rc-local.service\\\n",
+
+                                  "[Service]",
+                                  "Type=simple",
+                                  "Restart=always",
+                                  "KillMode=process",
+                                  "TimeoutSec=infinity",
+                                  "PIDFile=/var/awslogs/state/awslogs.pid",
+                                  "ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile $PIDFILE --user awslogs --chuid awslogs &amp; \\\n",
+
+                                  "[Install]",
+                                  "WantedBy=multi-user.target\\\n",
+                                  " ' >> /etc/systemd/system/awslogs.service"
+
+                                ]
+                              ]
+                           },
+                           "systemctl enable awslogs.service",
+                           "systemctl start awslogs.service"
                          ]
                      ]
                  }
@@ -122,11 +165,25 @@
           "TableName" : "csye6225"
         }
       },
+
       "S3Bucket" : {
   	     "Type" : "AWS::S3::Bucket",
          "Properties" : {
       	    "BucketName" : { "Ref" : "WebAppS3BucketName" }
       	  }
+      },
+
+      "MySNSTopic" : {
+         "Type":"AWS::SNS::Topic",
+         "Properties" : {
+            "DisplayName":"MySNSTopic-Display",
+            "TopicName" : {
+              "Fn::Join" : [ "",
+                  { "Ref" : "AWS::StackName" },
+                  "-SNS-Topic"
+              ]
+            }
+         }
       }
 
     },
