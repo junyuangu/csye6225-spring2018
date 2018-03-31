@@ -223,7 +223,7 @@
                           "logs:DescribeLogStreams",
                           "sns:Publish",
                           "cloudwatch:DescribeAlarms",
-                          "cloudwatch:PutMetricAlarm",
+                          "cloudwatch:PutMetricAlarm"
                        ],
                        "Resource" : "*"
                     },
@@ -239,9 +239,7 @@
                  ]
               },
               "Roles":[
-                 {
-                    "Ref":"RoleForLambda"
-                 }
+                 { "Ref" : "RoleForLambda" }
               ]
            }
         }
@@ -249,7 +247,7 @@
     },
 
     "Parameters" : {
-
+      
       "UserFromTravis" : {
         "Description" : "User who uses TravisCI",
         "Type" : "String",
