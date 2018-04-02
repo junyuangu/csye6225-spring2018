@@ -85,13 +85,13 @@
                                   ]
                                ]
                              },
-                             "sudo service tomcat8 restart ",
+                             "sudo service tomcat8 restart",
 
 
                            "apt-get update -y",
                            "apt-get install python -y",
                            "sudo curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O",
-                           "chmod +x ./awslogs-agent-setup.py\n",
+                           "chmod +x ./awslogs-agent-setup.py",
                            "echo '[general]' >> /home/ubuntu/awslogs.conf",
                            "echo 'state_file = /var/awslogs/state/agent-state' >> /home/ubuntu/awslogs.conf",
                            "echo '[var/lib/tomcat8/logs]' >> /home/ubuntu/awslogs.conf",
@@ -104,29 +104,22 @@
 
                            "sudo cd /etc/systemd/system",
                            "sudo touch awslogs.service",
-                           {
-                              "Fn::Join" : [
-                                "\n",
-                                [
-                                  "echo '[Unit]",
-                                  "Description=Service for CloudWatch Logs agent",
-                                  "After=rc-local.service\\\n",
 
-                                  "[Service]",
-                                  "Type=simple",
-                                  "Restart=always",
-                                  "KillMode=process",
-                                  "TimeoutSec=infinity",
-                                  "PIDFile=/var/awslogs/state/awslogs.pid",
-                                  "ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile $PIDFILE --user awslogs --chuid awslogs &amp; \\\n",
+                           "echo '[Unit]' > awslogs.service",
+                           "echo 'Description=Service for CloudWatch Logs agent' >> awslogs.service",
+                           "echo 'After=rc-local.service' >> awslogs.service",
 
-                                  "[Install]",
-                                  "WantedBy=multi-user.target\\\n",
-                                  " ' >> /etc/systemd/system/awslogs.service"
+                           "echo '[Service]' >> awslogs.service",
+                           "echo 'Type=simple' >> awslogs.service",
+                           "echo 'Restart=always' >> awslogs.service",
+                           "echo 'KillMode=process' >> awslogs.service",
+                           "echo 'TimeoutSec=infinity' >> awslogs.service",
+                           "echo 'PIDFile=/var/awslogs/state/awslogs.pid' >> awslogs.service",
+                           "echo 'ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile $PIDFILE --user awslogs --chuid awslogs &amp;' >> awslogs.service",
 
-                                ]
-                              ]
-                           },
+                           "echo '[Install]' >> awslogs.service",
+                           "echo 'WantedBy=multi-user.target' >> awslogs.service",
+
                            "systemctl enable awslogs.service",
                            "systemctl start awslogs.service"
                          ]
