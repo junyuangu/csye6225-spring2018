@@ -228,7 +228,9 @@
                           "ec2:DescribeNetworkInterfaces",
                           "ec2:DeleteNetworkInterface"
                        ],
-                       "Resource" : "*"
+                       "Resource" : [
+                          "arn:aws:*:*:*:*"
+                       ]
                     },
                     {
                        "Effect" : "Allow",
@@ -237,6 +239,15 @@
                        ],
                        "Resource" : [
                           "arn:aws:logs:*:*:*"
+                       ]
+                    },
+                    {
+                       "Effect" : "Allow",
+                       "Action" : [
+                          "dynamodb:*"
+                       ],
+                       "Resource" : [
+                          "arn:aws:*:*:*:*"
                        ]
                     }
                  ]

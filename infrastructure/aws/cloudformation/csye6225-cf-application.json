@@ -89,14 +89,15 @@
 
 
                             "sudo apt-get update",
-                            "sudo touch /tmp/awslogs.conf",
-                            "sudo echo '[general]' > /tmp/awslogs.conf",
-                            "sudo echo 'state_file= /var/awslogs/agent-state' >> /tmp/awslogs.conf",
-                            "sudo echo '[logstream1]' >> /tmp/awslogs.conf",
-                            "sudo echo 'file = /var/log/tomcat8/csye6225-aws.log' >> /tmp/awslogs.conf",
-                            "sudo echo 'log_group_name = csye6225-webapp' >> /tmp/awslogs.conf",
-                            "sudo echo 'log_stream_name = csye6225-webapp' >> /tmp/awslogs.conf",
-                            "sudo echo 'datetime_format = %d/%b/%Y:%H:%M:%S' >> /tmp/awslogs.conf",
+                            "sudo touch /home/ubuntu/awslogs.conf",
+                            "cd /home/ubuntu/",
+                            "sudo echo '[general]' > awslogs.conf",
+                            "sudo echo 'state_file= /var/awslogs/agent-state' >> awslogs.conf",
+                            "sudo echo '[logstream1]' >> awslogs.conf",
+                            "sudo echo 'file = /var/log/tomcat8/csye6225-aws.log' >> awslogs.conf",
+                            "sudo echo 'log_group_name = csye6225-webapp' >> awslogs.conf",
+                            "sudo echo 'log_stream_name = csye6225-webapp' >> awslogs.conf",
+                            "sudo echo 'datetime_format = %d/%b/%Y:%H:%M:%S' >> awslogs.conf",
                             "curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O",
                             {
                                 "Fn::Join": [
@@ -106,7 +107,7 @@
                                         {
                                             "Ref": "AWS::Region"
                                         },
-                                        "-c /tmp/awslogs.conf || error_exit 'Failed to run CloudWatch Logs agent setup'"
+                                        "-c /home/ubuntu/awslogs.conf || error_exit 'Failed to run CloudWatch Logs agent setup'"
                                     ]
                                 ]
                             },
