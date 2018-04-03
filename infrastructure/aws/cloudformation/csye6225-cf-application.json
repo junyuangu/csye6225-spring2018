@@ -141,7 +141,7 @@
     			"Type": "AWS::IAM::InstanceProfile",
     			"Properties": {
     				"Path": "/",
-    				"Roles":[ "CodeDeployEC2ServiceRole"]
+    				"Roles":[ "CodeDeployEC2ServiceRole" ]
     			}
     	},
 
@@ -183,10 +183,16 @@
               "Fn::Join" : [ "",
                 [
                   { "Ref" : "AWS::StackName" },
-                  "-SNS-Topic"
+                  "-SNS-ResetPassword"
                 ]
               ]
-            }
+            },
+            "Subscription": [ {
+					     "Endpoint": {
+						      "Ref": "LambdaFunctionARN"
+					     },
+					     "Protocol": "lambda"
+				    } ]
          }
       }
 
@@ -353,6 +359,12 @@
           "Description" : "Group Name for RDS DataBase Subnet Group",
           "Type" : "String",
           "Default" : "RDSsubnet-group"
+        },
+
+        "LambdaFunctionARN" : {
+          "Description" : "The arn of Lambda function",
+          "Type" : "String",
+          "Default" : " "
         }
 
     }
