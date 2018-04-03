@@ -223,7 +223,10 @@
                           "logs:DescribeLogStreams",
                           "sns:Publish",
                           "cloudwatch:DescribeAlarms",
-                          "cloudwatch:PutMetricAlarm"
+                          "cloudwatch:PutMetricAlarm",
+                          "ec2:CreateNetworkInterface",
+                          "ec2:DescribeNetworkInterfaces",
+                          "ec2:DeleteNetworkInterface"
                        ],
                        "Resource" : "*"
                     },
@@ -247,7 +250,7 @@
     },
 
     "Parameters" : {
-      
+
       "UserFromTravis" : {
         "Description" : "User who uses TravisCI",
         "Type" : "String",
