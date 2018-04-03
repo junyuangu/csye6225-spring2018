@@ -204,8 +204,7 @@
                  ]
               },
               "managedPolicyArns" : [
-                  "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-                  { "Ref" : "AWSLambdaCloudWatchPolicy" }
+                  "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
               ],
               "Path" : "/",
               "RoleName": "lambda-function-execution-role"
