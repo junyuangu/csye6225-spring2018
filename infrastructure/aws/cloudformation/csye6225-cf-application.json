@@ -164,6 +164,10 @@
               "ReadCapacityUnits" : "5",
               "WriteCapacityUnits" : "5"
           },
+          "TimeToLiveSpecification" : {
+              "AttributeName": "TTL",
+              "Enabled": true
+          },
           "TableName" : "csye6225"
         }
       },
