@@ -1,6 +1,10 @@
 package neu.csye6225.controller;
 
 import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
+import com.amazonaws.services.sns.model.PublishRequest;
+import com.amazonaws.services.sns.model.PublishResult;
 import neu.csye6225.Util.BCryptUtil;
 import neu.csye6225.entity.UserInfo;
 import neu.csye6225.service.IUserServiceProduct;
@@ -466,6 +470,27 @@ public class ProductUsingS3Controller {
         }
 
 
+    }
+
+    @RequestMapping( value = "resetPassword", method = { RequestMethod.POST } )
+    private ModelAndView resetUserPassword( HttpServletRequest request ) {
+        ModelAndView mav = new ModelAndView();
+        AmazonSNS snsClient = AmazonSNSClientBuilder.defaultClient();
+        String resetEmail = request.getParameter("user_pwreset");
+        logger.info( "input Reset Email: " + resetEmail );
+        if( !userInfoServiceProduct.checkUserByName(resetEmail) ) {
+            logger.info("resetUserPassword method: Account doesnot exist.");
+            return new ModelAndView("403", "errorMessage", "Account Not Exists");
+        }
+
+        String topicArn = snsClient.createTopic("ResetPasswordTopic").getTopicArn();
+        logger.info( "SNS Topic Arn: " + topicArn );
+        PublishRequest publishRequest = new PublishRequest(topicArn, resetEmail);
+        PublishResult publishResult = snsClient.publish(publishRequest);
+        logger.info( "SNS Publish Result: " + publishResult );
+
+        mav.setViewName("index");
+        return mav;
     }
 
 }

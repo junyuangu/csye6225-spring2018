@@ -203,72 +203,25 @@
                    }
                  ]
               },
-              "managedPolicyArns" : [
-                  "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-              ],
+              "ManagedPolicyArns": [
+        					"arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+        					"arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+        					"arn:aws:iam::aws:policy/AmazonSESFullAccess"
+      				],
               "Path" : "/",
               "RoleName": "lambda-function-execution-role"
            }
         },
 
-        "LambdaServiceRoleInsProfile": {
+        "LambdaFuncInsProfile": {
       			"Type": "AWS::IAM::InstanceProfile",
       			"Properties": {
       				"Path": "/",
-      				"Roles":[ "RoleForLambda" ]
-      			}
-      	},
-
-        "AWSLambdaCloudWatchPolicy" : {
-           "Type" : "AWS::IAM::Policy",
-           "Properties" : {
-              "PolicyName" : "AWSLambdaCloudWatchPolicy",
-              "PolicyDocument" : {
-                 "Version" : "2012-10-17",
-                 "Statement" : [
-                    {
-                       "Effect" : "Allow",
-                       "Action" : [
-                          "logs:CreateLogGroup",
-                          "logs:CreateLogStream",
-                          "logs:PutLogEvents",
-                          "logs:DescribeLogStreams",
-                          "sns:Publish",
-                          "cloudwatch:DescribeAlarms",
-                          "cloudwatch:PutMetricAlarm",
-                          "ec2:CreateNetworkInterface",
-                          "ec2:DescribeNetworkInterfaces",
-                          "ec2:DeleteNetworkInterface"
-                       ],
-                       "Resource" : [
-                          "*"
-                       ]
-                    },
-                    {
-                       "Effect" : "Allow",
-                       "Action" : [
-                          "ses:*"
-                       ],
-                       "Resource" : [
-                          "arn:aws:logs:*:*:*"
-                       ]
-                    },
-                    {
-                       "Effect" : "Allow",
-                       "Action" : [
-                          "dynamodb:*"
-                       ],
-                       "Resource" : [
-                          "arn:aws:dynamodb:*:*:*"
-                       ]
-                    }
-                 ]
-              },
-              "Roles":[
-                 { "Ref" : "RoleForLambda" }
+      				"Roles": [
+                { "Ref": "RoleForLambda" }
               ]
-           }
-        }
+      			}
+    		}
 
     },
 
