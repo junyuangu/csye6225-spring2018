@@ -149,6 +149,31 @@
           }
         },
 
+        "CloudWatchPolicy": {
+      			"Type": "AWS::IAM::ManagedPolicy",
+      			"Properties": {
+      				"Roles": [{
+      					"Ref": "RoleForCodeDeployService"
+      				}],
+      				"ManagedPolicyName": "CloudWatch-Policy",
+      				"PolicyDocument": {
+      					"Version": "2012-10-17",
+      					"Statement": [{
+      						"Effect": "Allow",
+      						"Action": [
+      							"logs:CreateLogGroup",
+      							"logs:CreateLogStream",
+      							"logs:PutLogEvents",
+      							"logs:DescribeLogStreams"
+      						],
+      						"Resource": [
+      							"arn:aws:logs:*:*:*"
+      						]
+      					}]
+      				}
+      			}
+      	},
+
         "S3BucketForCodeDeploy" : {
           	"Type": "AWS::S3::Bucket",
           	"Properties" : {
@@ -204,21 +229,48 @@
                  ]
               },
               "ManagedPolicyArns": [
-        					"arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-        					"arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
-        					"arn:aws:iam::aws:policy/AmazonSESFullAccess"
+        					"arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
       				],
               "Path" : "/",
               "RoleName": "lambda-function-execution-role"
            }
         },
 
-        "LambdaFuncInsProfile": {
-      			"Type": "AWS::IAM::InstanceProfile",
+        "DynamoDBSESAccessPolicy" : {
+            "Type" : "AWS::IAM::Policy",
+            "Properties" : {
+               "PolicyName" : "Lambda-Access-DynamoDB-SES-Policy",
+               "PolicyDocument" : {
+                  "Version" : "2012-10-17",
+                  "Statement" : [
+                    {
+                      "Action" : [
+                         "dynamodb:*"
+                      ],
+                      "Effect" : "Allow",
+                      "Resource" : "*"
+                    },
+                    {
+                      "Action" : [
+                         "ses:*"
+                      ],
+                      "Effect" : "Allow",
+                      "Resource" : "*"
+                    }
+                  ]
+               },
+               "Roles" : [
+                 { "Ref" : "RoleForLambda" }
+               ]
+            }
+        },
+
+        "LambdaFuncInsProfile" : {
+      			"Type" : "AWS::IAM::InstanceProfile",
       			"Properties": {
-      				"Path": "/",
-      				"Roles": [
-                { "Ref": "RoleForLambda" }
+      				"Path" : "/",
+      				"Roles" : [
+                { "Ref" : "RoleForLambda" }
               ]
       			}
     		}
