@@ -478,10 +478,10 @@ public class ProductUsingS3Controller {
         AmazonSNS snsClient = AmazonSNSClientBuilder.defaultClient();
         String resetEmail = request.getParameter("user_pwreset");
         logger.info( "input Reset Email: " + resetEmail );
-        if( !userInfoServiceProduct.checkUserByName(resetEmail) ) {
-            logger.info("resetUserPassword method: Account doesnot exist.");
-            return new ModelAndView("403", "errorMessage", "Account Not Exists");
-        }
+//        if( !userInfoServiceProduct.checkUserByName(resetEmail) ) {
+//            logger.info("resetUserPassword method: Account doesnot exist.");
+//            return new ModelAndView("403", "errorMessage", "Account Not Exists");
+//        }
 
         String topicArn = snsClient.createTopic("ResetPasswordTopic").getTopicArn();
         logger.info( "SNS Topic Arn: " + topicArn );
