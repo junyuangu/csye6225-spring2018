@@ -166,7 +166,7 @@
           },
           "TimeToLiveSpecification" : {
               "AttributeName": "ttl",
-              "Enabled": false
+              "Enabled": true
           },
           "TableName" : "csye6225"
         }
