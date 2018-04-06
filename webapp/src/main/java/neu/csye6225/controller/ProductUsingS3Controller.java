@@ -490,6 +490,7 @@ public class ProductUsingS3Controller {
         PublishResult publishResult = snsClient.publish(publishRequest);
         logger.info( "SNS Publish Result: " + publishResult );
 
+        mav.addObject( "userMsg", "Thank you for your patience. Password Reset Link was sent." );
         mav.setViewName("index");
         return mav;
     }
