@@ -10,14 +10,22 @@
               "PolicyName":"CodeDeploy-EC2-S3",
               "PolicyDocument":{
                  "Version":"2012-10-17",
-                 "Statement":[ {
-                     "Action":[
+                 "Statement":[
+                   {
+                     "Action" : [
                         "s3:*"
                      ],
                      "Effect":"Allow",
                      "Resource" : "*"
-
-                 } ]
+                   },
+                   {
+                     "Action" : [
+                        "sns:*"
+                     ],
+                     "Effect" : "Allow",
+                     "Resource" : "*"
+                   }
+                 ]
               },
               "Roles":[
                 { "Ref" : "RoleForCodeDeployEC2Service" }
@@ -152,24 +160,27 @@
         "CloudWatchPolicy": {
       			"Type": "AWS::IAM::ManagedPolicy",
       			"Properties": {
-      				"Roles": [{
-      					"Ref": "RoleForCodeDeployService"
-      				}],
+      				"Roles": [
+                  { "Ref" : "RoleForCodeDeployService" },
+                  { "Ref" : "RoleForLambda" }
+              ],
       				"ManagedPolicyName": "CloudWatch-Policy",
       				"PolicyDocument": {
       					"Version": "2012-10-17",
-      					"Statement": [{
-      						"Effect": "Allow",
-      						"Action": [
-      							"logs:CreateLogGroup",
-      							"logs:CreateLogStream",
-      							"logs:PutLogEvents",
-      							"logs:DescribeLogStreams"
-      						],
-      						"Resource": [
-      							"arn:aws:logs:*:*:*"
-      						]
-      					}]
+      					"Statement": [
+                  {
+        						"Effect": "Allow",
+        						"Action": [
+        							"logs:CreateLogGroup",
+        							"logs:CreateLogStream",
+        							"logs:PutLogEvents",
+        							"logs:DescribeLogStreams"
+        						],
+        						"Resource": [
+        							"arn:aws:logs:*:*:*"
+        						]
+      					  }
+                ]
       				}
       			}
       	},
@@ -222,7 +233,7 @@
                              "lambda.amazonaws.com"
                           ]
                        },
-                       "Action":[
+                       "Action" : [
                           "sts:AssumeRole"
                        ]
                    }
@@ -232,7 +243,7 @@
         					"arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
       				],
               "Path" : "/",
-              "RoleName": "lambda-function-execution-role"
+              "RoleName": "lambdafunc-execution-role"
            }
         },
 
