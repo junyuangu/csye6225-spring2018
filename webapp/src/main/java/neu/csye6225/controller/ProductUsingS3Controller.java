@@ -42,7 +42,7 @@ public class ProductUsingS3Controller {
     private final static String imgPlaceHolder = "http://via.placeholder.com/240x320";
 
     private boolean authState = false;
-
+    private String indexMessage = null;
     @Autowired
     private IUserServiceProduct userInfoServiceProduct;
 
@@ -61,7 +61,14 @@ public class ProductUsingS3Controller {
     @RequestMapping(value = {"", "#","index"}, method= {RequestMethod.GET})
     public ModelAndView indexProduct( HttpServletRequest request ){
         session = request.getSession();
-        return new ModelAndView("index");
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("index");
+        if( indexMessage!=null ) {
+            mav.addObject( "userMsg", indexMessage );
+            indexMessage=null;
+        }
+
+        return mav;
     }
 
     @RequestMapping(value = "signup", method = {RequestMethod.GET, RequestMethod.POST})
@@ -491,6 +498,7 @@ public class ProductUsingS3Controller {
         logger.info( "SNS Publish Result: " + publishResult );
 
         mav.addObject( "userMsg", "Thank you for your patience. Password Reset Link was sent." );
+        indexMessage = "Thank you for your patience. Password Reset Link was sent.";
         mav.setViewName("index");
         return mav;
     }
