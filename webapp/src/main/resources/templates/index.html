@@ -11,6 +11,9 @@
     <h3>
         Welcome to CSYE6225 Spring 2018 Semester!
     </h3>
+    <div th:if=" ${authState} == 'false' ">
+        <p th:text="${userMsg}"/>
+    </div>
 </div>
 <!--script type="text/javascript" src="6225Assign2.js"></script-->
 <!-- /.container -->

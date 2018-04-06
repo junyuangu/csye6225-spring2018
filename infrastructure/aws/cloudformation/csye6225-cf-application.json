@@ -55,6 +55,7 @@
                              "sudo apt-get install ruby -y ",
                              "sudo apt-get install wget -y ",
                              "sudo apt-get install python -y ",
+                             "sudo apt-get install mysql-client -y",
                              "sudo apt-get update ",
                              "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install ",
                              "sudo chmod +x ./install ",
@@ -80,11 +81,55 @@
                                     " -Dspring.datasource.password=",
                                     {"Ref":"rdsParamPassword"},
                                     " -Dspring.profiles.active=aws",
-                                    "\"' >> /usr/share/tomcat8/bin/setenv.sh \n"
+                                    "\"' >> /usr/share/tomcat8/bin/setenv.sh"
                                   ]
                                ]
                              },
-                             "sudo service tomcat8 restart "
+                             "sudo service tomcat8 restart",
+
+
+                            "sudo apt-get update",
+                            "sudo touch /home/ubuntu/awslogs.conf",
+                            "cd /home/ubuntu/",
+                            "sudo echo '[general]' > awslogs.conf",
+                            "sudo echo 'state_file= /var/awslogs/agent-state' >> awslogs.conf",
+                            "sudo echo '[logstream1]' >> awslogs.conf",
+                            "sudo echo 'file = /var/log/tomcat8/csye6225-aws.log' >> awslogs.conf",
+                            "sudo echo 'log_group_name = csye6225-webapp' >> awslogs.conf",
+                            "sudo echo 'log_stream_name = csye6225-webapp' >> awslogs.conf",
+                            "sudo echo 'datetime_format = %d/%b/%Y:%H:%M:%S' >> awslogs.conf",
+                            "curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O",
+                            {
+                                "Fn::Join": [
+                                    " ",
+                                    [
+                                        "sudo python ./awslogs-agent-setup.py -n -r",
+                                        {
+                                            "Ref": "AWS::Region"
+                                        },
+                                        "-c /home/ubuntu/awslogs.conf || error_exit 'Failed to run CloudWatch Logs agent setup'"
+                                    ]
+                                ]
+                            },
+
+
+                            "cd /etc/systemd/system",
+                            "sudo touch awslogs.service",
+                            "sudo echo '[Unit]' >> awslogs.service",
+                            "sudo echo 'Description=Service for CloudWatch Logs agent' >> awslogs.service",
+                            "sudo echo 'After=rc-local.service' >> awslogs.service",
+                            "sudo echo '[Service]' >> awslogs.service",
+                            "sudo echo 'Type=simple' >> awslogs.service",
+                            "sudo echo 'Restart=always' >> awslogs.service",
+                            "sudo echo 'KillMode=process' >> awslogs.service",
+                            "sudo echo 'TimeoutSec=infinity' >> awslogs.service",
+                            "sudo echo 'PIDFile=/var/awslogs/state/awslogs.pid' >> awslogs.service",
+                            "sudo echo 'ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile $PIDFILE --user awslogs --chuid awslogs &amp;' >> awslogs.service",
+                            "sudo echo '[Install]' >> awslogs.service",
+                            "sudo echo 'WantedBy=multi-user.target' >> awslogs.service",
+                            "sudo systemctl start awslogs.service",
+                            "sudo systemctl enable awslogs.service"
+
                          ]
                      ]
                  }
@@ -96,7 +141,7 @@
     			"Type": "AWS::IAM::InstanceProfile",
     			"Properties": {
     				"Path": "/",
-    				"Roles":[ "CodeDeployEC2ServiceRole"]
+    				"Roles":[ "CodeDeployEC2ServiceRole" ]
     			}
     	},
 
@@ -119,14 +164,40 @@
               "ReadCapacityUnits" : "5",
               "WriteCapacityUnits" : "5"
           },
+          "TimeToLiveSpecification" : {
+              "AttributeName": "ttl",
+              "Enabled": true
+          },
           "TableName" : "csye6225"
         }
       },
+
       "S3Bucket" : {
   	     "Type" : "AWS::S3::Bucket",
          "Properties" : {
       	    "BucketName" : { "Ref" : "WebAppS3BucketName" }
       	  }
+      },
+
+      "MySNSTopic" : {
+         "Type":"AWS::SNS::Topic",
+         "Properties" : {
+            "DisplayName":"MySNSTopic-Display",
+            "TopicName" : {
+              "Fn::Join" : [ "",
+                [
+                  { "Ref" : "AWS::StackName" },
+                  "-SNS-ResetPassword"
+                ]
+              ]
+            },
+            "Subscription": [ {
+					     "Endpoint": {
+						      "Ref": "LambdaFunctionARN"
+					     },
+					     "Protocol": "lambda"
+				    } ]
+         }
       }
 
     },
@@ -292,6 +363,12 @@
           "Description" : "Group Name for RDS DataBase Subnet Group",
           "Type" : "String",
           "Default" : "RDSsubnet-group"
+        },
+
+        "LambdaFunctionARN" : {
+          "Description" : "The arn of Lambda function",
+          "Type" : "String",
+          "Default" : " "
         }
 
     }
