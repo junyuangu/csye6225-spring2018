@@ -20,26 +20,25 @@
          }
        },
 
-      "MyEC2Instance" : {
-          "Type" : "AWS::EC2::Instance",
-          "DependsOn": "MyDBInstance",
+      "AutoScalingEC2Instance" : {
+          "Type":"AWS::AutoScaling::LaunchConfiguration",
           "Properties" : {
              "ImageId" : { "Ref" : "ImageIdOfEC2Instance" },
              "InstanceType" : { "Ref" : "TypeOfEC2Instance" },
-             "DisableApiTermination" : "true",
-             "InstanceInitiatedShutdownBehavior" : "stop",
-             "SubnetId": {"Ref" : "EC2SubnetId"},
-             "SecurityGroupIds": [{"Ref" : "WebServerSecurityGroupId"}],
              "KeyName" : { "Ref" : "ExistingKeyPairName" },
+             "AssociatePublicIpAddress" : true,
+             "DisableApiTermination" : "true",
+             "SubnetId": {"Ref" : "EC2SubnetId"},
+             "SecurityGroups": [{"Ref" : "WebServerSecurityGroupId"}],
              "BlockDeviceMappings" : [ {
                    "DeviceName" : "/dev/sdf",
                    "Ebs" : {
                       "VolumeType" : { "Ref" : "EC2VolumeType" },
-                      "DeleteOnTermination" : "false",
+                      "DeleteOnTermination" : true,
                       "VolumeSize" : { "Ref" : "EC2VolumeSize" }
                    }
              } ],
-             "IamInstanceProfile": { "Ref" : "CodeDeployEC2ServiceRoleInsProfile" },
+
              "Tags" : [ {
                     "Key" : { "Ref" : "TagKey" },
                     "Value" : { "Ref" : "EC2InstanceTagValue" }
@@ -67,7 +66,7 @@
                                    "",
                                    [
                                      "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.url=\\\"jdbc:mysql://",
-                                     { "Fn::GetAtt": [ "MyDBInstance", "Endpoint.Address" ] },
+                                     { "Fn::GetAtt" : [ "MyDBInstance", "Endpoint.Address" ] },
                                      ":3306/csye6225\\\"\"' >> /etc/default/tomcat8 \n"
                                    ]
                                 ]
@@ -77,16 +76,15 @@
                                   "",
                                   [
                                     "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.username=",
-                                    {"Ref":"rdsParamUsername"},
+                                    { "Ref" : "rdsParamUsername" },
                                     " -Dspring.datasource.password=",
-                                    {"Ref":"rdsParamPassword"},
+                                    { "Ref" : "rdsParamPassword" },
                                     " -Dspring.profiles.active=aws",
                                     "\"' >> /usr/share/tomcat8/bin/setenv.sh"
                                   ]
                                ]
                              },
                              "sudo service tomcat8 restart",
-
 
                             "sudo apt-get update",
                             "sudo touch /home/ubuntu/awslogs.conf",
@@ -95,7 +93,11 @@
                             "sudo echo 'state_file= /var/awslogs/agent-state' >> awslogs.conf",
                             "sudo echo '[logstream1]' >> awslogs.conf",
                             "sudo echo 'file = /var/log/tomcat8/csye6225-aws.log' >> awslogs.conf",
-                            "sudo echo 'log_group_name = csye6225-webapp' >> awslogs.conf",
+                            "echo 'log_group_name = ",
+                            {
+                              "Ref": "WebServerLogGroup"
+                            },
+                            "' >> awslogs.conf",
                             "sudo echo 'log_stream_name = csye6225-webapp' >> awslogs.conf",
                             "sudo echo 'datetime_format = %d/%b/%Y:%H:%M:%S' >> awslogs.conf",
                             "curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O",
@@ -133,7 +135,8 @@
                          ]
                      ]
                  }
-             }
+             },
+             "IamInstanceProfile": { "Ref" : "CodeDeployEC2ServiceRoleInsProfile" }
           }
       },
 
@@ -198,9 +201,163 @@
 					     "Protocol": "lambda"
 				    } ]
          }
+      },
+
+      "MyDNSRecord":{
+          "Type" : "AWS::Route53::RecordSetGroup",
+          "Properties" : {
+       				"RecordSets" : [
+       					{
+       						"Name" : {"Ref":"originalDomain"},
+       						"Type" : "A",
+       						"AliasTarget" : {
+       							"HostedZoneId" : { "Fn::GetAtt" : ["ApplicationLoadBalancer", "CanonicalHostedZoneID"] },
+       							"DNSName" : { "Fn::GetAtt" : ["ApplicationLoadBalancer","DNSName"] }
+       						}
+       					}
+       				],
+       				"Comment" : "DNS name for my instance.",
+       				"HostedZoneName" : { "Ref" : "originalDomain" }
+         }
+      },
+
+      "ApplicationLoadBalancer": {
+        	"Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+        	"Properties": {
+        		"Scheme": "internal",
+        		"Tags": [
+              {
+          			"Key": "name",
+          			"Value": "csye6225-AppLoadBalancer"
+        		  }
+            ],
+        		"Type" : "application",
+        		"IpAddressType" : "ipv4",
+        		"Subnets" : [
+              { "Ref" : "Subnet1" },
+              { "Ref" : "Subnet2" },
+              { "Ref" : "Subnet3" }
+            ],
+        		"SecurityGroups": [
+              { "Ref" : "WebServerSecurityGroupId" }
+            ]
+        	}
+      },
+
+      "MyServerGroup": {
+     		"Type": "AWS::AutoScaling::AutoScalingGroup",
+     		"Properties": {
+     			"VPCZoneIdentifier" :[{"Ref": "Subnet1"},{"Ref": "Subnet2"},{"Ref": "Subnet3"}],
+     			"LaunchConfigurationName": {"Ref": "AutoScalingEC2Instance"},
+     			"MinSize": "3",
+     			"MaxSize": "6",
+     			"TargetGroupARNs": [{"Ref": "ALBTargetGroup"}],
+     			"Tags": [{
+              		 "Key": "name",
+               		"Value": "csye6225",
+              		 "PropagateAtLaunch" : "true"
+            			 }]
+           			},
+          		 "DependsOn": [
+            			 "ALBListener",
+            			 "AutoScalingEC2Instance"
+          			 ]
+         },
+
+      "AutoScalingGroup" : {
+         "Type": "AWS::AutoScaling::AutoScalingGroup",
+         "Properties" : {
+           "VPCZoneIdentifier" : [
+             {"Ref": "Subnet1"},
+             {"Ref": "Subnet2"},
+             {"Ref": "Subnet3"}
+           ],
+           "LaunchConfigurationName": { "Ref": "AutoScalingEC2Instance" },
+           "MinSize": "3",
+           "MaxSize": "3",
+           "TargetGroupARNs": [ {"Ref": "ALBTargetGroup"} ]
+         }
+      },
+
+      "ALBListener": {
+    		"Type": "AWS::ElasticLoadBalancingV2::Listener",
+    		"Properties": {
+    			"Certificates":[
+            { "CertificateArn" : { "Ref" : "ACMArn" } }
+          ],
+    			"DefaultActions": [{
+    					"Type": "forward",
+    					"TargetGroupArn": {"Ref": "ALBTargetGroup"}
+    				}],
+    			"LoadBalancerArn": { "Ref" : "ApplicationLoadBalancer" },
+    			"Port": "443",
+    			"Protocol": "HTTPS"
+    			}
+    	},
+
+      "WebServerLogGroup":{
+         "Type":"AWS::Logs::LogGroup",
+         "Properties":{
+            "RetentionInDays":7
+         }
+      },
+
+      "Subnet1" : {
+         "Type" : "AWS::EC2::Subnet",
+         "Properties":{
+            "VpcId" : {
+               "Ref" : "vpcId"
+            },
+            "CidrBlock":"172.31.128.0/20",
+            "AvailabilityZone":"us-east-1e"
+         }
+      },
+
+      "Subnet2":{
+         "Type":"AWS::EC2::Subnet",
+         "Properties":{
+            "VpcId":{
+               "Ref":"vpcId"
+            },
+            "CidrBlock":"172.31.112.0/20",
+            "AvailabilityZone":"us-east-1c"
+         }
+      },
+
+      "Subnet3" : {
+             "Type" : "AWS::EC2::Subnet",
+             "Properties" : {
+             "VpcId" : {
+               "Ref" : "vpcId"
+             },
+             "CidrBlock": "172.31.100.0/20",
+             "AvailabilityZone" : "us-east-1f"
+            }
+      },
+
+
+      "ALBTargetGroup": {
+      	"Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      	"Properties": {
+      		"Tags": [
+              { "Key": "name", "Value": "csye6225-ALBTargetGroup" }
+          ],
+      		"HealthCheckIntervalSeconds": 60,
+      		"UnhealthyThresholdCount": 10,
+      		"HealthCheckPath": "/",
+      		"Name": "CsyeTargetGroup",
+      		"TargetType": "instance",
+      		"Port": 443,
+      		"Protocol": "HTTPS",
+      		"VpcId": {"Ref": "vpcId"}
+
+      	},
+      	"DependsOn": [ "ApplicationLoadBalancer" ]
       }
 
     },
+
+
 
     "Outputs": {
         "InstanceId": {
@@ -367,6 +524,16 @@
 
         "LambdaFunctionARN" : {
           "Description" : "The arn of Lambda function",
+          "Type" : "String",
+          "Default" : " "
+        },
+
+        "ACMArn" : {
+          "Type" : "String",
+          "Default" : "arn:aws:acm:us-east-1:169212139838:certificate/15e1fae8-ae59-48bb-8c4b-6d12e1baed33"
+        },
+
+        "VpcId" : {
           "Type" : "String",
           "Default" : " "
         }
