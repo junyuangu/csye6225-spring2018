@@ -108,7 +108,7 @@
       "Properties" : {
           "GroupName" : "csye6225-spring2018-loadBalancer",
           "GroupDescription" : "Rules For LoadBalancer",
-          "VpcId" : { "Ref" : "vpcId" },
+          "VpcId" : { "Ref" : "VPC" },
           "SecurityGroupIngress" : [
             {
               "IpProtocol": "tcp",

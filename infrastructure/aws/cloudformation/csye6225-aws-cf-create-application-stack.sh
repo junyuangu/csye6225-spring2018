@@ -8,6 +8,11 @@ echo "Email:  gu.ju@husky.neu.edu"
 echo "Enter Your Stack Name:"
 read stackname
 
+# echo "Enter your VPC tag value when Key=Name, Value=?"
+# assign9Network-csye6225-vpc
+#read VPCTagValue
+VPCTagValue="assign9Network-csye6225-vpc"
+
 STATUS_CF=""
 STATUS_STATE=""
 
@@ -20,7 +25,7 @@ EC2_Subnet_ID=$(aws ec2 describe-subnets --filters Name=tag:aws:cloudformation:l
 EC2_SecurityGroup_ID=$(aws ec2 describe-security-groups --filters Name=tag:aws:cloudformation:logical-id,Values=WebServerSecurityGroup | jq -r '.SecurityGroups[0].GroupId')
 RDS_SecurityGroup_ID=$(aws ec2 describe-security-groups --filters Name=tag:aws:cloudformation:logical-id,Values=DBServerSecurityGroup | jq -r '.SecurityGroups[0].GroupId')
 #Find vpc Id
-VPCId=`aws ec2 describe-vpcs --filter "Name=tag:Name,Values=assign9Network" --query 'Vpcs[*].{id:VpcId}' --output text`
+VPCId=`aws ec2 describe-vpcs --filter "Name=tag:Name,Values=$VPCTagValue" --query 'Vpcs[*].{id:VpcId}' --output text`
 
 val1="EC2_Subnet_ID: $EC2_Subnet_ID"
 val2="EC2_SecurityGroup_ID: $EC2_SecurityGroup_ID"
@@ -42,7 +47,7 @@ ParamLAMBDAFUNCARN=$(aws lambda get-function --function-name "lambda-LogEvent" -
 echo $ParamLAMBDAFUNCARN
 
 #Create Stack:
-STATUS_CF=$(aws cloudformation create-stack --stack-name $stackname --template-body file://csye6225-cf-application.json --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ImageIdOfEC2Instance,ParameterValue=ami-66506c1c ParameterKey=TypeOfEC2Instance,ParameterValue=t2.micro ParameterKey=WebServerSecurityGroupId,ParameterValue=$ParamECTWOSGID ParameterKey=EC2SubnetId,ParameterValue=$ParamECTWOSUBNETID ParameterKey=RDSSecurityGroupId,ParameterValue=$ParamRDSSGID ParameterKey=ExistingKeyPairName,ParameterValue=xyzdemo ParameterKey=EC2VolumeType,ParameterValue=gp2 ParameterKey=EC2VolumeSize,ParameterValue=16 ParameterKey=TagKey,ParameterValue=Name ParameterKey=EC2InstanceTagValue,ParameterValue=$instancename ParameterKey=WebAppS3BucketName,ParameterValue=web-app.csye6225-spring2018-guju.me ParameterKey=rdsParamStorageSize,ParameterValue=10 ParameterKey=rdsParamDBName,ParameterValue=csye6225 ParameterKey=rdsParamEngine,ParameterValue=MySQL ParameterKey=LambdaFunctionARN,ParameterValue=$ParamLAMBDAFUNCARN ParameterKey=rdsParamEngineVersion,ParameterValue=5.6.37 ParameterKey=rdsParamDBInsClass,ParameterValue=db.t2.medium ParameterKey=rdsParamDBInsId,ParameterValue=csye6225-spring2018 ParameterKey=rdsParamUsername,ParameterValue=csye6225master ParameterKey=rdsParamPassword,ParameterValue=csye6225password ParameterKey=rdsParamDBTagVal,ParameterValue=csye6225MyDBInstance ParameterKey=DBSubnetGroup,ParameterValue=RDSsubnet-group ParameterKey=VpcId,ParameterValue=$ParamVpcID)
+STATUS_CF=$(aws cloudformation create-stack --stack-name $stackname --template-body file://csye6225-cf-application.json --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ImageIdOfEC2Instance,ParameterValue=ami-66506c1c ParameterKey=TypeOfEC2Instance,ParameterValue=t2.micro ParameterKey=WebServerSecurityGroupId,ParameterValue=$ParamECTWOSGID ParameterKey=EC2SubnetId,ParameterValue=$ParamECTWOSUBNETID ParameterKey=RDSSecurityGroupId,ParameterValue=$ParamRDSSGID ParameterKey=ExistingKeyPairName,ParameterValue=xyzdemo ParameterKey=EC2VolumeType,ParameterValue=gp2 ParameterKey=EC2VolumeSize,ParameterValue=16 ParameterKey=TagKey,ParameterValue=Name ParameterKey=EC2InstanceTagValue,ParameterValue=$instancename ParameterKey=WebAppS3BucketName,ParameterValue=web-app.csye6225-spring2018-guju.me ParameterKey=rdsParamStorageSize,ParameterValue=10 ParameterKey=rdsParamDBName,ParameterValue=csye6225 ParameterKey=rdsParamEngine,ParameterValue=MySQL ParameterKey=LambdaFunctionARN,ParameterValue=$ParamLAMBDAFUNCARN ParameterKey=rdsParamEngineVersion,ParameterValue=5.6.37 ParameterKey=rdsParamDBInsClass,ParameterValue=db.t2.medium ParameterKey=rdsParamDBInsId,ParameterValue=csye6225-spring2018 ParameterKey=rdsParamUsername,ParameterValue=csye6225master ParameterKey=rdsParamPassword,ParameterValue=csye6225password ParameterKey=rdsParamDBTagVal,ParameterValue=csye6225MyDBInstance ParameterKey=DBSubnetGroup,ParameterValue=RDSsubnet-group ParameterKey=vpcId,ParameterValue=$ParamVpcID)
 
 
 echo $STATUS_CF
