@@ -211,9 +211,8 @@
         		"Type" : "application",
         		"IpAddressType" : "ipv4",
         		"Subnets" : [
-              { "Ref" : "Subnet1" },
-              { "Ref" : "Subnet2" },
-              { "Ref" : "Subnet3" }
+              { "Ref" : "EC2SubnetId" },
+              { "Ref" : "EC2Subnet2Id" }
             ],
         		"SecurityGroups": [
               { "Ref" : "WebServerSecurityGroupId" }
@@ -244,9 +243,8 @@
      		"Type": "AWS::AutoScaling::AutoScalingGroup",
      		"Properties": {
        			"VPCZoneIdentifier" : [
-                { "Ref" : "Subnet1" },
-                { "Ref" : "Subnet2" },
-                { "Ref" : "Subnet3" }
+                { "Ref" : "EC2SubnetId" },
+                { "Ref" : "EC2Subnet2Id" }
             ],
        			"LaunchConfigurationName": { "Ref" : "AutoScalingEC2Instance" },
        			"MinSize": "3",
@@ -350,55 +348,21 @@
               { "CertificateArn" : { "Ref" : "ACMArn" } }
             ],
       			"DefaultActions": [{
-      					"Type": "forward",
-      					"TargetGroupArn": {"Ref": "ALBTargetGroup"}
+      					"Type" : "forward",
+      					"TargetGroupArn" : {"Ref": "ALBTargetGroup"}
       				}],
-      			"LoadBalancerArn": { "Ref" : "ApplicationLoadBalancer" },
+      			"LoadBalancerArn" : { "Ref" : "ApplicationLoadBalancer" },
       			"Port" : "443",
       			"Protocol" : "HTTPS"
     		}
     	},
 
       "WebServerLogGroup":{
-         "Type":"AWS::Logs::LogGroup",
-         "Properties":{
-            "RetentionInDays":7
+         "Type" : "AWS::Logs::LogGroup",
+         "Properties" : {
+            "RetentionInDays" : 7
          }
       },
-
-      "Subnet1" : {
-         "Type" : "AWS::EC2::Subnet",
-         "Properties":{
-            "VpcId" : {
-               "Ref" : "vpcId"
-            },
-            "CidrBlock":"172.31.161.0/24",
-            "AvailabilityZone":"us-east-1a"
-         }
-      },
-
-      "Subnet2":{
-         "Type":"AWS::EC2::Subnet",
-         "Properties":{
-            "VpcId":{
-               "Ref":"vpcId"
-            },
-            "CidrBlock":"172.31.162.0/24",
-            "AvailabilityZone":"us-east-1b"
-         }
-      },
-
-      "Subnet3" : {
-             "Type" : "AWS::EC2::Subnet",
-             "Properties" : {
-             "VpcId" : {
-               "Ref" : "vpcId"
-             },
-             "CidrBlock": "172.31.163.0/24",
-             "AvailabilityZone" : "us-east-1c"
-            }
-      },
-
 
       "ALBTargetGroup": {
       	"Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
@@ -410,11 +374,10 @@
       		"UnhealthyThresholdCount" : 10,
       		"HealthCheckPath" : "/",
       		"Name" : "csye6225TargetGroup",
-      		"TargetType": "instance",
+      		"TargetType" : "instance",
       		"Port" : 443,
       		"Protocol" : "HTTPS",
       		"VpcId" : {"Ref": "vpcId"}
-
       	},
       	"DependsOn": [ "ApplicationLoadBalancer" ]
       }
@@ -433,11 +396,13 @@
     },
 
     "Parameters" : {
+
         "ImageIdOfEC2Instance": {
           "Description" : "ImageId of EC2 Instance",
           "Type": "String",
           "Default" : "ami-66506c1c"
         },
+
         "TypeOfEC2Instance": {
           "Description" : "InstanceType of EC2 Instance",
           "Type": "String",
@@ -452,6 +417,12 @@
 
         "EC2SubnetId" : {
           "Description" : "EC2 Subnet ID",
+          "Type": "AWS::EC2::Subnet::Id",
+          "Default" : " "
+        },
+
+        "EC2Subnet2Id" : {
+          "Description" : "EC2 Subnet2 ID",
           "Type": "AWS::EC2::Subnet::Id",
           "Default" : " "
         },

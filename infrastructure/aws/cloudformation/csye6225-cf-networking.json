@@ -69,7 +69,7 @@
       }
     },
 
-    "SubnetForWebServers" : {
+      "SubnetForWebServers" : {
          "Type" : "AWS::EC2::Subnet",
          "Properties" : {
             "VpcId" : { "Ref" : "VPC" },
@@ -108,7 +108,7 @@
       "LoadBalancerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-          "GroupName" : "csye6225-spring2018-loadBalancer",
+          "GroupName" : "csye6225-LoadBalancer-SecurityGroup",
           "GroupDescription" : "Rules For LoadBalancer",
           "VpcId" : { "Ref" : "VPC" },
           "SecurityGroupIngress" : [
@@ -126,7 +126,7 @@
             },
             {
               "IpProtocol": "tcp",
-              "FromPort": "443",
+              "FromPort" : "443",
               "ToPort": "443",
               "CidrIp": "0.0.0.0/0"
             },
