@@ -221,7 +221,7 @@
       },
 
       "MyDNSRecord":{
-          "Type" : "AWS::Route53::RecordSet",
+          "Type" : "AWS::Route53::RecordSetGroup",
           "Properties" : {
               "Comment" : "Alias targeted to myELB LoadBalancer.",
               "HostedZoneName" : { "Ref" : "originalDomain" },
@@ -235,7 +235,6 @@
        						}
        					}
        				]
-
          }
       },
 
