@@ -238,7 +238,7 @@
          }
       },
 
-      "MyServerGroup": {
+      "MyAutoScalingGroup": {
      		"Type": "AWS::AutoScaling::AutoScalingGroup",
      		"Properties": {
        			"VPCZoneIdentifier" : [
@@ -254,7 +254,7 @@
        			"Tags": [
               {
             		"Key": "name",
-             		"Value": "csye6225-MyServerGroup",
+             		"Value": "csye6225-MyAutoScalingGroup",
             		"PropagateAtLaunch" : "true"
               }
             ]
@@ -270,7 +270,7 @@
         "Properties": {
           "AdjustmentType": "ChangeInCapacity",
           "AutoScalingGroupName": {
-            "Ref": "MyServerGroup"
+            "Ref": "MyAutoScalingGroup"
           },
           "Cooldown": "60",
           "ScalingAdjustment": "1"
@@ -281,7 +281,7 @@
         "Properties": {
           "AdjustmentType": "ChangeInCapacity",
           "AutoScalingGroupName": {
-            "Ref": "MyServerGroup"
+            "Ref": "MyAutoScalingGroup"
           },
           "Cooldown": "60",
           "ScalingAdjustment": "-1"
@@ -306,7 +306,7 @@
             {
               "Name": "AutoScalingGroupName",
               "Value": {
-                "Ref": "MyServerGroup"
+                "Ref": "MyAutoScalingGroup"
               }
             }
           ],
@@ -332,7 +332,7 @@
             {
               "Name": "AutoScalingGroupName",
               "Value": {
-                "Ref": "MyServerGroup"
+                "Ref": "MyAutoScalingGroup"
               }
             }
           ],
@@ -399,7 +399,7 @@
         "ImageIdOfEC2Instance": {
           "Description" : "ImageId of EC2 Instance",
           "Type": "String",
-          "Default" : "ami-66506c1c"
+          "Default" : " "
         },
 
         "TypeOfEC2Instance": {
