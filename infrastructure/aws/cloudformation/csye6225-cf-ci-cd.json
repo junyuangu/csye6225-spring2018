@@ -384,8 +384,8 @@
       "TagValue" : {
         "Description" : " EC2 instance tag Value ",
         "Type" : "String",
-        "Default" : "MyEC2ForCodeDeployInstance"
+        "Default" : "csye6225-MyServerGroup"
       }
     }
-    
+
 }
