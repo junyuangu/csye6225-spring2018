@@ -23,6 +23,8 @@ Very Important: In assignment9, when switch to another region(like us-east-2), p
 1. create a lambda function according to lambda funciton name in the json template.
 2. certificate the domain in certificate manager, and update it in the application json template.
 Notice! the us-east-1 ACM arn is
-arn:aws:acm:us-east-1:169212139838:certificate/15e1fae8-ae59-48bb-8c4b-6d12e1baed33
+	arn:aws:acm:us-east-1:169212139838:certificate/15e1fae8-ae59-48bb-8c4b-6d12e1baed33
+us-east-2 ACM arn is
+	arn:aws:acm:us-east-2:169212139838:certificate/fc8d6767-173c-44aa-b9bb-f34e65f5ce5b
 
 
