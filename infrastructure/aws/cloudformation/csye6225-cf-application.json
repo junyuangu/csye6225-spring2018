@@ -51,7 +51,7 @@
                              "sudo apt-get install python -y ",
                              "sudo apt-get install mysql-client -y",
                              "sudo apt-get update ",
-                             "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install ",
+                             "sudo wget https://aws-codedeploy-us-east-2.s3.amazonaws.com/latest/install ",
                              "sudo chmod +x ./install ",
                              "sudo ./install auto ",
                              "sudo service codedeploy-agent start ",
@@ -538,7 +538,7 @@
 
         "ACMArn" : {
           "Type" : "String",
-          "Default" : "arn:aws:acm:us-east-1:169212139838:certificate/15e1fae8-ae59-48bb-8c4b-6d12e1baed33"
+          "Default" : "arn:aws:acm:us-east-2:169212139838:certificate/15e1fae8-ae59-48bb-8c4b-6d12e1baed33"
         },
 
         "vpcId" : {

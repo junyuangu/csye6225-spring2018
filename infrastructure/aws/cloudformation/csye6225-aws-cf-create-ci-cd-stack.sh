@@ -11,7 +11,7 @@ STACK_CF=""
 STACK_STATUS=""
 
 #Create Stack:
-STACK_CF=$(aws cloudformation create-stack --template-body file://csye6225-cf-ci-cd.json --stack-name $stackname --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=CodeDeployAppName,ParameterValue=MyApplication Parameterkey=S3Key,ParameterValue=MyApplication.zip ParameterKey=TagKey,ParameterValue=name ParameterKey=TagValue,ParameterValue=csye6225-MyAutoScalingGroup)
+STACK_CF=$(aws cloudformation create-stack --template-body file://csye6225-cf-ci-cd.json --stack-name $stackname --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=CodeDeployAppName,ParameterValue=MyApplication ParameterKey=TagKey,ParameterValue=name ParameterKey=TagValue,ParameterValue=csye6225-MyAutoScalingGroup)
 
 #Wait until stack completely created
 echo "Please wait..."

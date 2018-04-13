@@ -66,7 +66,7 @@
                      "Resource": {
                        "Fn::Join" : [ "",
                          [
-                            "arn:aws:codedeploy:us-east-1:",
+                            "arn:aws:codedeploy:us-east-2:",
                             { "Ref" : "AWS::AccountId" },
                             ":application:",
                             { "Ref" : "CodeDeployAppName" }
@@ -92,17 +92,17 @@
                      "Resource": [
                           {
                             "Fn::Join": [ "",
-                                [ "arn:aws:codedeploy:us-east-1:",{ "Ref": "AWS::AccountId" },":deploymentconfig:CodeDeployDefault.OneAtATime" ]
+                                [ "arn:aws:codedeploy:us-east-2:",{ "Ref": "AWS::AccountId" },":deploymentconfig:CodeDeployDefault.OneAtATime" ]
                             ]
                           },
                           {
                             "Fn::Join": [ "",
-                                [ "arn:aws:codedeploy:us-east-1:", { "Ref": "AWS::AccountId" }, ":deploymentconfig:CodeDeployDefault.HalfAtATime" ]
+                                [ "arn:aws:codedeploy:us-east-2:", { "Ref": "AWS::AccountId" }, ":deploymentconfig:CodeDeployDefault.HalfAtATime" ]
                             ]
                           },
                           {
                             "Fn::Join": [ "",
-                                [ "arn:aws:codedeploy:us-east-1:", { "Ref": "AWS::AccountId" }, ":deploymentconfig:CodeDeployDefault.AllAtOnce" ]
+                                [ "arn:aws:codedeploy:us-east-2:", { "Ref": "AWS::AccountId" }, ":deploymentconfig:CodeDeployDefault.AllAtOnce" ]
                             ]
                           }
                      ]
