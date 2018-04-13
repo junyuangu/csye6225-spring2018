@@ -253,12 +253,15 @@
             ],
        			"Tags": [
               {
+                "ResourceType": "auto-scaling-group",
+                "ResourceId": "MyAutoScalingGroup",
             		"Key": "name",
              		"Value": "csye6225-MyAutoScalingGroup",
             		"PropagateAtLaunch" : "true"
               }
             ]
           },
+          "AutoScalingGroupName": "MyAutoScalingGroup",
           "DependsOn": [
         			 "ALBListener",
         			 "AutoScalingEC2Instance"

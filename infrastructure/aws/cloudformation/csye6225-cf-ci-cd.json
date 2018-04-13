@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion" : "2010-09-09",
-    "Description" : "csye6225 spring2018 for assignment 6&7",
+    "Description" : "csye6225 spring2018 updated for assignment 9",
     "Resources" : {
 
         "CodeDeployEC2S3Policy" : {
@@ -318,25 +318,13 @@
       "TagKey" : {
         "Description" : " EC2 instance tag Key ",
         "Type" : "String",
-        "Default" : " "
+        "Default" : "name"
       },
 
       "TagValue" : {
         "Description" : " EC2 instance tag Value ",
         "Type" : "String",
-        "Default" : " "
-      },
-
-      "TagKey2" : {
-        "Description" : " EC2 instance tag Key ",
-        "Type" : "String",
-        "Default" : "name"
-      },
-
-      "TagValue2" : {
-        "Description" : " EC2 instance tag Value ",
-        "Type" : "String",
-        "Default" : "csye6225-AutoScalingGroup"
+        "Default" : "csye6225-MyAutoScalingGroup"
       }
 
     }
