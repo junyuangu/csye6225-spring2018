@@ -17,3 +17,7 @@ Name: Junyuan Gu, 001825583;
 	Shell scripts operations: network -> ci_cd -> application
 
 
+7. Assignment9:
+Remember to change the region in the .travis.yml if wanna test in a different region!!
+
+
