@@ -268,12 +268,14 @@
                 "DeploymentConfigName" : "CodeDeployDefault.OneAtATime",
                 "DeploymentGroupName": {
                     "Ref" : "NameOfDeploymentGroup"
-                 },
-                "Ec2TagFilters" : [ {
-                    "Key" : { "Ref" : "TagKey" },
-                    "Value" : { "Ref" : "TagValue" },
-                    "Type" : "KEY_AND_VALUE"
-                } ],
+                },
+                "Ec2TagFilters" : [
+                   {
+                      "Key" : { "Ref" : "TagKey" },
+                      "Value" : { "Ref" : "TagValue" },
+                      "Type" : "KEY_AND_VALUE"
+                   }
+                ],
                 "ServiceRoleArn" : { "Fn::GetAtt" : [ "RoleForCodeDeployService", "Arn" ] }
             },
             "DependsOn": [
@@ -378,14 +380,27 @@
       "TagKey" : {
         "Description" : " EC2 instance tag Key ",
         "Type" : "String",
-        "Default" : "Name"
+        "Default" : "name"
       },
 
       "TagValue" : {
         "Description" : " EC2 instance tag Value ",
         "Type" : "String",
         "Default" : "csye6225-MyServerGroup"
+      },
+
+      "TagKey2" : {
+        "Description" : " EC2 instance tag Key ",
+        "Type" : "String",
+        "Default" : "name"
+      },
+
+      "TagValue2" : {
+        "Description" : " EC2 instance tag Value ",
+        "Type" : "String",
+        "Default" : "csye6225-AutoScalingGroup"
       }
+
     }
 
 }
