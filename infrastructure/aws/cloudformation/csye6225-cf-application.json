@@ -538,7 +538,7 @@
 
         "ACMArn" : {
           "Type" : "String",
-          "Default" : "arn:aws:acm:us-east-2:169212139838:certificate/15e1fae8-ae59-48bb-8c4b-6d12e1baed33"
+          "Default" : ""
         },
 
         "vpcId" : {

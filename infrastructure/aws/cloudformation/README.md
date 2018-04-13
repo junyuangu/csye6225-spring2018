@@ -18,3 +18,11 @@
 
     The cloudFormation template for this stack
 
+
+Very Important: In assignment9, when switch to another region(like us-east-2), please remember 2 things:
+1. create a lambda function according to lambda funciton name in the json template.
+2. certificate the domain in certificate manager, and update it in the application json template.
+Notice! the us-east-1 ACM arn is
+arn:aws:acm:us-east-1:169212139838:certificate/15e1fae8-ae59-48bb-8c4b-6d12e1baed33
+
+
