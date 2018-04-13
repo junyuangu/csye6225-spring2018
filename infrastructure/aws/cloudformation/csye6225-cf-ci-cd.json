@@ -176,12 +176,12 @@
         							"logs:DescribeLogStreams"
         						],
         						"Resource": [
-        							"arn:aws:logs:*:*:*"
+                      "arn:aws:logs:*:*:*"
         						]
       					  }
                 ]
       				}
-      			}
+      		 }
       	},
 
         "S3BucketForCodeDeploy" : {
@@ -318,13 +318,13 @@
       "TagKey" : {
         "Description" : " EC2 instance tag Key ",
         "Type" : "String",
-        "Default" : "name"
+        "Default" : " "
       },
 
       "TagValue" : {
         "Description" : " EC2 instance tag Value ",
         "Type" : "String",
-        "Default" : "csye6225-MyAutoScalingGroup"
+        "Default" : " "
       }
 
     }

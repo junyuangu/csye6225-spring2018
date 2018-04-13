@@ -20,7 +20,7 @@
          }
        },
 
-      "AutoScalingEC2Instance" : {
+      "ASLaunchConfig" : {
           "Type":"AWS::AutoScaling::LaunchConfiguration",
           "Properties" : {
              "ImageId" : { "Ref" : "ImageIdOfEC2Instance" },
@@ -198,6 +198,56 @@
          }
       },
 
+      "MyAutoScalingGroup": {
+        "Type": "AWS::AutoScaling::AutoScalingGroup",
+        "Properties": {
+            "AutoScalingGroupName": "MyAutoScalingGroup",
+            "Cooldown" : "60",
+            "DesiredCapacity" : "3",
+            "VPCZoneIdentifier" : [
+                { "Ref" : "EC2SubnetId" },
+                { "Ref" : "EC2Subnet2Id" }
+            ],
+            "LaunchConfigurationName": { "Ref" : "ASLaunchConfig" },
+            "MinSize": "3",
+            "MaxSize": "7",
+            "TargetGroupARNs": [
+                {"Ref": "ALBTargetGroup"}
+            ],
+            "Tags": [
+              {
+                "ResourceType": "auto-scaling-group",
+                "ResourceId": "MyAutoScalingGroup",
+                "Key": "name",
+                "Value": "csye6225-MyAutoScalingGroup",
+                "PropagateAtLaunch" : "true"
+              }
+            ]
+        },
+        "DependsOn": [
+           "ALBListener",
+           "ASLaunchConfig"
+        ]
+      },
+
+      "ALBTargetGroup": {
+          "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+          "Properties": {
+              "Tags": [
+                { "Key": "name", "Value": "csye6225-ALBTargetGroup" }
+            ],
+              "HealthCheckIntervalSeconds" : 60,
+              "UnhealthyThresholdCount" : 10,
+              "HealthCheckPath" : "/",
+              "Name" : "csye6225TargetGroup",
+              "TargetType" : "instance",
+              "Port" : 443,
+              "Protocol" : "HTTPS",
+              "VpcId" : {"Ref": "vpcId"}
+          },
+          "DependsOn": [ "ApplicationLoadBalancer" ]
+      },
+
       "ApplicationLoadBalancer": {
         	"Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
         	"Properties": {
@@ -220,54 +270,6 @@
         	}
       },
 
-      "MyDNSRecord":{
-          "Type" : "AWS::Route53::RecordSetGroup",
-          "Properties" : {
-              "Comment" : "Alias targeted to myELB LoadBalancer.",
-              "HostedZoneName" : { "Ref" : "originalDomain" },
-       				"RecordSets" : [
-       					{
-       						"Name" : {"Ref":"originalDomain"},
-       						"Type" : "A",
-       						"AliasTarget" : {
-       							"HostedZoneId" : { "Fn::GetAtt" : ["ApplicationLoadBalancer", "CanonicalHostedZoneID"] },
-       							"DNSName" : { "Fn::GetAtt" : ["ApplicationLoadBalancer","DNSName"] }
-       						}
-       					}
-       				]
-         }
-      },
-
-      "MyAutoScalingGroup": {
-     		"Type": "AWS::AutoScaling::AutoScalingGroup",
-     		"Properties": {
-       			"VPCZoneIdentifier" : [
-                { "Ref" : "EC2SubnetId" },
-                { "Ref" : "EC2Subnet2Id" }
-            ],
-       			"LaunchConfigurationName": { "Ref" : "AutoScalingEC2Instance" },
-       			"MinSize": "3",
-       			"MaxSize": "7",
-       			"TargetGroupARNs": [
-                {"Ref": "ALBTargetGroup"}
-            ],
-       			"Tags": [
-              {
-                "ResourceType": "auto-scaling-group",
-                "ResourceId": "MyAutoScalingGroup",
-            		"Key": "name",
-             		"Value": "csye6225-MyAutoScalingGroup",
-            		"PropagateAtLaunch" : "true"
-              }
-            ]
-          },
-          "AutoScalingGroupName": "MyAutoScalingGroup",
-          "DependsOn": [
-        			 "ALBListener",
-        			 "AutoScalingEC2Instance"
-          ]
-      },
-
       "WebServerScaleUpPolicy": {
         "Type": "AWS::AutoScaling::ScalingPolicy",
         "Properties": {
@@ -279,6 +281,7 @@
           "ScalingAdjustment": "1"
         }
       },
+
       "WebServerScaleDownPolicy": {
         "Type": "AWS::AutoScaling::ScalingPolicy",
         "Properties": {
@@ -290,6 +293,7 @@
           "ScalingAdjustment": "-1"
         }
       },
+
       "CPUAlarmHigh": {
         "Type": "AWS::CloudWatch::Alarm",
         "Properties": {
@@ -316,6 +320,7 @@
           "ComparisonOperator": "GreaterThanThreshold"
         }
       },
+
       "CPUAlarmLow": {
         "Type": "AWS::CloudWatch::Alarm",
         "Properties": {
@@ -343,6 +348,24 @@
         }
       },
 
+      "MyDNSRecord":{
+          "Type" : "AWS::Route53::RecordSetGroup",
+          "Properties" : {
+              "Comment" : "Alias targeted to myELB LoadBalancer.",
+              "HostedZoneName" : { "Ref" : "originalDomain" },
+       				"RecordSets" : [
+       					{
+       						"Name" : {"Ref":"originalDomain"},
+       						"Type" : "A",
+       						"AliasTarget" : {
+       							"HostedZoneId" : { "Fn::GetAtt" : ["ApplicationLoadBalancer", "CanonicalHostedZoneID"] },
+       							"DNSName" : { "Fn::GetAtt" : ["ApplicationLoadBalancer","DNSName"] }
+       						}
+       					}
+       				]
+         }
+      },
+
       "ALBListener": {
     		"Type": "AWS::ElasticLoadBalancingV2::Listener",
     		"Properties": {
@@ -364,38 +387,13 @@
          "Properties" : {
             "RetentionInDays" : 7
          }
-      },
-
-      "ALBTargetGroup": {
-      	"Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-      	"Properties": {
-      		"Tags": [
-              { "Key": "name", "Value": "csye6225-ALBTargetGroup" }
-          ],
-      		"HealthCheckIntervalSeconds" : 60,
-      		"UnhealthyThresholdCount" : 10,
-      		"HealthCheckPath" : "/",
-      		"Name" : "csye6225TargetGroup",
-      		"TargetType" : "instance",
-      		"Port" : 443,
-      		"Protocol" : "HTTPS",
-      		"VpcId" : {"Ref": "vpcId"}
-      	},
-      	"DependsOn": [ "ApplicationLoadBalancer" ]
       }
 
     },
 
 
 
-    "Outputs": {
-        "InstanceId": {
-            "Description": "InstanceId of the newly created EC2 instance",
-            "Value": {
-                "Ref": "AutoScalingEC2Instance"
-            }
-        }
-    },
+
 
     "Parameters" : {
 
