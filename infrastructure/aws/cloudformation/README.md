@@ -19,7 +19,7 @@
     The cloudFormation template for this stack
 
 
-Very Important: In assignment9, when switch to another region(like us-east-2), please remember 3 things:
+Very Important: In assignment9, when switch to another region(like us-east-2), please remember these things:
 1. create a lambda function according to lambda funciton name in the json template.
 2. certificate the domain in certificate manager, and update it in the application json template.
 Notice! the us-east-1 ACM arn is
@@ -30,5 +30,9 @@ us-east-2 ACM arn is
 3. image id: 
 	us-east-1: ami-66506c1c
 	east-2: ami-916f59f4(should be changed in the application shell script.)
+
+4. in Application shell script, Param: KeyPairName
+    east-1: xyzdemo
+    east-2: region2Key
 
 
