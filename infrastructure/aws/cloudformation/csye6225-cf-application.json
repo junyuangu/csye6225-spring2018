@@ -75,7 +75,7 @@
               { "Ref" : "EC2Subnet2Id" }
             ],
         		"SecurityGroups": [
-              { "Ref" : "WebServerSecurityGroupId" }
+              { "Ref" : "LoadBalancerSecurityGroupId" }
             ]
         	}
       },
@@ -213,6 +213,11 @@
 
         "WebServerSecurityGroupId" : {
           "Description" : "Group ID of Web Server Security Group",
+          "Type": "AWS::EC2::SecurityGroup::Id",
+          "Default" : " "
+        },
+
+        "LoadBalancerSecurityGroupId" : {
           "Type": "AWS::EC2::SecurityGroup::Id",
           "Default" : " "
         },

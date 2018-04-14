@@ -28,6 +28,8 @@ EC2_Subnet_ID=$(aws ec2 describe-subnets --filters Name=tag:aws:cloudformation:l
 EC2_Subnet2_ID=$(aws ec2 describe-subnets --filters Name=tag:aws:cloudformation:logical-id,Values=SubnetForAutoScaling | jq -r '.Subnets[0].SubnetId')
 EC2_SecurityGroup_ID=$(aws ec2 describe-security-groups --filters Name=tag:aws:cloudformation:logical-id,Values=WebServerSecurityGroup | jq -r '.SecurityGroups[0].GroupId')
 RDS_SecurityGroup_ID=$(aws ec2 describe-security-groups --filters Name=tag:aws:cloudformation:logical-id,Values=DBServerSecurityGroup | jq -r '.SecurityGroups[0].GroupId')
+ALB_SecurityGroup_ID=$(aws ec2 describe-security-groups --filters Name=tag:aws:cloudformation:logical-id,Values=LoadBalancerSecurityGroup | jq -r '.SecurityGroups[0].GroupId')
+
 
 val1="EC2_Subnet_ID: $EC2_Subnet_ID"
 valSubnet2="EC2_Subnet2_ID: $EC2_Subnet2_ID"
@@ -39,6 +41,7 @@ echo $valSubnet2
 echo $val2
 echo $val3
 echo $val4
+echo "ALB SecurityGroup ID: $ALB_SecurityGroup_ID"
 
 ParamECTWOSUBNETID=$EC2_Subnet_ID
 ParamECTWOSGID=$EC2_SecurityGroup_ID
@@ -53,7 +56,7 @@ ParamALBTargetGroupARN=$(aws autoscaling describe-load-balancer-target-groups --
 echo $ParamALBTargetGroupARN
 
 #Create Stack:
-STATUS_CF=$(aws cloudformation create-stack --stack-name $stackname --template-body file://csye6225-cf-application.json --capabilities CAPABILITY_NAMED_IAM --parameters  ParameterKey=TypeOfEC2Instance,ParameterValue=t2.micro ParameterKey=RDSSecurityGroupId,ParameterValue=$ParamRDSSGID ParameterKey=ExistingKeyPairName,ParameterValue=xyzdemo ParameterKey=EC2VolumeType,ParameterValue=gp2 ParameterKey=EC2VolumeSize,ParameterValue=16 ParameterKey=TagKey,ParameterValue=Name ParameterKey=WebServerSecurityGroupId,ParameterValue=$ParamECTWOSGID ParameterKey=EC2SubnetId,ParameterValue=$ParamECTWOSUBNETID ParameterKey=EC2InstanceTagValue,ParameterValue=$instancename ParameterKey=WebAppS3BucketName,ParameterValue=web-app.csye6225-spring2018-guju.me ParameterKey=rdsParamStorageSize,ParameterValue=10 ParameterKey=rdsParamDBName,ParameterValue=csye6225 ParameterKey=rdsParamEngine,ParameterValue=MySQL ParameterKey=LambdaFunctionARN,ParameterValue=$ParamLAMBDAFUNCARN ParameterKey=rdsParamEngineVersion,ParameterValue=5.6.37 ParameterKey=rdsParamDBInsClass,ParameterValue=db.t2.medium ParameterKey=rdsParamDBInsId,ParameterValue=csye6225-spring2018 ParameterKey=rdsParamUsername,ParameterValue=csye6225master ParameterKey=rdsParamPassword,ParameterValue=csye6225password ParameterKey=rdsParamDBTagVal,ParameterValue=csye6225MyDBInstance ParameterKey=DBSubnetGroup,ParameterValue=RDSsubnet-group ParameterKey=vpcId,ParameterValue=$ParamVpcID ParameterKey=EC2Subnet2Id,ParameterValue=$EC2_Subnet2_ID ParameterKey=ALBTargetGroupArn,ParameterValue=$ParamALBTargetGroupARN)
+STATUS_CF=$(aws cloudformation create-stack --stack-name $stackname --template-body file://csye6225-cf-application.json --capabilities CAPABILITY_NAMED_IAM --parameters  ParameterKey=TypeOfEC2Instance,ParameterValue=t2.micro ParameterKey=RDSSecurityGroupId,ParameterValue=$ParamRDSSGID ParameterKey=ExistingKeyPairName,ParameterValue=xyzdemo ParameterKey=EC2VolumeType,ParameterValue=gp2 ParameterKey=EC2VolumeSize,ParameterValue=16 ParameterKey=TagKey,ParameterValue=Name ParameterKey=WebServerSecurityGroupId,ParameterValue=$ParamECTWOSGID ParameterKey=EC2SubnetId,ParameterValue=$ParamECTWOSUBNETID ParameterKey=EC2InstanceTagValue,ParameterValue=$instancename ParameterKey=WebAppS3BucketName,ParameterValue=web-app.csye6225-spring2018-guju.me ParameterKey=rdsParamStorageSize,ParameterValue=10 ParameterKey=rdsParamDBName,ParameterValue=csye6225 ParameterKey=rdsParamEngine,ParameterValue=MySQL ParameterKey=LambdaFunctionARN,ParameterValue=$ParamLAMBDAFUNCARN ParameterKey=rdsParamEngineVersion,ParameterValue=5.6.37 ParameterKey=rdsParamDBInsClass,ParameterValue=db.t2.medium ParameterKey=rdsParamDBInsId,ParameterValue=csye6225-spring2018 ParameterKey=rdsParamUsername,ParameterValue=csye6225master ParameterKey=rdsParamPassword,ParameterValue=csye6225password ParameterKey=rdsParamDBTagVal,ParameterValue=csye6225MyDBInstance ParameterKey=DBSubnetGroup,ParameterValue=RDSsubnet-group ParameterKey=vpcId,ParameterValue=$ParamVpcID ParameterKey=EC2Subnet2Id,ParameterValue=$EC2_Subnet2_ID ParameterKey=ALBTargetGroupArn,ParameterValue=$ParamALBTargetGroupARN ParameterKey=LoadBalancerSecurityGroupId,ParameterValue=$ALB_SecurityGroup_ID)
 
 
 echo $STATUS_CF
