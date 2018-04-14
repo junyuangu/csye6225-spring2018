@@ -78,7 +78,7 @@
             "VpcId" : { "Ref" : "VPC" },
             "CidrBlock" : "10.0.0.0/24",
             "MapPublicIpOnLaunch": true,
-            "AvailabilityZone" : "us-east-2a",
+            "AvailabilityZone" : "us-east-1a",
             "Tags" : [ { "Key" : "Name", "Value" : "SubnetForWebServers" } ]
          }
       },
@@ -97,7 +97,7 @@
             "VpcId" : { "Ref" : "VPC" },
             "CidrBlock" : "10.0.2.0/24",
             "MapPublicIpOnLaunch": true,
-            "AvailabilityZone" : "us-east-2c",
+            "AvailabilityZone" : "us-east-1c",
             "Tags" : [ { "Key" : "Name", "Value" : "SubnetForAutoScale" } ]
          }
       },
@@ -116,7 +116,7 @@
          "Properties" : {
             "VpcId" : { "Ref" : "VPC" },
             "CidrBlock" : "10.0.1.0/24",
-            "AvailabilityZone" : "us-east-2b",
+            "AvailabilityZone" : "us-east-1b",
             "Tags" : [ { "Key" : "Name", "Value" : "SubnetForDBServers" } ]
          }
       },

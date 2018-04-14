@@ -66,7 +66,7 @@
                      "Resource": {
                        "Fn::Join" : [ "",
                          [
-                            "arn:aws:codedeploy:us-east-2:",
+                            "arn:aws:codedeploy:us-east-1:",
                             { "Ref" : "AWS::AccountId" },
                             ":application:",
                             { "Ref" : "CodeDeployAppName" }
@@ -92,17 +92,17 @@
                      "Resource": [
                           {
                             "Fn::Join": [ "",
-                                [ "arn:aws:codedeploy:us-east-2:",{ "Ref": "AWS::AccountId" },":deploymentconfig:CodeDeployDefault.OneAtATime" ]
+                                [ "arn:aws:codedeploy:us-east-1:",{ "Ref": "AWS::AccountId" },":deploymentconfig:CodeDeployDefault.OneAtATime" ]
                             ]
                           },
                           {
                             "Fn::Join": [ "",
-                                [ "arn:aws:codedeploy:us-east-2:", { "Ref": "AWS::AccountId" }, ":deploymentconfig:CodeDeployDefault.HalfAtATime" ]
+                                [ "arn:aws:codedeploy:us-east-1:", { "Ref": "AWS::AccountId" }, ":deploymentconfig:CodeDeployDefault.HalfAtATime" ]
                             ]
                           },
                           {
                             "Fn::Join": [ "",
-                                [ "arn:aws:codedeploy:us-east-2:", { "Ref": "AWS::AccountId" }, ":deploymentconfig:CodeDeployDefault.AllAtOnce" ]
+                                [ "arn:aws:codedeploy:us-east-1:", { "Ref": "AWS::AccountId" }, ":deploymentconfig:CodeDeployDefault.AllAtOnce" ]
                             ]
                           }
                      ]
@@ -204,6 +204,9 @@
             "Properties" : {
                 "ApplicationName" : { "Ref" : "CodeDeployAppName" },
                 "DeploymentConfigName" : "CodeDeployDefault.OneAtATime",
+                "AutoScalingGroups" : [
+                    { "Ref" : "MyAutoScalingGroup" }
+                ],
                 "DeploymentGroupName": {
                     "Ref" : "NameOfDeploymentGroup"
                 },
@@ -219,6 +222,244 @@
             "DependsOn": [
               "CodeDeployApplication"
             ]
+        },
+
+        "MyAutoScalingGroup": {
+          "Type": "AWS::AutoScaling::AutoScalingGroup",
+          "Properties": {
+              "AutoScalingGroupName": "MyAutoScalingGroup",
+              "Cooldown" : "60",
+              "DesiredCapacity" : "3",
+              "VPCZoneIdentifier" : [
+                  { "Ref" : "EC2SubnetId" },
+                  { "Ref" : "EC2Subnet2Id" }
+              ],
+              "LaunchConfigurationName": { "Ref" : "ASLaunchConfig" },
+              "MinSize": "3",
+              "MaxSize": "7",
+              "TargetGroupARNs": [
+                  {"Ref": "ALBTargetGroup"}
+              ],
+              "Tags": [
+                {
+                  "ResourceType": "auto-scaling-group",
+                  "ResourceId": "MyAutoScalingGroup",
+                  "Key": "name",
+                  "Value": "csye6225-MyAutoScalingGroup",
+                  "PropagateAtLaunch" : "true"
+                }
+              ]
+          }
+        },
+
+        "ALBTargetGroup": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "Tags": [
+                  { "Key": "name", "Value": "csye6225-ALBTargetGroup" }
+              ],
+                "HealthCheckIntervalSeconds" : 60,
+                "UnhealthyThresholdCount" : 10,
+                "HealthCheckPath" : "/",
+                "Name" : "csye6225TargetGroup",
+                "TargetType" : "instance",
+                "Port" : 443,
+                "Protocol" : "HTTPS",
+                "VpcId" : {"Ref": "vpcId"}
+            }
+        },
+
+        "WebServerScaleUpPolicy": {
+          "Type": "AWS::AutoScaling::ScalingPolicy",
+          "Properties": {
+            "AdjustmentType": "ChangeInCapacity",
+            "AutoScalingGroupName": {
+              "Ref": "MyAutoScalingGroup"
+            },
+            "Cooldown": "60",
+            "ScalingAdjustment": "1"
+          }
+        },
+
+        "WebServerScaleDownPolicy": {
+          "Type": "AWS::AutoScaling::ScalingPolicy",
+          "Properties": {
+            "AdjustmentType": "ChangeInCapacity",
+            "AutoScalingGroupName": {
+              "Ref": "MyAutoScalingGroup"
+            },
+            "Cooldown": "60",
+            "ScalingAdjustment": "-1"
+          }
+        },
+
+        "CPUAlarmHigh": {
+          "Type": "AWS::CloudWatch::Alarm",
+          "Properties": {
+            "AlarmDescription": "Scale-up if CPU > 90% for 10 minutes",
+            "MetricName": "CPUUtilization",
+            "Namespace": "AWS/EC2",
+            "Statistic": "Average",
+            "Period": "300",
+            "EvaluationPeriods": "2",
+            "Threshold": "90",
+            "AlarmActions": [
+              {
+                "Ref": "WebServerScaleUpPolicy"
+              }
+            ],
+            "Dimensions": [
+              {
+                "Name": "AutoScalingGroupName",
+                "Value": {
+                  "Ref": "MyAutoScalingGroup"
+                }
+              }
+            ],
+            "ComparisonOperator": "GreaterThanThreshold"
+          }
+        },
+
+        "CPUAlarmLow": {
+          "Type": "AWS::CloudWatch::Alarm",
+          "Properties": {
+            "AlarmDescription": "Scale-down if CPU < 70% for 10 minutes",
+            "MetricName": "CPUUtilization",
+            "Namespace": "AWS/EC2",
+            "Statistic": "Average",
+            "Period": "300",
+            "EvaluationPeriods": "2",
+            "Threshold": "70",
+            "AlarmActions": [
+              {
+                "Ref": "WebServerScaleDownPolicy"
+              }
+            ],
+            "Dimensions": [
+              {
+                "Name": "AutoScalingGroupName",
+                "Value": {
+                  "Ref": "MyAutoScalingGroup"
+                }
+              }
+            ],
+            "ComparisonOperator": "LessThanThreshold"
+          }
+        },
+
+        "ASLaunchConfig" : {
+            "Type":"AWS::AutoScaling::LaunchConfiguration",
+            "Properties" : {
+               "ImageId" : { "Ref" : "ImageIdOfEC2Instance" },
+               "InstanceType" : { "Ref" : "TypeOfEC2Instance" },
+               "KeyName" : { "Ref" : "ExistingKeyPairName" },
+               "AssociatePublicIpAddress" : true,
+               "SecurityGroups": [{"Ref" : "WebServerSecurityGroupId"}],
+               "BlockDeviceMappings" : [
+                 {
+                     "DeviceName" : "/dev/sdf",
+                     "Ebs" : {
+                        "VolumeType" : { "Ref" : "EC2VolumeType" },
+                        "DeleteOnTermination" : true,
+                        "VolumeSize" : { "Ref" : "EC2VolumeSize" }
+                     }
+                 }
+               ],
+               "UserData": {
+                   "Fn::Base64": {
+                       "Fn::Join": [
+                           "\n",
+                           [
+                               "#!/bin/bash -xe ",
+                               "sudo apt-get update ",
+                               "sudo apt-get install openjdk-8-jdk -y",
+                               "sudo apt-get install ruby -y ",
+                               "sudo apt-get install wget -y ",
+                               "sudo apt-get install python -y ",
+                               "sudo apt-get install mysql-client -y",
+                               "sudo apt-get update ",
+                               "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install ",
+                               "sudo chmod +x ./install ",
+                               "sudo ./install auto ",
+                               "sudo service codedeploy-agent start ",
+                               "sudo apt-get install tomcat8 -y ",
+                               {
+                                  "Fn::Join": [
+                                     "",
+                                     [
+                                       "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.url=\\\"jdbc:mysql://",
+                                       { "Fn::GetAtt" : [ "MyDBInstance", "Endpoint.Address" ] },
+                                       ":3306/csye6225\\\"\"' >> /etc/default/tomcat8 \n"
+                                     ]
+                                  ]
+                               },
+                               {
+                                 "Fn::Join": [
+                                    "",
+                                    [
+                                      "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.username=",
+                                      { "Ref" : "rdsParamUsername" },
+                                      " -Dspring.datasource.password=",
+                                      { "Ref" : "rdsParamPassword" },
+                                      " -Dspring.profiles.active=aws",
+                                      "\"' >> /usr/share/tomcat8/bin/setenv.sh"
+                                    ]
+                                 ]
+                               },
+                               "sudo service tomcat8 restart",
+
+                              "sudo apt-get update",
+                              "sudo touch /home/ubuntu/awslogs.conf",
+                              "cd /home/ubuntu/",
+                              "sudo echo '[general]' > awslogs.conf",
+                              "sudo echo 'state_file= /var/awslogs/agent-state' >> awslogs.conf",
+                              "sudo echo '[logstream1]' >> awslogs.conf",
+                              "sudo echo 'file = /var/log/tomcat8/csye6225-aws.log' >> awslogs.conf",
+                              "echo 'log_group_name = ",
+                              {
+                                "Ref": "WebServerLogGroup"
+                              },
+                              "' >> awslogs.conf",
+                              "sudo echo 'log_stream_name = csye6225-webapp' >> awslogs.conf",
+                              "sudo echo 'datetime_format = %d/%b/%Y:%H:%M:%S' >> awslogs.conf",
+                              "curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O",
+                              {
+                                  "Fn::Join": [
+                                      " ",
+                                      [
+                                          "sudo python ./awslogs-agent-setup.py -n -r",
+                                          {
+                                              "Ref": "AWS::Region"
+                                          },
+                                          "-c /home/ubuntu/awslogs.conf || error_exit 'Failed to run CloudWatch Logs agent setup'"
+                                      ]
+                                  ]
+                              },
+
+
+                              "cd /etc/systemd/system",
+                              "sudo touch awslogs.service",
+                              "sudo echo '[Unit]' >> awslogs.service",
+                              "sudo echo 'Description=Service for CloudWatch Logs agent' >> awslogs.service",
+                              "sudo echo 'After=rc-local.service' >> awslogs.service",
+                              "sudo echo '[Service]' >> awslogs.service",
+                              "sudo echo 'Type=simple' >> awslogs.service",
+                              "sudo echo 'Restart=always' >> awslogs.service",
+                              "sudo echo 'KillMode=process' >> awslogs.service",
+                              "sudo echo 'TimeoutSec=infinity' >> awslogs.service",
+                              "sudo echo 'PIDFile=/var/awslogs/state/awslogs.pid' >> awslogs.service",
+                              "sudo echo 'ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile $PIDFILE --user awslogs --chuid awslogs &amp;' >> awslogs.service",
+                              "sudo echo '[Install]' >> awslogs.service",
+                              "sudo echo 'WantedBy=multi-user.target' >> awslogs.service",
+                              "sudo systemctl start awslogs.service",
+                              "sudo systemctl enable awslogs.service"
+
+                           ]
+                       ]
+                   }
+               },
+               "IamInstanceProfile": { "Ref" : "CodeDeployEC2ServiceRoleInsProfile" }
+            }
         },
 
         "RoleForLambda" : {
@@ -325,8 +566,24 @@
         "Description" : " EC2 instance tag Value ",
         "Type" : "String",
         "Default" : " "
-      }
+      },
 
+      "ParamAutoScalingGroup" : {
+        "Type" : "String",
+        "Default" : " "
+      },
+
+      "EC2SubnetId" : {
+        "Description" : "EC2 Subnet ID",
+        "Type": "AWS::EC2::Subnet::Id",
+        "Default" : " "
+      },
+
+      "EC2Subnet2Id" : {
+        "Description" : "EC2 Subnet2 ID",
+        "Type": "AWS::EC2::Subnet::Id",
+        "Default" : " "
+      }
     }
 
 }
