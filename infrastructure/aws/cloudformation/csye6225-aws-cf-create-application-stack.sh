@@ -22,10 +22,10 @@ STATUS_STATE=""
 #instancename="$stackname-csye6225-ec2"
 instancename="MyEC2ForCodeDeployInstance"
 
-echo $instancename
+echo $intancename
 
 EC2_Subnet_ID=$(aws ec2 describe-subnets --filters Name=tag:aws:cloudformation:logical-id,Values=SubnetForWebServers | jq -r '.Subnets[0].SubnetId')
-EC2_Subnet2_ID=$(aws ec2 describe-subnets --filters Name=tag:aws:cloudformation:logical-id,Values=SubnetForDBServers | jq -r '.Subnets[0].SubnetId')
+EC2_Subnet2_ID=$(aws ec2 describe-subnets --filters Name=tag:aws:cloudformation:logical-id,Values=SubnetForAutoScale | jq -r '.Subnets[0].SubnetId')
 EC2_SecurityGroup_ID=$(aws ec2 describe-security-groups --filters Name=tag:aws:cloudformation:logical-id,Values=WebServerSecurityGroup | jq -r '.SecurityGroups[0].GroupId')
 RDS_SecurityGroup_ID=$(aws ec2 describe-security-groups --filters Name=tag:aws:cloudformation:logical-id,Values=DBServerSecurityGroup | jq -r '.SecurityGroups[0].GroupId')
 

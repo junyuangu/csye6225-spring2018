@@ -25,9 +25,10 @@
     "InternetGateway" : {
       "Type" : "AWS::EC2::InternetGateway",
       "Properties" : {
-        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		               {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" } }
-                 ]
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+		      { "Key" : "Name", "Value" : { "Ref": "AWS::StackName" } }
+        ]
       }
     },
 
@@ -43,9 +44,10 @@
       "Type" : "AWS::EC2::RouteTable",
       "Properties" : {
         "VpcId" : {"Ref" : "VPC"},
-        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		   {"Key" : "Name", "Value" : {"Ref" : "ParamPublicRouteTableName"} }
-		 ]
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+		      { "Key" : "Name", "Value" : { "Ref" : "ParamPublicRouteTableName" } }
+		    ]
       }
     },
 
@@ -53,9 +55,10 @@
       "Type" : "AWS::EC2::RouteTable",
       "Properties" : {
         "VpcId" : {"Ref" : "VPC"},
-        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		   {"Key" : "Name", "Value" : {"Ref" : "ParamPrivateRouteTableName"} }
-		 ]
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+    		  { "Key" : "Name", "Value" : { "Ref" : "ParamPrivateRouteTableName" } }
+    		]
       }
     },
 
@@ -79,6 +82,7 @@
             "Tags" : [ { "Key" : "Name", "Value" : "SubnetForWebServers" } ]
          }
       },
+
       "SubnetForWebServersSubnetRouteTableAssociation" : {
          "Type" : "AWS::EC2::SubnetRouteTableAssociation",
          "Properties" : {
@@ -86,6 +90,26 @@
             "RouteTableId" : { "Ref" : "RouteTable" }
          }
       },
+
+      "SubnetForAutoScaling" : {
+         "Type" : "AWS::EC2::Subnet",
+         "Properties" : {
+            "VpcId" : { "Ref" : "VPC" },
+            "CidrBlock" : "10.0.2.0/24",
+            "MapPublicIpOnLaunch": true,
+            "AvailabilityZone" : "us-east-2c",
+            "Tags" : [ { "Key" : "Name", "Value" : "SubnetForAutoScale" } ]
+         }
+      },
+
+      "SubnetForAutoScaleSubnetRouteTableAssociation" : {
+         "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+         "Properties" : {
+            "SubnetId" : { "Ref" : "SubnetForAutoScaling" },
+            "RouteTableId" : { "Ref" : "RouteTable" }
+         }
+      },
+
 
       "SubnetForDBServers" : {
          "Type" : "AWS::EC2::Subnet",
