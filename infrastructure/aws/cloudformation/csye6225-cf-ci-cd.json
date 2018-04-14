@@ -261,6 +261,7 @@
                   { "Key": "name", "Value": "csye6225-ALBTargetGroup" }
                 ],
                 "HealthCheckIntervalSeconds" : 60,
+                "HealthCheckPort" : "8080",
                 "UnhealthyThresholdCount" : 10,
                 "HealthCheckPath" : "/",
                 "Name" : "csye6225TargetGroup",
@@ -417,10 +418,8 @@
                               "sudo echo 'state_file= /var/awslogs/agent-state' >> awslogs.conf",
                               "sudo echo '[logstream1]' >> awslogs.conf",
                               "sudo echo 'file = /var/log/tomcat8/csye6225-aws.log' >> awslogs.conf",
-                              "echo 'log_group_name = ",
-                              {
-                                "Ref": "WebServerLogGroup"
-                              },
+                              "sudo echo 'log_group_name = ",
+                              { "Ref": "WebServerLogGroup" },
                               "' >> awslogs.conf",
                               "sudo echo 'log_stream_name = csye6225-webapp' >> awslogs.conf",
                               "sudo echo 'datetime_format = %d/%b/%Y:%H:%M:%S' >> awslogs.conf",
