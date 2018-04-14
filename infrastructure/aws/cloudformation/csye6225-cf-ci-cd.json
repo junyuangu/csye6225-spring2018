@@ -259,14 +259,14 @@
             "Properties": {
                 "Tags": [
                   { "Key": "name", "Value": "csye6225-ALBTargetGroup" }
-              ],
+                ],
                 "HealthCheckIntervalSeconds" : 60,
                 "UnhealthyThresholdCount" : 10,
                 "HealthCheckPath" : "/",
                 "Name" : "csye6225TargetGroup",
                 "TargetType" : "instance",
-                "Port" : 443,
-                "Protocol" : "HTTPS",
+                "Port" : 8080,
+                "Protocol" : "HTTP",
                 "VpcId" : {"Ref": "vpcId"}
             }
         },
@@ -476,7 +476,7 @@
       			"Properties": {
       				"Path": "/",
       				"Roles":[
-                { "Ref" : "RoleForCodeDeployEC2Service" } 
+                { "Ref" : "RoleForCodeDeployEC2Service" }
               ]
       			}
       	},

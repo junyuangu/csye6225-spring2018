@@ -98,7 +98,7 @@
          }
       },
 
-      "ALBListener": {
+      "ALBListenerForHTTPS": {
     		"Type": "AWS::ElasticLoadBalancingV2::Listener",
     		"Properties": {
       			"Certificates" : [
@@ -109,10 +109,25 @@
       					"TargetGroupArn" : {"Ref": "ALBTargetGroupArn"}
       				}],
       			"LoadBalancerArn" : { "Ref" : "ApplicationLoadBalancer" },
-      			"Port" : "443",
+      			"Port" : 443,
       			"Protocol" : "HTTPS"
     		}
+    	},
+
+      "ALBListenerForHTTP": {
+    		"Type": "AWS::ElasticLoadBalancingV2::Listener",
+    		"Properties": {
+
+      			"DefaultActions": [ {
+      					"Type" : "forward",
+      					"TargetGroupArn" : {"Ref": "ALBTargetGroupArn"}
+      				} ],
+      			"LoadBalancerArn" : { "Ref" : "ApplicationLoadBalancer" },
+      			"Port" : 80,
+      			"Protocol" : "HTTP"
+    		}
     	}
+
 
     },
 
@@ -171,7 +186,7 @@
         "Type" : "String",
         "Default" : "RDSsubnet-group"
       },
-      
+
       "RDSSecurityGroupId" : {
         "Description" : "Security Group ID of RDS",
         "Type": "AWS::EC2::SecurityGroup::Id",
