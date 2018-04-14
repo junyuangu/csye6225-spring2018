@@ -3,6 +3,49 @@
     "Description" : "csye6225 spring2018 updated for assignment 9",
     "Resources" : {
 
+      "RoleForCodeDeployEC2Service":{
+         "Type":"AWS::IAM::Role",
+         "Properties":{
+            "AssumeRolePolicyDocument": {
+               "Version":"2012-10-17",
+               "Statement":[ {
+                     "Effect":"Allow",
+                     "Principal":{
+                        "Service":[
+                           "ec2.amazonaws.com"
+                        ]
+                     },
+                     "Action":[ "sts:AssumeRole" ]
+               } ]
+            },
+            "Path":"/",
+            "RoleName" : "CodeDeployEC2ServiceRole"
+         }
+      },
+
+      "RoleForCodeDeployService": {
+         "Type":"AWS::IAM::Role",
+         "Properties":{
+            "RoleName": "CodeDeployServiceRole",
+            "AssumeRolePolicyDocument":{
+               "Version":"2012-10-17",
+               "Statement": [ {
+                   "Effect":"Allow",
+                   "Principal":{
+                      "Service":[
+                         "codedeploy.amazonaws.com"
+                      ]
+                   },
+                   "Action":[ "sts:AssumeRole" ]
+               } ]
+            },
+            "Path":"/",
+            "ManagedPolicyArns": [
+                "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+            ]
+        }
+      },
+
         "CodeDeployEC2S3Policy" : {
            "Type" : "AWS::IAM::Policy",
            "Properties":{
@@ -113,48 +156,7 @@
            }
         },
 
-        "RoleForCodeDeployEC2Service":{
-           "Type":"AWS::IAM::Role",
-           "Properties":{
-              "AssumeRolePolicyDocument": {
-                 "Version":"2012-10-17",
-                 "Statement":[ {
-                       "Effect":"Allow",
-                       "Principal":{
-                          "Service":[
-                             "ec2.amazonaws.com"
-                          ]
-                       },
-                       "Action":[ "sts:AssumeRole" ]
-                 } ]
-              },
-              "Path":"/",
-              "RoleName" : "CodeDeployEC2ServiceRole"
-           }
-        },
 
-        "RoleForCodeDeployService": {
-           "Type":"AWS::IAM::Role",
-           "Properties":{
-              "RoleName": "CodeDeployServiceRole",
-              "AssumeRolePolicyDocument":{
-                 "Version":"2012-10-17",
-                 "Statement": [ {
-                     "Effect":"Allow",
-                     "Principal":{
-                        "Service":[
-                           "codedeploy.amazonaws.com"
-                        ]
-                     },
-                     "Action":[ "sts:AssumeRole" ]
-                 } ]
-              },
-              "Path":"/",
-              "ManagedPolicyArns": [
-                  "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
-              ]
-          }
-        },
 
         "CloudWatchPolicy": {
       			"Type": "AWS::IAM::ManagedPolicy",
@@ -462,6 +464,42 @@
             }
         },
 
+        "WebServerLogGroup":{
+           "Type" : "AWS::Logs::LogGroup",
+           "Properties" : {
+              "RetentionInDays" : 7
+           }
+        },
+
+        "CodeDeployEC2ServiceRoleInsProfile": {
+      			"Type": "AWS::IAM::InstanceProfile",
+      			"Properties": {
+      				"Path": "/",
+      				"Roles":[
+                { "Ref" : "RoleForCodeDeployEC2Service" } 
+              ]
+      			}
+      	},
+
+        "MyDBInstance" : {
+          "Type" : "AWS::RDS::DBInstance",
+          "Properties" : {
+             "AllocatedStorage" : { "Ref" : "rdsParamStorageSize" },
+             "DBName" : { "Ref" : "rdsParamDBName" },
+             "Engine" : { "Ref" : "rdsParamEngine" },
+             "EngineVersion" : { "Ref" : "rdsParamEngineVersion" },
+             "DBInstanceClass" :  { "Ref" : "rdsParamDBInsClass" },
+             "MultiAZ" : "FALSE",
+             "DBInstanceIdentifier" : { "Ref" : "rdsParamDBInsId" },
+             "MasterUsername" : {"Ref" : "rdsParamUsername"},
+             "MasterUserPassword" : {"Ref" : "rdsParamPassword"},
+             "PubliclyAccessible" : "FALSE",
+             "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
+             "VPCSecurityGroups": [ { "Ref" : "RDSSecurityGroupId" } ]
+           }
+         },
+
+
         "RoleForLambda" : {
            "Type" : "AWS::IAM::Role",
            "Properties" : {
@@ -583,6 +621,113 @@
         "Description" : "EC2 Subnet2 ID",
         "Type": "AWS::EC2::Subnet::Id",
         "Default" : " "
+      },
+
+      "vpcId" : {
+        "Type" : "String",
+        "Default" : " "
+      },
+
+      "rdsParamStorageSize" : {
+        "Description" : "Allocated Storage for RDS",
+        "Type" : "String",
+        "Default" : "10"
+      },
+
+      "rdsParamDBName" : {
+        "Description" : "DB Name for RDS",
+        "Type" : "String",
+        "Default" : "csye6225"
+      },
+
+      "rdsParamEngine" : {
+        "Description" : "Engine Type for RDS DB",
+        "Type" : "String",
+        "Default" : "MySQL"
+      },
+
+      "rdsParamEngineVersion" : {
+        "Description" : "Engine version for RDS DB",
+        "Type" : "String",
+        "Default" : "5.6.37"
+      },
+
+      "rdsParamDBInsClass" : {
+        "Description" : "Instance Class for RDS DB",
+        "Type" : "String",
+        "Default" : "db.t2.medium"
+      },
+
+      "rdsParamDBInsId" : {
+        "Description" : "Instance Identifier for RDS DB",
+        "Type" : "String",
+        "Default" : "RDS-csye6225-spring2018"
+      },
+
+      "rdsParamUsername" : {
+        "Description": "database username",
+        "Type" : "String",
+        "Default" : "csye6225master"
+      },
+
+      "rdsParamPassword" : {
+        "Description" : "database password",
+        "Type" : "String",
+        "Default" : "csye6225password"
+      },
+
+      "DBSubnetGroup" : {
+        "Description" : "Group Name for RDS DataBase Subnet Group",
+        "Type" : "String",
+        "Default" : "RDSsubnet-group"
+      },
+
+      "RDSSecurityGroupId" : {
+        "Description" : "Security Group ID of RDS",
+        "Type": "AWS::EC2::SecurityGroup::Id",
+        "Default" : " "
+      },
+
+      "rdsParamDBTagVal" : {
+        "Description" : "Tag Value for RDS DB instance",
+        "Type" : "String",
+        "Default" : "csye6225MyDBInstance"
+      },
+
+      "ImageIdOfEC2Instance": {
+        "Description" : "ImageId of EC2 Instance",
+        "Type": "String",
+        "Default" : " "
+      },
+
+      "WebServerSecurityGroupId" : {
+        "Description" : "Group ID of Web Server Security Group",
+        "Type": "AWS::EC2::SecurityGroup::Id",
+        "Default" : " "
+      },
+
+      "ExistingKeyPairName" : {
+        "Description" : "Attach an Existing Key Pair to the EC2 Instance",
+        "Type" : "String",
+        "Default" : " "
+      },
+
+      "EC2VolumeType" : {
+        "Description" : "EC2 Volume type",
+        "Type" : "String",
+        "Default" : "gp2"
+      },
+
+      "EC2VolumeSize" : {
+        "Description" : "EC2 Volume size",
+        "Type" : "String",
+        "Default" : "16"
+      },
+
+      "TypeOfEC2Instance": {
+        "Description" : "InstanceType of EC2 Instance",
+        "Type": "String",
+        "Default" : "t2.micro"
       }
     }
 

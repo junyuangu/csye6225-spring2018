@@ -2,32 +2,6 @@
     "AWSTemplateFormatVersion" : "2010-09-09",
     "Description" : "csye6225 spring2018 for assignment9, using free-tier AWS resources.",
     "Resources" : {
-      "MyDBInstance" : {
-        "Type" : "AWS::RDS::DBInstance",
-        "Properties" : {
-           "AllocatedStorage" : { "Ref" : "rdsParamStorageSize" },
-           "DBName" : { "Ref" : "rdsParamDBName" },
-           "Engine" : { "Ref" : "rdsParamEngine" },
-           "EngineVersion" : { "Ref" : "rdsParamEngineVersion" },
-           "DBInstanceClass" :  { "Ref" : "rdsParamDBInsClass" },
-           "MultiAZ" : "FALSE",
-           "DBInstanceIdentifier" : { "Ref" : "rdsParamDBInsId" },
-           "MasterUsername" : {"Ref" : "rdsParamUsername"},
-           "MasterUserPassword" : {"Ref" : "rdsParamPassword"},
-           "PubliclyAccessible" : "FALSE",
-           "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
-           "VPCSecurityGroups": [ { "Ref" : "RDSSecurityGroupId" } ]
-         }
-       },
-
-
-      "CodeDeployEC2ServiceRoleInsProfile": {
-    			"Type": "AWS::IAM::InstanceProfile",
-    			"Properties": {
-    				"Path": "/",
-    				"Roles":[ "CodeDeployEC2ServiceRole" ]
-    			}
-    	},
 
       "myDynamoDBTable" : {
         "Type" : "AWS::DynamoDB::Table",
@@ -138,27 +112,82 @@
       			"Port" : "443",
       			"Protocol" : "HTTPS"
     		}
-    	},
-
-      "WebServerLogGroup":{
-         "Type" : "AWS::Logs::LogGroup",
-         "Properties" : {
-            "RetentionInDays" : 7
-         }
-      }
+    	}
 
     },
 
-
-
-
-
     "Parameters" : {
+
+      "rdsParamStorageSize" : {
+        "Description" : "Allocated Storage for RDS",
+        "Type" : "String",
+        "Default" : "10"
+      },
+
+      "rdsParamDBName" : {
+        "Description" : "DB Name for RDS",
+        "Type" : "String",
+        "Default" : "csye6225"
+      },
+
+      "rdsParamEngine" : {
+        "Description" : "Engine Type for RDS DB",
+        "Type" : "String",
+        "Default" : "MySQL"
+      },
+
+      "rdsParamEngineVersion" : {
+        "Description" : "Engine version for RDS DB",
+        "Type" : "String",
+        "Default" : "5.6.37"
+      },
+
+      "rdsParamDBInsClass" : {
+        "Description" : "Instance Class for RDS DB",
+        "Type" : "String",
+        "Default" : "db.t2.medium"
+      },
+
+      "rdsParamDBInsId" : {
+        "Description" : "Instance Identifier for RDS DB",
+        "Type" : "String",
+        "Default" : "RDS-csye6225-spring2018"
+      },
+
+      "rdsParamUsername" : {
+        "Description": "database username",
+        "Type" : "String",
+        "Default" : "csye6225master"
+      },
+
+      "rdsParamPassword" : {
+        "Description" : "database password",
+        "Type" : "String",
+        "Default" : "csye6225password"
+      },
+
+      "DBSubnetGroup" : {
+        "Description" : "Group Name for RDS DataBase Subnet Group",
+        "Type" : "String",
+        "Default" : "RDSsubnet-group"
+      },
+      
+      "RDSSecurityGroupId" : {
+        "Description" : "Security Group ID of RDS",
+        "Type": "AWS::EC2::SecurityGroup::Id",
+        "Default" : " "
+      },
+
+      "rdsParamDBTagVal" : {
+        "Description" : "Tag Value for RDS DB instance",
+        "Type" : "String",
+        "Default" : "csye6225MyDBInstance"
+      },
 
         "ImageIdOfEC2Instance": {
           "Description" : "ImageId of EC2 Instance",
           "Type": "String",
-          "Default" : " "
+          "Default" : "ami-66506c1c"
         },
 
         "TypeOfEC2Instance": {
@@ -182,12 +211,6 @@
         "EC2Subnet2Id" : {
           "Description" : "EC2 Subnet2 ID",
           "Type": "AWS::EC2::Subnet::Id",
-          "Default" : " "
-        },
-
-        "RDSSecurityGroupId" : {
-          "Description" : "Security Group ID of RDS",
-          "Type": "AWS::EC2::SecurityGroup::Id",
           "Default" : " "
         },
 
@@ -228,65 +251,6 @@
 
         },
 
-        "rdsParamStorageSize" : {
-          "Description" : "Allocated Storage for RDS",
-          "Type" : "String",
-          "Default" : "10"
-        },
-
-        "rdsParamDBName" : {
-          "Description" : "DB Name for RDS",
-          "Type" : "String",
-          "Default" : "csye6225"
-        },
-
-        "rdsParamEngine" : {
-          "Description" : "Engine Type for RDS DB",
-          "Type" : "String",
-          "Default" : "MySQL"
-        },
-
-        "rdsParamEngineVersion" : {
-          "Description" : "Engine version for RDS DB",
-          "Type" : "String",
-          "Default" : "5.6.37"
-        },
-
-        "rdsParamDBInsClass" : {
-          "Description" : "Instance Class for RDS DB",
-          "Type" : "String",
-          "Default" : "db.t2.medium"
-        },
-
-        "rdsParamDBInsId" : {
-          "Description" : "Instance Identifier for RDS DB",
-          "Type" : "String",
-          "Default" : "RDS-csye6225-spring2018"
-        },
-
-        "rdsParamUsername" : {
-  				"Description": "database username",
-  				"Type" : "String",
-          "Default" : "csye6225master"
-  			},
-
-  			"rdsParamPassword" : {
-  				"Description" : "database password",
-  				"Type" : "String",
-          "Default" : "csye6225password"
-  			},
-
-        "rdsParamDBTagVal" : {
-          "Description" : "Tag Value for RDS DB instance",
-          "Type" : "String",
-          "Default" : "csye6225MyDBInstance"
-        },
-
-        "DBSubnetGroup" : {
-          "Description" : "Group Name for RDS DataBase Subnet Group",
-          "Type" : "String",
-          "Default" : "RDSsubnet-group"
-        },
 
         "LambdaFunctionARN" : {
           "Description" : "The arn of Lambda function",
