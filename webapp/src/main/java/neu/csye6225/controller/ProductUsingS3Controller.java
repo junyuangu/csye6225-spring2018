@@ -41,7 +41,7 @@ public class ProductUsingS3Controller {
     private final static Logger logger = LoggerFactory.getLogger(ProductUsingS3Controller.class);
     private final static String imgPlaceHolder = "http://via.placeholder.com/240x320";
 
-    private Boolean authState = false;
+    //private Boolean authState = false;
 
     private String indexMessage = null;
     @Autowired
@@ -60,8 +60,7 @@ public class ProductUsingS3Controller {
     }
 
     @RequestMapping(value = {"", "#","index"}, method= {RequestMethod.GET})
-    public ModelAndView indexProduct( HttpServletRequest request ){
-        session = request.getSession();
+    public ModelAndView indexProduct() {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("index");
         if( indexMessage!=null ) {
@@ -129,9 +128,12 @@ public class ProductUsingS3Controller {
     }
 
     @PostMapping("logout")
-    public ModelAndView logoutProduct() {
-        authState = false;
-        session.setAttribute( "loginUserName", null );
+    public ModelAndView logoutProduct( HttpServletRequest request ) {
+        //session = request.getSession();
+        if( session.getAttribute("loginUserName")!=null )
+            session.setAttribute( "loginUserName", null );
+        session.invalidate();
+
         ModelAndView mav = new ModelAndView();
         mav.setViewName("index");
         return mav;
@@ -148,37 +150,29 @@ public class ProductUsingS3Controller {
     }
 
     //---------------------------- Assign5 codes--------------------
+
+    /**
+     * assign9 update: Variable authState is deprecated!
+     * @param request
+     * @return
+     */
     @GetMapping("editProfile")
     public ModelAndView editProfileProduct( HttpServletRequest request ) {
         logger.info( "Entering editProfileProduct method" );
         ModelAndView mav = new ModelAndView();
 
-        if( authState==false ) {
-            Object user = session.getAttribute("loginUserName");
-            if ( user == null )
-                authState = false;
-            else
-                authState = true;
-        }
+        final String username = session.getAttribute("loginUserName").toString();
+        boolean uCheck = userInfoServiceProduct.checkUserByName( username );
 
-        if( !authState ) {
-            logger.info( "editProfileProduct method: Unauthorized User." );
-            String errorMessage = "You are not authorized for editing profile, please login first.";
-            mav.addObject("errorMessage", errorMessage);
-            mav.setViewName("403");
-            return mav;
-        }
-
-        String username = session.getAttribute("loginUserName").toString();
-        if( username!=null ) {
-            mav.setViewName("editProfile");
-            mav.addObject("loginUser", username );
-        } else {
+        if( username==null || !uCheck ) {
             logger.info( "editProfileProduct method: cannot find the User." );
             String errorMessage = "You are not authorized for editing profile, please login first.";
             mav.addObject("errorMessage", errorMessage);
             mav.setViewName("403");
             return mav;
+        } else {
+            mav.setViewName("editProfile");
+            mav.addObject("loginUser", username );
         }
 
         return mav;
@@ -189,35 +183,14 @@ public class ProductUsingS3Controller {
         logger.info( "Entering myProfileProduct method." );
         ModelAndView mav = new ModelAndView();
 
-        logger.info( "authState: " + authState );
+        final String userName = session.getAttribute("loginUserName").toString();
+        boolean uCheck = userInfoServiceProduct.checkUserByName( userName );
 
-        //if( authState==false ) {
-            Object user = session.getAttribute("loginUserName");
-            logger.info( "Object user: " + user );
-            if ( user == null )
-                authState = false;
-            else {
-                authState = true;
-                logger.info( "user Object get from session: " + user.toString() );
-            }
-        //}
-
-
-        if( !authState  ) {
-            logger.info( "myProfileProduct method: Unauthorized User." );
-            mav.setViewName("myProfile");
+        if( userName==null || !uCheck ) {
+            logger.info( "myProfileProduct method: cannot find the User." );
             mav.addObject("loginUser", "No LoginUser");
             mav.addObject( "currentTime", new Date().toString() );
             mav.addObject("authState", "false" );
-            return mav;
-        }
-
-        String userName = session.getAttribute("loginUserName").toString();
-        if( userName==null ) {
-            logger.info( "myProfileProduct method: cannot find the User." );
-            mav.setViewName("myProfile");
-            mav.addObject("loginUser", userName);
-            mav.addObject( "currentTime", new Date().toString() );
 
         } else {
             logger.info( "myProfileProduct method: show the profile of the User." );
@@ -292,7 +265,7 @@ public class ProductUsingS3Controller {
 
             String aboutMe = userInfoServiceProduct.findAboutmeByUsername(username);
             mav.addObject( "aboutMeDescription", aboutMe );
-            authState = true;
+
             return mav;
         }
     }
@@ -328,7 +301,7 @@ public class ProductUsingS3Controller {
 
     @RequestMapping( method = {RequestMethod.GET,RequestMethod.POST}, value = "deletePic" )
     public ModelAndView DeleteFileInS3Bucket (  Model model )  {
-        String app_username = session.getAttribute("loginUserName").toString();
+        final String app_username = session.getAttribute("loginUserName").toString();
         logger.info( "app_username: " + app_username );
 
         AmazonS3 s3client = AmazonS3ClientBuilder.standard().build();
@@ -360,7 +333,8 @@ public class ProductUsingS3Controller {
     public ModelAndView UploadFileToS3Bucket( @RequestParam("uploadImg") MultipartFile file ) {
         ModelAndView mav = new ModelAndView();
         String app_username = session.getAttribute("loginUserName").toString();
-        if( app_username == null && authState == false ) {
+
+        if( app_username == null ) {
             logger.info("UploadFileToS3Bucket method: no authenticated user.");
             String errMsg = "No Authenticated user, please login first.";
             logger.info(errMsg);
@@ -386,7 +360,7 @@ public class ProductUsingS3Controller {
 
     @RequestMapping( value = "update-AboutMe", method = { RequestMethod.POST } )
     public ModelAndView UpdateAboutMeProduct( HttpServletRequest request ) {
-        session = request.getSession();
+        logger.info( "Entering UpdateAboutMeProduct method..." );
 
         if( session.getAttribute("loginUserName")==null ) {
             String errMsg = "Production update-AboutMe: There is no Login User.";
