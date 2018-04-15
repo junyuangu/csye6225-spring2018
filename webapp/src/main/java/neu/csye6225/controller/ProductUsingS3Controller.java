@@ -183,6 +183,14 @@ public class ProductUsingS3Controller {
         logger.info( "Entering myProfileProduct method." );
         ModelAndView mav = new ModelAndView();
 
+        if( session.getAttribute("loginUserName")==null ) {
+            logger.info( "myProfileProduct method: User is null." );
+            mav.setViewName("myProfile");
+            mav.addObject( "currentTime", new Date().toString() );
+            mav.addObject("authState", "false" );
+            return mav;
+        }
+
         final String userName = session.getAttribute("loginUserName").toString();
         boolean uCheck = userInfoServiceProduct.checkUserByName( userName );
 
@@ -191,10 +199,10 @@ public class ProductUsingS3Controller {
             mav.setViewName("myProfile");
             mav.addObject("loginUser", "No LoginUser");
             mav.addObject( "currentTime", new Date().toString() );
-            mav.addObject("authState", "false" );
+//            mav.addObject("authState", "false" );
             return mav;
-
-        } else {
+        }
+        else {
             logger.info( "myProfileProduct method: show the profile of the User." );
             mav.setViewName("myProfile");
             mav.addObject( "loginUser", userName );
