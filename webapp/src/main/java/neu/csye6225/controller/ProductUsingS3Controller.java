@@ -41,8 +41,7 @@ public class ProductUsingS3Controller {
     private final static Logger logger = LoggerFactory.getLogger(ProductUsingS3Controller.class);
     private final static String imgPlaceHolder = "http://via.placeholder.com/240x320";
 
-    @Autowired
-    private Boolean authState;
+    private Boolean authState = false;
 
     private String indexMessage = null;
     @Autowired
