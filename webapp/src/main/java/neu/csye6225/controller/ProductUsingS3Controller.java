@@ -41,7 +41,7 @@ public class ProductUsingS3Controller {
     private final static Logger logger = LoggerFactory.getLogger(ProductUsingS3Controller.class);
     private final static String imgPlaceHolder = "http://via.placeholder.com/240x320";
 
-    private static boolean authState = false;
+    private boolean authState = false;
     private String indexMessage = null;
     @Autowired
     private IUserServiceProduct userInfoServiceProduct;
@@ -61,7 +61,6 @@ public class ProductUsingS3Controller {
     @RequestMapping(value = {"", "#","index"}, method= {RequestMethod.GET})
     public ModelAndView indexProduct( HttpServletRequest request ){
         session = request.getSession();
-        session.setAttribute( "userLoginName", null );
         ModelAndView mav = new ModelAndView();
         mav.setViewName("index");
         if( indexMessage!=null ) {
@@ -129,8 +128,9 @@ public class ProductUsingS3Controller {
     }
 
     @PostMapping("logout")
-    public ModelAndView logoutProduct() {
+    public ModelAndView logoutProduct( HttpServletRequest request ) {
         authState = false;
+        request.getSession().setAttribute( "loginUserName", null );
         ModelAndView mav = new ModelAndView();
         mav.setViewName("index");
         return mav;
