@@ -192,9 +192,14 @@ public class ProductUsingS3Controller {
             Object user = request.getSession().getAttribute("loginUserName");
             if ( user == null )
                 authState = false;
-            else
+            else {
                 authState = true;
+                logger.info( "user Object get from session: " + user.toString() );
+            }
+            logger.info( "authState: " + authState );
+
         }
+
 
         if( !authState  ) {
             logger.info( "myProfileProduct method: Unauthorized User." );
