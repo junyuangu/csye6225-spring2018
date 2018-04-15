@@ -61,6 +61,7 @@ public class ProductUsingS3Controller {
     @RequestMapping(value = {"", "#","index"}, method= {RequestMethod.GET})
     public ModelAndView indexProduct( HttpServletRequest request ){
         session = request.getSession();
+        session.setAttribute( "userLoginName", null );
         ModelAndView mav = new ModelAndView();
         mav.setViewName("index");
         if( indexMessage!=null ) {
@@ -147,9 +148,18 @@ public class ProductUsingS3Controller {
 
     //---------------------------- Assign5 codes--------------------
     @GetMapping("editProfile")
-    public ModelAndView editProfileProduct() {
+    public ModelAndView editProfileProduct( HttpServletRequest request ) {
         logger.info( "Entering editProfileProduct method" );
         ModelAndView mav = new ModelAndView();
+
+        if( authState==false ) {
+            Object user = request.getSession().getAttribute("loginUserName");
+            if ( user == null )
+                authState = false;
+            else
+                authState = true;
+        }
+
         if( !authState ) {
             logger.info( "editProfileProduct method: Unauthorized User." );
             String errorMessage = "You are not authorized for editing profile, please login first.";
@@ -174,10 +184,19 @@ public class ProductUsingS3Controller {
     }
 
     @GetMapping("myProfile")
-    public ModelAndView myProfileProduct() {
+    public ModelAndView myProfileProduct( HttpServletRequest request ) {
         logger.info( "Entering myProfileProduct method." );
         ModelAndView mav = new ModelAndView();
-        if( !authState ) {
+
+        if( authState==false ) {
+            Object user = request.getSession().getAttribute("loginUserName");
+            if ( user == null )
+                authState = false;
+            else
+                authState = true;
+        }
+
+        if( !authState  ) {
             logger.info( "myProfileProduct method: Unauthorized User." );
             mav.setViewName("myProfile");
             mav.addObject("loginUser", "No LoginUser");
@@ -245,6 +264,7 @@ public class ProductUsingS3Controller {
         boolean checked = userInfoServiceProduct.checkAccount(username, enPassword);
         if (!checked) {
             logger.info("loginCheckProduct method: password does not match username.");
+            session.setAttribute( "loginUserName", null );
             return new ModelAndView("403", "errorMessage", "Username does not Match Password.");
         } else {
             ModelAndView mav = new ModelAndView("authUser");
