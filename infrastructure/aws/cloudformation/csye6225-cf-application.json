@@ -109,22 +109,8 @@
       					"TargetGroupArn" : {"Ref": "ALBTargetGroupArn"}
       				}],
       			"LoadBalancerArn" : { "Ref" : "ApplicationLoadBalancer" },
-      			"Port" : 443,
+      			"Port" : "443",
       			"Protocol" : "HTTPS"
-    		}
-    	},
-
-      "ALBListenerForHTTP": {
-    		"Type": "AWS::ElasticLoadBalancingV2::Listener",
-    		"Properties": {
-
-      			"DefaultActions": [ {
-      					"Type" : "forward",
-      					"TargetGroupArn" : {"Ref": "ALBTargetGroupArn"}
-      				} ],
-      			"LoadBalancerArn" : { "Ref" : "ApplicationLoadBalancer" },
-      			"Port" : 80,
-      			"Protocol" : "HTTP"
     		}
     	}
 

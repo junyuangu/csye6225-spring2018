@@ -268,7 +268,13 @@
                 "TargetType" : "instance",
                 "Port" : 8080,
                 "Protocol" : "HTTP",
-                "VpcId" : { "Ref": "vpcId" }
+                "VpcId" : { "Ref": "vpcId" },
+                "TargetGroupAttributes": [
+                  {
+                    "Key": "stickiness.enabled",
+                    "Value": true
+                  }
+                ]
             }
         },
 
