@@ -260,15 +260,11 @@
                 "Tags": [
                   { "Key": "name", "Value": "csye6225-ALBTargetGroup" }
                 ],
-                "HealthCheckIntervalSeconds" : 60,
-                "HealthCheckPort" : "8080",
-                "UnhealthyThresholdCount" : 10,
-                "HealthCheckPath" : "/",
                 "Name" : "csye6225TargetGroup",
                 "TargetType" : "instance",
                 "Port" : 8080,
                 "Protocol" : "HTTP",
-                "VpcId" : {"Ref": "vpcId"}
+                "VpcId" : { "Ref": "vpcId" }
             }
         },
 
@@ -299,11 +295,11 @@
         "CPUAlarmHigh": {
           "Type": "AWS::CloudWatch::Alarm",
           "Properties": {
-            "AlarmDescription": "Scale-up if CPU > 90% for 10 minutes",
+            "AlarmDescription": "Scale-up if CPU > 90% for 2 minutes",
             "MetricName": "CPUUtilization",
             "Namespace": "AWS/EC2",
             "Statistic": "Average",
-            "Period": "300",
+            "Period": "60",
             "EvaluationPeriods": "2",
             "Threshold": "90",
             "AlarmActions": [
@@ -326,13 +322,13 @@
         "CPUAlarmLow": {
           "Type": "AWS::CloudWatch::Alarm",
           "Properties": {
-            "AlarmDescription": "Scale-down if CPU < 70% for 10 minutes",
+            "AlarmDescription": "Scale-down if CPU < 50% for 20 minutes",
             "MetricName": "CPUUtilization",
             "Namespace": "AWS/EC2",
             "Statistic": "Average",
-            "Period": "300",
+            "Period": "600",
             "EvaluationPeriods": "2",
-            "Threshold": "70",
+            "Threshold": "50",
             "AlarmActions": [
               {
                 "Ref": "WebServerScaleDownPolicy"
