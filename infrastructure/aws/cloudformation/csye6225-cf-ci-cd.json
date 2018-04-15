@@ -206,6 +206,10 @@
             "Properties" : {
                 "ApplicationName" : { "Ref" : "CodeDeployAppName" },
                 "DeploymentConfigName" : "CodeDeployDefault.AllAtOnce",
+                "DeploymentStyle": {
+          					"DeploymentOption": "WITHOUT_TRAFFIC_CONTROL",
+          					"DeploymentType": "IN_PLACE"
+        				},
                 "AutoScalingGroups" : [
                     { "Ref" : "MyAutoScalingGroup" }
                 ],
