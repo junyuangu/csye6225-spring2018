@@ -188,9 +188,11 @@ public class ProductUsingS3Controller {
 
         if( userName==null || !uCheck ) {
             logger.info( "myProfileProduct method: cannot find the User." );
+            mav.setViewName("myProfile");
             mav.addObject("loginUser", "No LoginUser");
             mav.addObject( "currentTime", new Date().toString() );
             mav.addObject("authState", "false" );
+            return mav;
 
         } else {
             logger.info( "myProfileProduct method: show the profile of the User." );
