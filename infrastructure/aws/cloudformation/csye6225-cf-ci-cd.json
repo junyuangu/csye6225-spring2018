@@ -205,7 +205,7 @@
             "Type" : "AWS::CodeDeploy::DeploymentGroup",
             "Properties" : {
                 "ApplicationName" : { "Ref" : "CodeDeployAppName" },
-                "DeploymentConfigName" : "CodeDeployDefault.OneAtATime",
+                "DeploymentConfigName" : "CodeDeployDefault.AllAtOnce",
                 "AutoScalingGroups" : [
                     { "Ref" : "MyAutoScalingGroup" }
                 ],
