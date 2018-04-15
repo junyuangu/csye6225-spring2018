@@ -128,9 +128,9 @@ public class ProductUsingS3Controller {
     }
 
     @PostMapping("logout")
-    public ModelAndView logoutProduct( HttpServletRequest request ) {
+    public ModelAndView logoutProduct() {
         authState = false;
-        request.getSession().setAttribute( "loginUserName", null );
+        session.setAttribute( "loginUserName", null );
         ModelAndView mav = new ModelAndView();
         mav.setViewName("index");
         return mav;
@@ -153,7 +153,7 @@ public class ProductUsingS3Controller {
         ModelAndView mav = new ModelAndView();
 
         if( authState==false ) {
-            Object user = request.getSession().getAttribute("loginUserName");
+            Object user = session.getAttribute("loginUserName");
             if ( user == null )
                 authState = false;
             else
@@ -188,17 +188,17 @@ public class ProductUsingS3Controller {
         logger.info( "Entering myProfileProduct method." );
         ModelAndView mav = new ModelAndView();
 
-        if( authState==false ) {
-            Object user = request.getSession().getAttribute("loginUserName");
+        logger.info( "authState: " + authState );
+
+        //if( authState==false ) {
+            Object user = session.getAttribute("loginUserName");
             if ( user == null )
                 authState = false;
             else {
                 authState = true;
                 logger.info( "user Object get from session: " + user.toString() );
             }
-            logger.info( "authState: " + authState );
-
-        }
+        //}
 
 
         if( !authState  ) {
