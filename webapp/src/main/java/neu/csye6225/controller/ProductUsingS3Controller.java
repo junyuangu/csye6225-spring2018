@@ -192,6 +192,7 @@ public class ProductUsingS3Controller {
 
         //if( authState==false ) {
             Object user = session.getAttribute("loginUserName");
+            logger.info( "Object user: " + user );
             if ( user == null )
                 authState = false;
             else {
