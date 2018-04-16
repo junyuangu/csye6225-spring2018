@@ -6,7 +6,7 @@
    <h3>Access Denied Exception</h3>
    <div>
 	    Logged in user: <b th:inline="text"  class="user"> [[${#httpServletRequest.remoteUser}]] </b>
-	    <form th:action="@{/index}" method="POST">
+	    <form action="/index" method="GET">
 	         <input type="submit" value="Return Home"/>
 	    </form>
    </div> 	 
