@@ -161,6 +161,15 @@ public class ProductUsingS3Controller {
         logger.info( "Entering editProfileProduct method" );
         ModelAndView mav = new ModelAndView();
 
+        if( session.getAttribute("loginUserName")==null ) {
+            logger.info( "editProfileProduct method: User is null." );
+            mav.setViewName("403");
+            String errorMessage= "You are not authorized for editing Profile.";
+            mav.addObject( "errorMsg", errorMessage );
+
+            return mav;
+        }
+
         final String username = session.getAttribute("loginUserName").toString();
         boolean uCheck = userInfoServiceProduct.checkUserByName( username );
 
