@@ -1,24 +1,34 @@
 {
-
-  "Description" : "This template is for csye6225-spring2018 assignment 5, 6 and 7.",
+  "Description" : "This template is updated for csye6225-spring2018 assignment 9.",
 
   "Resources" : {
+
     "VPC" : {
       "Type" : "AWS::EC2::VPC",
       "Properties" : {
         "CidrBlock" : "10.0.0.0/16",
-        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		               {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" } }
-                 ]
+        "EnableDnsSupport" : "true",
+        "EnableDnsHostnames" : "true",
+        "Tags" : [
+          {
+            "Key" : "Application",
+            "Value" : { "Ref" : "AWS::StackId"}
+          },
+  	      {
+            "Key" : "Name",
+            "Value" : { "Ref": "AWS::StackName" }
+          }
+        ]
       }
     },
 
     "InternetGateway" : {
       "Type" : "AWS::EC2::InternetGateway",
       "Properties" : {
-        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		               {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" } }
-                 ]
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+		      { "Key" : "Name", "Value" : { "Ref": "AWS::StackName" } }
+        ]
       }
     },
 
@@ -34,18 +44,21 @@
       "Type" : "AWS::EC2::RouteTable",
       "Properties" : {
         "VpcId" : {"Ref" : "VPC"},
-        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		   {"Key" : "Name", "Value" : {"Ref" : "ParamPublicRouteTableName"} }
-		 ]
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+		      { "Key" : "Name", "Value" : { "Ref" : "ParamPublicRouteTableName" } }
+		    ]
       }
     },
+
     "PrivateRouteTable" : {
       "Type" : "AWS::EC2::RouteTable",
       "Properties" : {
         "VpcId" : {"Ref" : "VPC"},
-        "Tags" : [ {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
-		   {"Key" : "Name", "Value" : {"Ref" : "ParamPrivateRouteTableName"} }
-		 ]
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+    		  { "Key" : "Name", "Value" : { "Ref" : "ParamPrivateRouteTableName" } }
+    		]
       }
     },
 
@@ -58,7 +71,8 @@
         "GatewayId" : { "Ref" : "InternetGateway" }
       }
     },
-    "SubnetForWebServers" : {
+
+      "SubnetForWebServers" : {
          "Type" : "AWS::EC2::Subnet",
          "Properties" : {
             "VpcId" : { "Ref" : "VPC" },
@@ -68,14 +82,36 @@
             "Tags" : [ { "Key" : "Name", "Value" : "SubnetForWebServers" } ]
          }
       },
-    "SubnetForWebServersSubnetRouteTableAssociation" : {
+
+      "SubnetForWebServersSubnetRouteTableAssociation" : {
          "Type" : "AWS::EC2::SubnetRouteTableAssociation",
          "Properties" : {
             "SubnetId" : { "Ref" : "SubnetForWebServers" },
             "RouteTableId" : { "Ref" : "RouteTable" }
          }
       },
-    "SubnetForDBServers" : {
+
+      "SubnetForAutoScaling" : {
+         "Type" : "AWS::EC2::Subnet",
+         "Properties" : {
+            "VpcId" : { "Ref" : "VPC" },
+            "CidrBlock" : "10.0.2.0/24",
+            "MapPublicIpOnLaunch": true,
+            "AvailabilityZone" : "us-east-1c",
+            "Tags" : [ { "Key" : "Name", "Value" : "SubnetForAutoScale" } ]
+         }
+      },
+
+      "SubnetForAutoScaleSubnetRouteTableAssociation" : {
+         "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+         "Properties" : {
+            "SubnetId" : { "Ref" : "SubnetForAutoScaling" },
+            "RouteTableId" : { "Ref" : "RouteTable" }
+         }
+      },
+
+
+      "SubnetForDBServers" : {
          "Type" : "AWS::EC2::Subnet",
          "Properties" : {
             "VpcId" : { "Ref" : "VPC" },
@@ -84,81 +120,114 @@
             "Tags" : [ { "Key" : "Name", "Value" : "SubnetForDBServers" } ]
          }
       },
-    "SubnetForDBServersSubnetRouteTableAssociation" : {
-         "Type" : "AWS::EC2::SubnetRouteTableAssociation",
-         "Properties" : {
-            "SubnetId" : { "Ref" : "SubnetForDBServers" },
-            "RouteTableId" : { "Ref" : "PrivateRouteTable" }
-         }
+
+      "SubnetForDBServersSubnetRouteTableAssociation" : {
+           "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+           "Properties" : {
+              "SubnetId" : { "Ref" : "SubnetForDBServers" },
+              "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+           }
       },
-      "WebServerSecurityGroup" : {
+
+      "LoadBalancerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-        "GroupDescription" : "Enable TCP access via port 22, 80, 443 and 8080",
-        "VpcId":{"Ref":"VPC"},
-        "SecurityGroupIngress" : [ {
-          "IpProtocol" : "tcp",
-          "FromPort" : "22",
-          "ToPort" : "22",
-          "CidrIp" : "0.0.0.0/0"
-         },
-         {
-           "IpProtocol": "tcp",
-           "FromPort": "80",
-           "ToPort": "80",
-           "CidrIp": "0.0.0.0/0"
-         },
-         {
-           "IpProtocol": "tcp",
-           "FromPort": "443",
-           "ToPort": "443",
-           "CidrIp": "0.0.0.0/0"
-         },
-         {
-            "IpProtocol": "tcp",
-            "FromPort": "8080",
-            "ToPort": "8080",
-            "CidrIp": "0.0.0.0/0"
-         }
-       ]
-      }
-    },
+          "GroupName" : "csye6225-LoadBalancer-SecurityGroup",
+          "GroupDescription" : "Rules For LoadBalancer",
+          "VpcId" : { "Ref" : "VPC" },
+          "SecurityGroupIngress" : [
+            {
+              "IpProtocol": "tcp",
+              "FromPort": "80",
+              "ToPort": "80",
+              "CidrIp": "0.0.0.0/0"
+            },
+            {
+              "IpProtocol": "tcp",
+              "FromPort" : "443",
+              "ToPort": "443",
+              "CidrIp": "0.0.0.0/0"
+            },
+            {
+              "IpProtocol": "tcp",
+              "FromPort": "443",
+              "ToPort": "443",
+              "CidrIpv6": "::/0"
+            }
+          ]
+        }
+      },
 
-    "DBServerSecurityGroup" : {
+      "WebServerSecurityGroup" : {
         "Type" : "AWS::EC2::SecurityGroup",
         "Properties" : {
-            "GroupDescription" : "EC2 Security Group for RDS DB. Enable TCP access via port 3306",
-            "VpcId": { "Ref" : "VPC" },
-            "SecurityGroupIngress" : [ {
-              "IpProtocol" : "tcp",
-              "FromPort" : "3306",
-              "ToPort" : "3306",
-              "SourceSecurityGroupId" : {"Ref" : "WebServerSecurityGroup"}
-             }
-           ]
-        }
-    },
-
-    "RDSDBSubnetGroup": {
-        "Type": "AWS::RDS::DBSubnetGroup",
-        "Properties": {
-            "DBSubnetGroupDescription": "Subnets for RDS instances",
-            "DBSubnetGroupName": "RDSsubnet-group",
-            "SubnetIds" : [
-                { "Ref": "SubnetForDBServers" },
-                { "Ref": "SubnetForWebServers" }
+            "GroupDescription" : "Enable Load Balancer access via port 8080",
+            "VpcId":{"Ref":"VPC"},
+            "SecurityGroupIngress" : [
+              {
+                "IpProtocol":"tcp",
+                "FromPort":"22",
+                "ToPort":"22",
+                "CidrIp":"0.0.0.0/0"
+              },
+              {
+                "IpProtocol" : "tcp",
+                "FromPort" : "8080",
+                "ToPort" : "8080",
+                "SourceSecurityGroupId": {
+                  "Fn::GetAtt": [
+                    "LoadBalancerSecurityGroup",
+                    "GroupId"
+                  ]
+                }
+              }
             ]
-        }
-    }
+         }
+      },
 
- },
-  "Parameters" : {
-	"ParamPublicRouteTableName" : {
+      "DBServerSecurityGroup" : {
+          "Type" : "AWS::EC2::SecurityGroup",
+          "Properties" : {
+              "GroupDescription" : "EC2 Security Group for RDS DB. Enable TCP access via port 3306",
+              "VpcId": { "Ref" : "VPC" },
+              "SecurityGroupIngress" : [ {
+                "IpProtocol" : "tcp",
+                "FromPort" : "3306",
+                "ToPort" : "3306",
+                "SourceSecurityGroupId" : {"Ref" : "WebServerSecurityGroup"}
+               }
+             ]
+          }
+      },
+
+      "RDSDBSubnetGroup": {
+          "Type": "AWS::RDS::DBSubnetGroup",
+          "Properties": {
+              "DBSubnetGroupDescription": "Subnets for RDS instances",
+              "DBSubnetGroupName": "RDSsubnet-group",
+              "SubnetIds" : [
+                  { "Ref": "SubnetForDBServers" },
+                  { "Ref": "SubnetForWebServers" }
+              ]
+          }
+      }
+
+    },
+    "Parameters" : {
+      	"ParamPublicRouteTableName" : {
             "Type" : "String"
-	},
-       "ParamPrivateRouteTableName" : {
+      	},
+
+        "ParamPrivateRouteTableName" : {
             "Type" : "String"
-	}
- }
+        },
+
+        "MyRegisteredDomain" : {
+            "Type" : "String",
+            "Default" : "csye6225-spring2018-guju.me"
+        }
+
+
+    }
 
 }

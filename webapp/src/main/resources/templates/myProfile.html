@@ -19,11 +19,28 @@
 <h3>About Me</h3>
 
 <!--/*@thymesVar id="authState" type="java.lang.String"*/-->
-<div th:if=" ${authState} == 'false' ">
+<div th:if=" ${loginUser} == 'No LoginUser' ">
     <form class="form-editPic"  action="/aboutMe-searchByUser" method="post">
         <label th:for="aboutMeSearch" id="userDescription" name="aboutMeSearch">Input Username:</label>
         <input id="searchUsername"  type="text" name="aboutMeSearch" />
         <input id="forwardUploadPicBtn" type="submit" value="Enter Username" tabindex="3" />
+    </form>
+</div>
+
+<!--/*@thymesVar id="authState" type="java.lang.String"*/-->
+<div th:if=" ${authState} == 'false' ">
+    <form class="form-editPic"  action="/aboutMe-searchByUser" method="post">
+        <label th:for="aboutMeSearch" id="userDescriptionLocal" name="aboutMeSearch">Input Username:</label>
+        <input id="searchUsernameLocal"  type="text" name="aboutMeSearch" />
+        <input id="forwardUploadPicBtnLocal" type="submit" value="Enter Username" tabindex="4" />
+    </form>
+</div>
+
+<div th:if=" ${authState} == null ">
+    <form class="form-editPic"  action="/aboutMe-searchByUser" method="post">
+        <label th:for="aboutMeSearch" id="userDescriptionNull" name="aboutMeSearch">Input Username:</label>
+        <input id="searchUsernameNull"  type="text" name="aboutMeSearch" />
+        <input id="forwardUploadPicBtnNull" type="submit" value="Enter Username" tabindex="5" />
     </form>
 </div>
 

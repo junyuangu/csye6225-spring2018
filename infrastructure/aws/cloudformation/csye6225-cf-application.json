@@ -1,149 +1,7 @@
 {
     "AWSTemplateFormatVersion" : "2010-09-09",
-    "Description" : "csye6225 spring2018 for assignment6&7, using free-tier AWS resources.",
+    "Description" : "csye6225 spring2018 for assignment9, using free-tier AWS resources.",
     "Resources" : {
-      "MyDBInstance" : {
-        "Type" : "AWS::RDS::DBInstance",
-        "Properties" : {
-           "AllocatedStorage" : { "Ref" : "rdsParamStorageSize" },
-           "DBName" : { "Ref" : "rdsParamDBName" },
-           "Engine" : { "Ref" : "rdsParamEngine" },
-           "EngineVersion" : { "Ref" : "rdsParamEngineVersion" },
-           "DBInstanceClass" :  { "Ref" : "rdsParamDBInsClass" },
-           "MultiAZ" : "FALSE",
-           "DBInstanceIdentifier" : { "Ref" : "rdsParamDBInsId" },
-           "MasterUsername" : {"Ref" : "rdsParamUsername"},
-           "MasterUserPassword" : {"Ref" : "rdsParamPassword"},
-           "PubliclyAccessible" : "FALSE",
-           "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
-           "VPCSecurityGroups": [ { "Ref" : "RDSSecurityGroupId" } ]
-         }
-       },
-
-      "MyEC2Instance" : {
-          "Type" : "AWS::EC2::Instance",
-          "DependsOn": "MyDBInstance",
-          "Properties" : {
-             "ImageId" : { "Ref" : "ImageIdOfEC2Instance" },
-             "InstanceType" : { "Ref" : "TypeOfEC2Instance" },
-             "DisableApiTermination" : "true",
-             "InstanceInitiatedShutdownBehavior" : "stop",
-             "SubnetId": {"Ref" : "EC2SubnetId"},
-             "SecurityGroupIds": [{"Ref" : "WebServerSecurityGroupId"}],
-             "KeyName" : { "Ref" : "ExistingKeyPairName" },
-             "BlockDeviceMappings" : [ {
-                   "DeviceName" : "/dev/sdf",
-                   "Ebs" : {
-                      "VolumeType" : { "Ref" : "EC2VolumeType" },
-                      "DeleteOnTermination" : "false",
-                      "VolumeSize" : { "Ref" : "EC2VolumeSize" }
-                   }
-             } ],
-             "IamInstanceProfile": { "Ref" : "CodeDeployEC2ServiceRoleInsProfile" },
-             "Tags" : [ {
-                    "Key" : { "Ref" : "TagKey" },
-                    "Value" : { "Ref" : "EC2InstanceTagValue" }
-             } ],
-             "UserData": {
-                 "Fn::Base64": {
-                     "Fn::Join": [
-                         "\n",
-                         [
-                             "#!/bin/bash -xe ",
-                             "sudo apt-get update ",
-                             "sudo apt-get install openjdk-8-jdk -y",
-                             "sudo apt-get install ruby -y ",
-                             "sudo apt-get install wget -y ",
-                             "sudo apt-get install python -y ",
-                             "sudo apt-get install mysql-client -y",
-                             "sudo apt-get update ",
-                             "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install ",
-                             "sudo chmod +x ./install ",
-                             "sudo ./install auto ",
-                             "sudo service codedeploy-agent start ",
-                             "sudo apt-get install tomcat8 -y ",
-                             {
-                                "Fn::Join": [
-                                   "",
-                                   [
-                                     "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.url=\\\"jdbc:mysql://",
-                                     { "Fn::GetAtt": [ "MyDBInstance", "Endpoint.Address" ] },
-                                     ":3306/csye6225\\\"\"' >> /etc/default/tomcat8 \n"
-                                   ]
-                                ]
-                             },
-                             {
-                               "Fn::Join": [
-                                  "",
-                                  [
-                                    "echo 'JAVA_OPTS=\"${JAVA_OPTS} -Dspring.datasource.username=",
-                                    {"Ref":"rdsParamUsername"},
-                                    " -Dspring.datasource.password=",
-                                    {"Ref":"rdsParamPassword"},
-                                    " -Dspring.profiles.active=aws",
-                                    "\"' >> /usr/share/tomcat8/bin/setenv.sh"
-                                  ]
-                               ]
-                             },
-                             "sudo service tomcat8 restart",
-
-
-                            "sudo apt-get update",
-                            "sudo touch /home/ubuntu/awslogs.conf",
-                            "cd /home/ubuntu/",
-                            "sudo echo '[general]' > awslogs.conf",
-                            "sudo echo 'state_file= /var/awslogs/agent-state' >> awslogs.conf",
-                            "sudo echo '[logstream1]' >> awslogs.conf",
-                            "sudo echo 'file = /var/log/tomcat8/csye6225-aws.log' >> awslogs.conf",
-                            "sudo echo 'log_group_name = csye6225-webapp' >> awslogs.conf",
-                            "sudo echo 'log_stream_name = csye6225-webapp' >> awslogs.conf",
-                            "sudo echo 'datetime_format = %d/%b/%Y:%H:%M:%S' >> awslogs.conf",
-                            "curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O",
-                            {
-                                "Fn::Join": [
-                                    " ",
-                                    [
-                                        "sudo python ./awslogs-agent-setup.py -n -r",
-                                        {
-                                            "Ref": "AWS::Region"
-                                        },
-                                        "-c /home/ubuntu/awslogs.conf || error_exit 'Failed to run CloudWatch Logs agent setup'"
-                                    ]
-                                ]
-                            },
-
-
-                            "cd /etc/systemd/system",
-                            "sudo touch awslogs.service",
-                            "sudo echo '[Unit]' >> awslogs.service",
-                            "sudo echo 'Description=Service for CloudWatch Logs agent' >> awslogs.service",
-                            "sudo echo 'After=rc-local.service' >> awslogs.service",
-                            "sudo echo '[Service]' >> awslogs.service",
-                            "sudo echo 'Type=simple' >> awslogs.service",
-                            "sudo echo 'Restart=always' >> awslogs.service",
-                            "sudo echo 'KillMode=process' >> awslogs.service",
-                            "sudo echo 'TimeoutSec=infinity' >> awslogs.service",
-                            "sudo echo 'PIDFile=/var/awslogs/state/awslogs.pid' >> awslogs.service",
-                            "sudo echo 'ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile $PIDFILE --user awslogs --chuid awslogs &amp;' >> awslogs.service",
-                            "sudo echo '[Install]' >> awslogs.service",
-                            "sudo echo 'WantedBy=multi-user.target' >> awslogs.service",
-                            "sudo systemctl start awslogs.service",
-                            "sudo systemctl enable awslogs.service"
-
-                         ]
-                     ]
-                 }
-             }
-          }
-      },
-
-      "CodeDeployEC2ServiceRoleInsProfile": {
-    			"Type": "AWS::IAM::InstanceProfile",
-    			"Properties": {
-    				"Path": "/",
-    				"Roles":[ "CodeDeployEC2ServiceRole" ]
-    			}
-    	},
 
       "myDynamoDBTable" : {
         "Type" : "AWS::DynamoDB::Table",
@@ -198,52 +56,141 @@
 					     "Protocol": "lambda"
 				    } ]
          }
-      }
+      },
 
-    },
+      "ApplicationLoadBalancer": {
+        	"Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+        	"Properties": {
+        		"Scheme": "internet-facing",
+        		"Tags": [
+              {
+          			"Key": "name",
+          			"Value": "csye6225-AppLoadBalancer"
+        		  }
+            ],
+        		"Type" : "application",
+        		"IpAddressType" : "ipv4",
+        		"Subnets" : [
+              { "Ref" : "EC2SubnetId" },
+              { "Ref" : "EC2Subnet2Id" }
+            ],
+        		"SecurityGroups": [
+              { "Ref" : "LoadBalancerSecurityGroupId" }
+            ]
+        	}
+      },
 
-    "Outputs": {
-        "InstanceId": {
-            "Description": "InstanceId of the newly created EC2 instance",
-            "Value": {
-                "Ref": "MyEC2Instance"
-            }
-        },
-        "AZ": {
-            "Description": "Availability Zone of the newly created EC2 instance",
-            "Value": {
-                "Fn::GetAtt": [
-                    "MyEC2Instance",
-                    "AvailabilityZone"
-                ]
-            }
-        },
-        "PublicDNS": {
-            "Description": "Public DNSName of the newly created EC2 instance",
-            "Value": {
-                "Fn::GetAtt": [
-                    "MyEC2Instance",
-                    "PublicDnsName"
-                ]
-            }
-        },
-        "PublicIP": {
-            "Description": "Public IP address of the newly created EC2 instance",
-            "Value": {
-                "Fn::GetAtt": [
-                    "MyEC2Instance",
-                    "PublicIp"
-                ]
-            }
-        }
+      "MyDNSRecord":{
+          "Type" : "AWS::Route53::RecordSetGroup",
+          "Properties" : {
+              "Comment" : "Alias targeted to myELB LoadBalancer.",
+              "HostedZoneName" : { "Ref" : "originalDomain" },
+       				"RecordSets" : [
+       					{
+       						"Name" : {"Ref":"originalDomain"},
+       						"Type" : "A",
+       						"AliasTarget" : {
+       							"HostedZoneId" : { "Fn::GetAtt" : ["ApplicationLoadBalancer", "CanonicalHostedZoneID"] },
+       							"DNSName" : { "Fn::GetAtt" : ["ApplicationLoadBalancer","DNSName"] }
+       						}
+       					}
+       				]
+         }
+      },
+
+      "ALBListenerForHTTPS": {
+    		"Type": "AWS::ElasticLoadBalancingV2::Listener",
+    		"Properties": {
+      			"Certificates" : [
+              { "CertificateArn" : { "Ref" : "ACMArn" } }
+            ],
+      			"DefaultActions": [{
+      					"Type" : "forward",
+      					"TargetGroupArn" : {"Ref": "ALBTargetGroupArn"}
+      				}],
+      			"LoadBalancerArn" : { "Ref" : "ApplicationLoadBalancer" },
+      			"Port" : "443",
+      			"Protocol" : "HTTPS"
+    		}
+    	}
+
+
     },
 
     "Parameters" : {
+
+      "rdsParamStorageSize" : {
+        "Description" : "Allocated Storage for RDS",
+        "Type" : "String",
+        "Default" : "10"
+      },
+
+      "rdsParamDBName" : {
+        "Description" : "DB Name for RDS",
+        "Type" : "String",
+        "Default" : "csye6225"
+      },
+
+      "rdsParamEngine" : {
+        "Description" : "Engine Type for RDS DB",
+        "Type" : "String",
+        "Default" : "MySQL"
+      },
+
+      "rdsParamEngineVersion" : {
+        "Description" : "Engine version for RDS DB",
+        "Type" : "String",
+        "Default" : "5.6.37"
+      },
+
+      "rdsParamDBInsClass" : {
+        "Description" : "Instance Class for RDS DB",
+        "Type" : "String",
+        "Default" : "db.t2.medium"
+      },
+
+      "rdsParamDBInsId" : {
+        "Description" : "Instance Identifier for RDS DB",
+        "Type" : "String",
+        "Default" : "RDS-csye6225-spring2018"
+      },
+
+      "rdsParamUsername" : {
+        "Description": "database username",
+        "Type" : "String",
+        "Default" : "csye6225master"
+      },
+
+      "rdsParamPassword" : {
+        "Description" : "database password",
+        "Type" : "String",
+        "Default" : "csye6225password"
+      },
+
+      "DBSubnetGroup" : {
+        "Description" : "Group Name for RDS DataBase Subnet Group",
+        "Type" : "String",
+        "Default" : "RDSsubnet-group"
+      },
+
+      "RDSSecurityGroupId" : {
+        "Description" : "Security Group ID of RDS",
+        "Type": "AWS::EC2::SecurityGroup::Id",
+        "Default" : " "
+      },
+
+      "rdsParamDBTagVal" : {
+        "Description" : "Tag Value for RDS DB instance",
+        "Type" : "String",
+        "Default" : "csye6225MyDBInstance"
+      },
+
         "ImageIdOfEC2Instance": {
           "Description" : "ImageId of EC2 Instance",
           "Type": "String",
           "Default" : "ami-66506c1c"
         },
+
         "TypeOfEC2Instance": {
           "Description" : "InstanceType of EC2 Instance",
           "Type": "String",
@@ -256,15 +203,20 @@
           "Default" : " "
         },
 
+        "LoadBalancerSecurityGroupId" : {
+          "Type": "AWS::EC2::SecurityGroup::Id",
+          "Default" : " "
+        },
+
         "EC2SubnetId" : {
           "Description" : "EC2 Subnet ID",
           "Type": "AWS::EC2::Subnet::Id",
           "Default" : " "
         },
 
-        "RDSSecurityGroupId" : {
-          "Description" : "Security Group ID of RDS",
-          "Type": "AWS::EC2::SecurityGroup::Id",
+        "EC2Subnet2Id" : {
+          "Description" : "EC2 Subnet2 ID",
+          "Type": "AWS::EC2::Subnet::Id",
           "Default" : " "
         },
 
@@ -305,68 +257,30 @@
 
         },
 
-        "rdsParamStorageSize" : {
-          "Description" : "Allocated Storage for RDS",
-          "Type" : "String",
-          "Default" : "10"
-        },
-
-        "rdsParamDBName" : {
-          "Description" : "DB Name for RDS",
-          "Type" : "String",
-          "Default" : "csye6225"
-        },
-
-        "rdsParamEngine" : {
-          "Description" : "Engine Type for RDS DB",
-          "Type" : "String",
-          "Default" : "MySQL"
-        },
-
-        "rdsParamEngineVersion" : {
-          "Description" : "Engine version for RDS DB",
-          "Type" : "String",
-          "Default" : "5.6.37"
-        },
-
-        "rdsParamDBInsClass" : {
-          "Description" : "Instance Class for RDS DB",
-          "Type" : "String",
-          "Default" : "db.t2.medium"
-        },
-
-        "rdsParamDBInsId" : {
-          "Description" : "Instance Identifier for RDS DB",
-          "Type" : "String",
-          "Default" : "RDS-csye6225-spring2018"
-        },
-
-        "rdsParamUsername" : {
-  				"Description": "database username",
-  				"Type" : "String",
-          "Default" : "csye6225master"
-  			},
-
-  			"rdsParamPassword" : {
-  				"Description" : "database password",
-  				"Type" : "String",
-          "Default" : "csye6225password"
-  			},
-
-        "rdsParamDBTagVal" : {
-          "Description" : "Tag Value for RDS DB instance",
-          "Type" : "String",
-          "Default" : "csye6225MyDBInstance"
-        },
-
-        "DBSubnetGroup" : {
-          "Description" : "Group Name for RDS DataBase Subnet Group",
-          "Type" : "String",
-          "Default" : "RDSsubnet-group"
-        },
 
         "LambdaFunctionARN" : {
           "Description" : "The arn of Lambda function",
+          "Type" : "String",
+          "Default" : " "
+        },
+
+        "ACMArn" : {
+          "Type" : "String",
+          "Default" : "arn:aws:acm:us-east-1:169212139838:certificate/15e1fae8-ae59-48bb-8c4b-6d12e1baed33"
+        },
+
+        "vpcId" : {
+          "Description" : "Use the default VPC ID",
+          "Type" : "String",
+          "Default" : "vpc-b10d14c9"
+        },
+
+        "originalDomain" : {
+          "Type" : "String",
+          "Default" : "csye6225-spring2018-guju.me."
+        },
+
+        "ALBTargetGroupArn" : {
           "Type" : "String",
           "Default" : " "
         }
