@@ -4,15 +4,16 @@
 <body>
 <div th:replace="fragments/navigation :: navigation"/>
 
+<!--/*@thymesVar id="loginUser" type="java.lang.String"*/-->
 <h3 th:text="| Valued user: ${loginUser}, you could update personal info now.|"/>
 
 
 
 <form class="form-upload"  action="/upload-toDb" method="post" enctype="multipart/form-data">
-    <input id="img_input2" type="file" name="uploadImg" accept="image/*" />
-    <label for="img_input2" id="img_label2">Select File
+    <input id="img-input2" type="file" name="uploadImg" accept="image/*" />
+    <label for="img-input2" id="img_label2">Select File
         <i class="fa fa-plus fa-lg"></i></label>
-    <div id="preview_box2"></div>
+    <div id="preview-box2"></div>
     &emsp;<input id="uploadBtn" type="submit" value="Upload" tabindex="1" />
 </form>
 
