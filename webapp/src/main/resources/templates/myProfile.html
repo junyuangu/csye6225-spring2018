@@ -36,6 +36,14 @@
     </form>
 </div>
 
+<div th:if=" ${authState} == null ">
+    <form class="form-editPic"  action="/aboutMe-searchByUser" method="post">
+        <label th:for="aboutMeSearch" id="userDescriptionNull" name="aboutMeSearch">Input Username:</label>
+        <input id="searchUsernameNull"  type="text" name="aboutMeSearch" />
+        <input id="forwardUploadPicBtnNull" type="submit" value="Enter Username" tabindex="5" />
+    </form>
+</div>
+
 
 <br/>
 <!--/*@thymesVar id="imgInfoText" type="java.lang.String"*/-->
